@@ -1,0 +1,50 @@
+# HiddenBench server config / HiddenBenchサーバ設定
+#
+# Faithful reproduction of Li, Naito & Shirado (arXiv:2505.11556):
+#   agent_count: 4, total_rounds: 15 (fixed, no early stopping).
+# 論文 (2505.11556) に忠実: 4エージェント・15ラウンド固定・早期終了なし.
+
+# WebSocket listen address / WebSocket待受
+host: 0.0.0.0
+port: 8090
+
+# Agents per game (HiddenBench canonical = 4) / 1ゲームのエージェント数 (正準=4)
+agent_count: 4
+
+# Fixed number of sequential discussion rounds (paper T=15) / 逐次議論ラウンド数 (論文 T=15)
+total_rounds: 15
+
+# Language of task content delivery / タスク内容の言語
+#   en -> data/benchmark.json (upstream English set)
+#   ja -> data/benchmark.ja.json if present, else falls back to English
+lang: en
+
+# Experiment condition label recorded in results (one of the 3x2 cells) /
+# 結果に記録する実験条件ラベル (3x2のいずれか)
+#   baseline | analysis_only | utterance_fewshot | utterance_fewshot_analysis |
+#   script_fewshot | script_fewshot_analysis
+condition: baseline
+
+# Which tasks to run (held-out exemplar leakage control is the experimenter's duty:
+# evaluation ids must be disjoint from exemplar ids — see INLG_METHODOLOGY.md §3.2 L1).
+# 評価タスクの指定 (手本に使うタスクIDと重複させないこと).
+#   task_ids: [1, 2, 3]   # explicit ids, OR
+#   task_limit: 20        # first N tasks
+task_ids:
+task_limit: 20
+
+# Repeat each task this many times (HiddenBench paper uses 10 sessions/task) /
+# 各タスクの反復回数 (論文は10セッション/タスク)
+repeats_per_task: 1
+
+# Round-robin distribution + per-agent shuffle seed / 配分・シャッフル種
+seed: 42
+
+# Timeouts (ms) / タイムアウト
+action_timeout_ms: 60000
+response_timeout_ms: 120000
+
+# Where task data lives, relative to project root / タスクデータの場所 (プロジェクト相対)
+data_dir: data
+# Where per-game result JSON is written (consumed by inlg-eval) / 結果JSON出力先
+output_dir: log/results

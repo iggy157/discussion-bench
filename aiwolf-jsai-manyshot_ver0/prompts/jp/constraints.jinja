@@ -1,0 +1,146 @@
+{#-
+  constraints.jinja
+  出力形式 (request_key 別) と文字数制限 (サーバ setting / info から動的取得) を表示.
+  Expects: request_key, setting?, info?, narration_split?, freeform?, remain_talk_map?
+
+  サーバの文字数制限モデル (aiwolf-nlp-server):
+    - per_talk:       1発言あたりの絶対上限 (値が -1 のとき packet から omit される → None)
+    - base_length:    1発言あたりの基本枠 (per_agent 予算を消費しない下限)
+    - mention_length: 他エージェントへの @メンションを含む場合のみ追加で使える文字数
+    - per_agent:      1日の1エージェントあたりの上限 (残量は info.remain_length で届く)
+  per_talk が設定されていない運用 (base + mention 方式) に対応するため, per_talk が
+  無い場合は base_length を主軸に, mention_length があれば追加枠を提示する.
+  メンション例は info.status_map から自分以外のエージェント名を1件選んで生成する.
+  (サーバは @<agent.GameName> を検出するため, custom_profile 有効時はキャラクター名,
+   無効時は "Agent[01]" 形式がそのまま正しい例になる.)
+
+  narration_split=True のときは, 発話本文を ``「...」`` で囲ませてト書きを外側に書く
+  モード. 文字数制限は ``「」`` 内側の合計のみに適用される旨を LLM に伝える.
+
+  freeform=True のときは, グループチャット方式で「今は自分のターンか」を判断させ,
+  ``[PASS]`` 制御トークンの利用と各エージェントの残り発話回数 (remain_talk_map) を
+  踏まえた振る舞いを促す指示を追加する. 既存の発話制約と併存して LLM に渡る.
+
+  talk_state (dict, optional) はトークリクエスト時の本日のトーク進行状況
+  (max_count / own_count / own_remain / total_today). freeform に依存せず常に
+  表示する (Day 末で投票宣言フェーズへ移行する判断材料として).
+-#}
+{%- set _narration_split = narration_split if narration_split is defined else False -%}
+{%- set _freeform = freeform if freeform is defined else False -%}
+{%- set _remain_map = remain_talk_map if remain_talk_map is defined else none -%}
+{%- set _talk_state = talk_state if talk_state is defined else none -%}
+{%- set _scenario_enabled = scenario_enabled if scenario_enabled is defined else False -%}
+{%- set mention_ns = namespace(example=none) -%}
+{%- if info is not none and info.status_map is not none -%}
+{%- for name in info.status_map -%}
+{%- if name != info.agent and mention_ns.example is none -%}
+{%- set mention_ns.example = name -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- set mention_hint = ('`@' ~ mention_ns.example ~ '`') if mention_ns.example is not none else '他のエージェント名の前に @ を付けた形式' -%}
+{% if request_key == 'talk' -%}
+{%- set ml = (setting.talk.max_length if setting is not none and setting.talk is not none and setting.talk.max_length is not none else none) -%}
+{%- set _length_unit = '「」内の発話本文' if _narration_split else '1発言' -%}
+{% if ml is not none and ml.per_talk is not none -%}
+{{ _length_unit }}あたり最大 {{ ml.per_talk }} 文字以内で出力してください。
+{% if ml.mention_length is not none and ml.mention_length > 0 -%}
+ただし他エージェントへの @メンション (例: {{ mention_hint }}) を含む場合に限り, さらに {{ ml.mention_length }} 文字まで延長できます。
+{% endif -%}
+{% elif ml is not none and ml.base_length is not none -%}
+{{ _length_unit }}あたり {{ ml.base_length }} 文字以内で出力してください。
+{% if ml.mention_length is not none and ml.mention_length > 0 -%}
+ただし他エージェントへの @メンション (例: {{ mention_hint }}) を含める場合に限り, 追加で {{ ml.mention_length }} 文字まで書けます (合計最大 {{ ml.base_length + ml.mention_length }} 文字)。
+{% endif -%}
+{% endif -%}
+{% if info is not none and info.remain_length is not none -%}
+本日の残り発言可能文字数は {{ info.remain_length }} 文字です。
+{% endif -%}
+{%- if _talk_state is not none %}
+本日のあなたの発話状況: 既に {{ _talk_state.own_count }} 回発話済み (上限 {{ _talk_state.max_count }} 回), 残り {{ _talk_state.own_remain }} 回。今日のトーク全体は {{ _talk_state.total_today }} 発話進行中。
+{# Day 0 はサーバ仕様上, 追放投票フェーズが存在しない (logic.md: 0日目以外の場合は追放フェーズを開始する).
+   よって投票宣言を促すと talk_history に「@〜に投票します」が混ざり, Day 1 以降の議論を歪める.
+   info.day > 0 のときだけ警告を出す. #}
+{% if info is not none and info.day is not none and info.day > 0 -%}
+{% if _talk_state.own_remain <= 1 -%}
+[残り発話 1 回以下] 議論を続けるよりも, **投票先を ``@-mention`` 付きで明確に宣言**して締める局面です (例: 「@〇〇さんに投票します」「@〇〇に入れる」)。{% if _scenario_enabled %}台本上, 最終 Turn は全員が投票宣言で終わるのが典型です。{% else %}最終 Turn は投票宣言で締めくくるのが典型です。{% endif %}
+{%- elif _talk_state.own_remain <= 2 -%}
+[残り発話 2 回] 終盤に近づいています。投票先の明確化を意識してください。
+{%- endif %}
+{%- endif %}
+{% endif -%}
+{%- if _narration_split %}
+発話本文は必ず ``「...」`` で囲んで出力してください。``「」`` の外側にはキャラクターの仕草・視線・間合いなどのト書きを書いてよく (例: ``（少し間を置いて）``), サーバには ``「」`` 内側の文字列だけが連結されて送信されます。上記の文字数制限は ``「」`` 内側の合計に対してのみ適用され, ト書き部分は字数にカウントされません。{% if _scenario_enabled %}台本で見た {% endif %}`### Turn 0` のような見出し・表・メタラベル (``〇日目``等)・`名前: 発話内容` の発話構造・他キャラのセリフ代弁・他キャラの心情ナレーションは, ``「」`` の内外どちらにも書かないでください。{% if _scenario_enabled %}台本から学ぶのは議論の展開・発言のテンポ・キャラクターの口調であり, 形式ではありません。{% endif %}
+本日これ以上発言することが無い場合に限り、特別な制御トークンとして ``「Over」`` のみを出力してください。
+{%- else %}
+発言内容のみを出力してください。説明やメタ情報、前置きは含めないでください。
+{% if _scenario_enabled -%}
+台本で見た `### Turn 0` のような見出し、`| ID | 名前 |` のような表、「〇日目」「夜の行動」などのメタラベル、`名前: 発話内容` の発話構造、他キャラのセリフ代弁・ト書き (例:「(沈黙)」)・他キャラの心情ナレーションは出力に含めないでください (サーバ側で処理されるメタ要素および脚本家視点の地の文です)。台本から学ぶのは議論の展開・発言のテンポ・キャラクターの口調であり、形式ではありません。
+{%- else -%}
+`### Turn 0` のような見出し、`| ID | 名前 |` のような表、「〇日目」「夜の行動」などのメタラベル、`名前: 発話内容` の発話構造、他キャラのセリフ代弁・ト書き (例:「(沈黙)」)・他キャラの心情ナレーションは出力に含めないでください (これらはサーバ側で処理されるメタ要素です)。
+{%- endif %}
+本日これ以上発言することが無い場合に限り、特別な制御トークンとして「Over」のみを出力してください。
+{%- endif %}
+{%- if _freeform %}
+
+【freeform モード: 次発話者判断】
+{% if _remain_map -%}
+本日の各エージェントの残り発話可能回数:
+{% for name, remain in _remain_map.items() -%}
+{% if remain <= 0 %}- {{ name }}: Over (発話済み・応答不可)
+{% else %}- {{ name }}: 残り {{ remain }} 回
+{% endif -%}
+{%- endfor %}
+{% endif -%}
+直前の流れと残り発話回数を踏まえ, 今あなたが発話するのが自然か判断してください. 次のいずれかに該当する場合は ``[PASS]`` のみを出力してください (空発話扱いで送信されません):
+- 直前で他キャラが名指し / 直接質問された → 名指し相手 (= 自分でない) の応答待ち
+- 自分が直前のターンで発話済みで, 追加すべき新論点が無い
+- Over したキャラへの応答を求められている (誰も応えられない不毛な往復になる)
+- 同じ趣旨を繰り返すだけになりそう
+- 残り発話回数を温存したい (核心議題まで取っておきたい)
+
+それ以外は普段通り発話してください. 沈黙が続く / あなたが質問された / CO 直後の補足が必要 などの状況では積極的に発話してください.
+{%- endif %}
+{% elif request_key == 'whisper' -%}
+{%- set ml = (setting.whisper.max_length if setting is not none and setting.whisper is not none and setting.whisper.max_length is not none else none) -%}
+{%- set _length_unit = '「」内の囁き本文' if _narration_split else '1囁き' -%}
+{% if ml is not none and ml.per_talk is not none -%}
+{{ _length_unit }}あたり最大 {{ ml.per_talk }} 文字以内で出力してください。
+{% if ml.mention_length is not none and ml.mention_length > 0 -%}
+ただし他エージェントへの @メンション (例: {{ mention_hint }}) を含む場合に限り, さらに {{ ml.mention_length }} 文字まで延長できます。
+{% endif -%}
+{% elif ml is not none and ml.base_length is not none -%}
+{{ _length_unit }}あたり {{ ml.base_length }} 文字以内で出力してください。
+{% if ml.mention_length is not none and ml.mention_length > 0 -%}
+ただし他エージェントへの @メンション (例: {{ mention_hint }}) を含める場合に限り, 追加で {{ ml.mention_length }} 文字まで書けます (合計最大 {{ ml.base_length + ml.mention_length }} 文字)。
+{% endif -%}
+{% endif -%}
+{% if info is not none and info.remain_length is not none -%}
+本日の残り囁き可能文字数は {{ info.remain_length }} 文字です。
+{% endif -%}
+{%- if _narration_split %}
+囁き本文は必ず ``「...」`` で囲んで出力してください。``「」`` の外側にはキャラクターの仕草・視線・間合いなどのト書きを書いてよく, サーバには ``「」`` 内側の文字列だけが連結されて送信されます。上記の文字数制限は ``「」`` 内側の合計に対してのみ適用され, ト書き部分は字数にカウントされません。{% if _scenario_enabled %}台本で見た{% endif %}見出し・表・メタラベル・`名前: 発話内容` の発話構造・他キャラのセリフ代弁・他キャラの心情ナレーションは, ``「」`` の内外どちらにも書かないでください。
+本日これ以上囁くことが無い場合に限り、特別な制御トークンとして ``「Over」`` のみを出力してください。
+{%- else %}
+囁き内容のみを出力してください。説明やメタ情報、前置きは含めないでください。
+{% if _scenario_enabled -%}
+台本で見た見出し・表・メタラベル・`名前: 発話内容` の発話構造、他キャラのセリフ代弁・ト書き・他キャラの心情ナレーションは出力に含めないでください (サーバ側で処理されるメタ要素および脚本家視点の地の文です)。
+{%- else -%}
+見出し・表・メタラベル・`名前: 発話内容` の発話構造、他キャラのセリフ代弁・ト書き・他キャラの心情ナレーションは出力に含めないでください (これらはサーバ側で処理されるメタ要素です)。
+{%- endif %}
+本日これ以上囁くことが無い場合に限り、特別な制御トークンとして「Over」のみを出力してください。
+{%- endif %}
+{%- if _freeform %}
+
+【freeform モード: 次発話者判断】
+直前の囁きの流れを踏まえ, 今あなたが囁くのが自然か判断してください. 次のいずれかに該当する場合は ``[PASS]`` のみを出力してください (空囁き扱いで送信されません):
+- 直前で他の人狼が問いかけた相手が自分でない → 相手の応答待ち
+- 自分が直前のターンで囁き済みで, 追加すべき新論点が無い
+- 同じ趣旨を繰り返すだけになりそう
+- 囁き回数を温存したい局面
+
+それ以外は普段通り囁いてください.
+{%- endif %}
+{% elif request_key in ['divine', 'guard', 'vote', 'attack'] -%}
+対象エージェント名のみを出力してください。説明・理由・記号・接頭辞は一切含めないでください。
+{% endif -%}

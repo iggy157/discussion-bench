@@ -1,0 +1,44 @@
+# HiddenBench (協調熟議ドメイン) 用メイン設定 — 日本語.
+# domain: hiddenbench を指定すると, init_agent_from_packet が役職非依存の
+# HiddenBenchAgent を生成し, info.profile のJSON文脈 (フェーズ/手がかり/選択肢) を
+# 解析して hb_pre / hb_discussion / hb_post プロンプトに振り分ける.
+
+domain: hiddenbench
+mode: multi_turn
+lang: jp
+
+headings:
+  enabled: true
+  style: markdown
+
+# HiddenBenchでは info.profile はHiddenBenchのJSON文脈であり, ペルソナではない.
+# ローカルプロフィール展開は行わない.
+profile:
+  source: server
+
+configs:
+  multi_turn: ./config.hiddenbench.jp.yml
+
+web_socket:
+  # HiddenBenchサーバ (hiddenbench-server) の待受. compose内では service名 hiddenbench-server.
+  url: ws://127.0.0.1:8090/ws
+  token:
+  auto_reconnect: true
+
+agent:
+  # HiddenBench正準は4エージェント.
+  num: 4
+  team: hb-agent
+  kill_on_timeout: true
+  # HiddenBenchは逐次TALK request/response で進行する (freeform群チャットではない).
+  freeform: false
+
+log:
+  console_output: true
+  file_output: true
+  output_dir: ./log
+  level: info
+  request:
+    name: false
+    initialize: false
+    daily_initialize: false

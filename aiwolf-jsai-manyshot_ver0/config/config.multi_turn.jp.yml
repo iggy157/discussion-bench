@@ -1,0 +1,228 @@
+# Multi-turn モード用の子設定ファイル.
+# LLMプロバイダ・モデル・プロンプト定義を含む.
+# メインconfigの mode が multi_turn のときに読み込まれる.
+
+# お手本台本 (サンプル対局) の読み込み設定. multi-turn 専用.
+# 有効にすると, Agent.initialize() の最初で
+# data/sample_games_md/sample_games_<agent.num>/ 以下の Markdown 台本を全部読み込み,
+# LLM に "事前学習" として与えてから INITIALIZE プロンプトを送信する.
+# 台本は HumanMessage, 応答は AIMessage として llm_message_history に積まれ, 以降の
+# 全リクエストでコンテキストとして保持される.
+#
+# 参照フォルダは agent.num の値で自動選択 (5 → sample_games_5, 9 → sample_games_9).
+# enabled を false にすると一切読み込まない.
+#
+# separate_langchain: true のときは talk / action 両系統の履歴に同じ台本を積む.
+#
+# ack_mode:
+#   llm_summary (既定)
+#     LLM に「議論展開・発話のテンポ・話題転換・キャラクター口調の一貫性」を
+#     300〜500字で要約させる. chain-of-thought的に学習観点を言語化させるので
+#     後段の発話品質が上がりやすい反面, 1エージェントあたり追加で数千トークンの
+#     生成コストが発生する.
+#   static
+#     固定の承諾文 (ack_static_text) を AIMessage として積む. API呼び出しなし.
+#     コスト最小・学習効果は llm_summary より弱い可能性あり.
+#
+# 注意:
+#   台本の量はプロバイダの prompt cache を効かせないと毎ターンの入力コストが
+#   膨張する. Anthropic / Gemini の長文キャッシュが使える構成を推奨.
+#
+# 上級オプション (通常は不要):
+#   sample_dir: 参照フォルダを明示指定 (絶対 or プロジェクトルート相対). 既定の
+#               ./data/sample_games_md/sample_games_<agent.num>/ を上書きしたいときのみ.
+#   glob:       読み込むファイルの glob パターン. 既定は "*.md" (フォルダ内全件).
+#   cache_dir:  キャッシュ先を明示指定. 既定は
+#               ./data/scenario_cache/sample_games_<agent.num>/.
+scenario:
+  enabled: false
+  # delivery: 'full' (既定, 後方互換) | 'by_day'
+  #   full   = 全 manyshot を全 day まとめて INITIALIZE で 1 回だけ feed.
+  #   by_day = INITIALIZE で各 manyshot の Day 0 部分 (役職配置 + 0日目章節) のみ feed,
+  #            以降は daily_initialize で当該日章節を継ぎ足す. 各日の覚書を Day 別キャッシュ
+  #            (cache key に day を含めて区別) として持つので, prewarm_scenario.py を
+  #            走らせると by_day モードのときは自動で全 day 分が prewarm される.
+  delivery: full
+  ack_mode: llm_summary
+  ack_static_text: "承知しました。台本を参考に、議論展開・発話のテンポ・キャラクターの口調を踏まえて演じます。"
+  # --- キャッシュ設定 (ack_mode=llm_summary のとき有効) ---
+  # 事前に `uv run scripts/prewarm_scenario.py` で要約を生成しキャッシュする.
+  # ゲーム起動時はキャッシュを読むだけ (LLM 呼び出しゼロ → INITIALIZE タイムアウト回避).
+  # キャッシュ先は agent.num に応じて自動選択
+  # (./data/scenario_cache/sample_games_<num>/).
+  use_cache: true
+  # キャッシュミス時: static=静的ackフォールバック (推奨) / live=実行時に呼び直す / error=失敗扱い
+  on_cache_miss: static
+  # --- prewarm 専用モデル指定 (任意) ---
+  # 指定があれば prewarm のときだけそのモデルで要約を生成する.
+  # cache key も (provider, model) を prewarm 側で計算するため, 実ゲーム時の
+  # llm.<role> とは無関係にキャッシュヒットが保証される.
+  # 役割キー (talk / action / default) ごとに独立指定可能. type と model の
+  # 両方が揃った role だけが override 対象, 欠けていれば llm.<role> へフォールバック.
+  # 用途例: runtime は gpt-5.2, prewarm は gpt-4o-mini で安く済ませる.
+  prewarm:
+    talk:
+      type: openai
+      model: gpt-5.4
+    action:
+      type: openai
+      model: gpt-5.4
+
+llm:
+  type: openai
+  # llm 直下でも model / temperature / pricing_mode / base_url を書けば
+  # 下のプロバイダセクション (openai:, google: 等) の値を上書きする (任意).
+  # 例: separate_langchain=false のまま google の別モデルを使いたい場合
+  # model: gemini-2.5-pro
+  sleep_time: 0
+  # trueにするとリクエスト種別ごとにLangChainとllm_message_historyを分離する.
+  # 共通系 (initialize, daily_initialize, daily_finish) は両方に送信する.
+  # 発話系 (talk, whisper) は llm.talk のモデルに送信する.
+  # アクション系 (vote, divine, guard, attack) は llm.action のモデルに送信する.
+  # falseにするとllm.typeの単一モデル/履歴で従来通り動作する.
+  separate_langchain: true
+  # talk / action には type の他に model / temperature / pricing_mode / base_url を直接書ける.
+  # 指定した項目は下の <provider>: セクションより優先される. 省略した項目は <provider>: から継承.
+  # 同じ会社の異なるモデルを talk と action で使い分けたい場合はここに model を書く.
+  # type を省略した場合は llm.type をデフォルトとして使う.
+  talk:
+    # type: anthropic
+    # model: claude-sonnet-4-6
+    type: openai
+    model: gpt-5.2
+  action:
+    type: openai
+    model: gpt-5.4-mini         # openai + gpt-4o-mini (action は軽量モデル)
+
+openai:
+  model: gpt-4o-mini
+  temperature: 0.7
+
+google:
+  model: gemini-2.0-flash-lite
+  temperature: 0.7
+
+vertexai:
+  model: gemini-2.0-flash-lite
+  temperature: 0.7
+
+ollama:
+  model: llama3.1
+  temperature: 0.7
+  base_url: http://localhost:11434
+
+anthropic:
+  model: claude-haiku-4-5
+  temperature: 1.0
+  # Prompt cache の自動注入. true (default) のとき, 毎コール直前に
+  # 末尾 HumanMessage 直前の最後の AIMessage に cache_control を自動付与し,
+  # scenario + 過去ターンを Anthropic の prompt cache に乗せる.
+  # OpenAI の自動キャッシュと同等の効果. false にすると素の挙動 (全額課金).
+  cache: true
+  # cache TTL: "5m" (default, 1.25× write cost) または "1h" (2× write cost).
+  # 1局が 5 分以内に終わるなら 5m で十分. 長引くゲームは 1h を検討.
+  cache_ttl: "5m"
+
+# multi-turn モードでは LLM の会話履歴 (llm_message_history) が LangChain 側で保持されるため,
+# 各リクエストのプロンプトは最低限のワンラインで足りる.
+# ただし llm.separate_langchain=true の場合は talk系 / action系 LangChain が分離され履歴が共有されないため,
+# 共通リクエスト (initialize / daily_initialize / daily_finish) のプロンプトで identity / event ブロックを
+# include し, 両系統に最低限の情報共有を行う.
+prompt:
+  # narration_split:
+  #   false (default) → 旧来動作. 発話本文だけを LLM に出力させ, ト書き・地の文は禁止.
+  #   true → LLM に発話を ``「...」`` で囲ませ, ``「」`` の外側にト書き・地の文を許可する.
+  #          サーバには ``「」`` 内側だけが連結されて送信される (extract_dialogue_quotes).
+  #          文字数制限 (per_talk / base_length 等) は ``「」`` 内側の合計のみに適用される
+  #          ことを LLM に明示する. ト書き分は API トークンとしてのみ消費 (送信は無し).
+  #   注意: true にすると scenario_system / constraints のプロンプト本文が変わるため,
+  #         scenario_cache のキーが別キーになる (= 既存キャッシュは使えないので
+  #         prewarm を再実行する必要あり, または on_cache_miss=static で fallback 動作).
+  narration_split: false
+
+  # 共通リクエスト (initialize / daily_initialize / daily_finish) はゲーム状態の
+  # コンテキストを LLM に積むためのもので, 役のセリフを生成させてはいけない.
+  # in-character の発話を生成すると llm_message_history に AIMessage として残り,
+  # 後続の talk_phase で LLM が「自分が前のターンで言ったこと」として参照してしまう
+  # (= talk 開始時に空の履歴なのに「賛成です」など脈絡のない応答が起きる).
+  # 全ての shared リクエスト末尾で 「了解しました」 のみを返すよう明示する.
+  initialize: |-
+    {{ block('identity') }}
+    {{ block('instruction') }}
+    以降のリクエストには日本語で応答してください。レスポンスはそのままゲームに送信されるため, 不要な情報を含めないでください。
+
+    これはセットアップメッセージです。**役のセリフを生成せず**, 「了解しました」とだけ返してください。実際の発話は後続の talk / whisper リクエストで行います。
+  daily_initialize: |-
+    {{ block('instruction') }}
+    {{ block('event') }}
+
+    これは日付開始の通知です。**役のセリフを生成せず**, 「了解しました」とだけ返してください。実際の発話は後続の talk / whisper リクエストで行います。
+  daily_finish: |-
+    {{ block('instruction') }}
+    {{ block('event') }}
+    {% set history_source = talk_history -%}
+    {% set history_start = sent_talk_count -%}
+    {{ block('history') }}
+
+    これは日付終了の通知です。**役のセリフ・感想・反省を生成せず**, 「了解しました」とだけ返してください。実際の発話は次の日の talk / whisper リクエストで行います。
+  talk: |-
+    {% set history_source = talk_history -%}
+    {% set history_start = sent_talk_count -%}
+    {{ block('history') }}
+    {{ block('instruction') }}
+    {{ block('constraints') }}
+  whisper: |-
+    {% set history_source = whisper_history -%}
+    {% set history_start = sent_whisper_count -%}
+    {{ block('history') }}
+    {{ block('instruction') }}
+    {{ block('constraints') }}
+  # アクション系 (vote / divine / guard / attack) では当日の talk_history (attack は whisper_history)
+  # を必ずフル展開して再提示する. multi-turn でも separate_langchain=true のときは
+  # action LLM の履歴に当日の TALK が積まれない (TALK は talk 系列のみ) ため,
+  # ここで明示的に history block を渡さないと LLM は当日の議論を踏まえずに投票してしまう.
+  # history_start=0 でフル, history_source は talk_history / whisper_history を切替.
+  divine: |-
+    {% set history_source = talk_history -%}
+    {% set history_start = 0 -%}
+    {{ block('history') }}
+    {{ block('instruction') }}
+    対象:
+    {% for k, v in info.status_map.items() -%}
+    {%- if v == 'ALIVE' %}{{ k }}
+    {% endif -%}
+    {%- endfor %}
+    {{ block('constraints') }}
+  guard: |-
+    {% set history_source = talk_history -%}
+    {% set history_start = 0 -%}
+    {{ block('history') }}
+    {{ block('instruction') }}
+    対象:
+    {% for k, v in info.status_map.items() -%}
+    {%- if v == 'ALIVE' %}{{ k }}
+    {% endif -%}
+    {%- endfor %}
+    {{ block('constraints') }}
+  vote: |-
+    {% set history_source = talk_history -%}
+    {% set history_start = 0 -%}
+    {{ block('history') }}
+    {{ block('instruction') }}
+    対象:
+    {% for k, v in info.status_map.items() -%}
+    {%- if v == 'ALIVE' %}{{ k }}
+    {% endif -%}
+    {%- endfor %}
+    {{ block('constraints') }}
+  attack: |-
+    {% set history_source = whisper_history -%}
+    {% set history_start = 0 -%}
+    {{ block('history') }}
+    {{ block('instruction') }}
+    対象:
+    {% for k, v in info.status_map.items() -%}
+    {%- if v == 'ALIVE' %}{{ k }}
+    {% endif -%}
+    {%- endfor %}
+    {{ block('constraints') }}

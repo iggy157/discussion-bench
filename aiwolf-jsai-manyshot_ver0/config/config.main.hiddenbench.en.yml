@@ -1,0 +1,40 @@
+# Main config for the HiddenBench (collaborative reasoning) domain — English.
+# domain: hiddenbench makes init_agent_from_packet build the role-free HiddenBenchAgent,
+# which parses the JSON context (phase / clues / options) from info.profile and routes
+# the standard TALK request to hb_pre / hb_discussion / hb_post prompts.
+
+domain: hiddenbench
+mode: multi_turn
+lang: en
+
+headings:
+  enabled: true
+  style: markdown
+
+# In HiddenBench, info.profile carries the HiddenBench JSON context, not a persona.
+profile:
+  source: server
+
+configs:
+  multi_turn: ./config.hiddenbench.en.yml
+
+web_socket:
+  url: ws://127.0.0.1:8090/ws
+  token:
+  auto_reconnect: true
+
+agent:
+  num: 4
+  team: hb-agent
+  kill_on_timeout: true
+  freeform: false
+
+log:
+  console_output: true
+  file_output: true
+  output_dir: ./log
+  level: info
+  request:
+    name: false
+    initialize: false
+    daily_initialize: false

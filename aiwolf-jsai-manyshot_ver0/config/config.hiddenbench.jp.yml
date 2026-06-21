@@ -1,0 +1,99 @@
+# HiddenBench multi-turn 子設定 — 日本語プロンプト.
+# 6条件 (3x2) の手本注入は scenario セクション + data/exemplars/ で制御する.
+# 手本 (台本/発話few-shot/分析) は一旦空のため scenario.enabled=false (= ベースライン挙動).
+# 手本を用意したら condition 別 config で scenario を有効化する (INLG_METHODOLOGY.md §3).
+
+# 実験条件ラベル (結果ログに記録). サーバ側 condition と揃える.
+#   baseline | analysis_only | utterance_fewshot | utterance_fewshot_analysis |
+#   script_fewshot | script_fewshot_analysis
+condition: baseline
+
+scenario:
+  enabled: false
+  delivery: full
+  ack_mode: static
+  ack_static_text: "承知しました。手本を参考に議論します。"
+  use_cache: true
+  on_cache_miss: static
+
+llm:
+  # 議論エージェント: 規模頑健性検証のため Gemma 等の単一モデルを推奨 (生成器Claude/審査GPTと系列分離).
+  # ここでは可搬性のため openai 既定. vertexai/ollama/google へ差し替え可.
+  type: openai
+  sleep_time: 0
+  # HiddenBenchは単一モデル (talk/actionの分離は不要).
+  separate_langchain: false
+
+openai:
+  model: gpt-4o-mini
+  temperature: 0.7
+
+google:
+  model: gemini-2.0-flash-lite
+  temperature: 0.7
+
+vertexai:
+  model: gemini-2.0-flash-lite
+  temperature: 0.7
+
+ollama:
+  # 例: Gemma 2 をローカルで. `ollama pull gemma2:9b` など.
+  model: gemma2:9b
+  temperature: 0.7
+  base_url: http://localhost:11434
+
+anthropic:
+  model: claude-haiku-4-5
+  temperature: 0.7
+  cache: true
+  cache_ttl: "5m"
+
+prompt:
+  # INITIALIZE: 状況と「自分の手がかり」を履歴に積む (役を演じさせず承諾のみ).
+  initialize: |-
+    あなたはグループ意思決定タスクに参加しています。以下の状況について、最終的にひとつの選択肢を選びます。
+
+    ## 状況
+    {{ hb.description }}
+
+    ## あなたが持っている情報
+    {% for c in hb.clues %}- {{ c }}
+    {% endfor %}
+    重要: これらの情報の順序はランダムにシャッフルされており、順序は重要度や関係性を表しません。すべての情報を慎重に検討してください。
+
+    これはセットアップメッセージです。役のセリフを生成せず、「了解しました」とだけ返してください。
+  # 事前回答 (Y^pre): 討論前の個別判断. JSONで回答.
+  hb_pre: |-
+    グループ討論を始める前に、いまあなたが持っている情報だけにもとづいて、最初の判断を行ってください。
+
+    ## 選択肢
+    {% for o in hb.options %}- {{ o }}
+    {% endfor %}
+    次のJSON形式で、上の選択肢のいずれか一つを正確に選んで回答してください。
+    {"vote": "<選択肢のいずれか一つ>", "rationale": "<判断の理由を簡潔に>"}
+  # 議論ターン: 全履歴を見て1〜2文で貢献. JSONではなく発言本文のみ.
+  hb_discussion: |-
+    {% set history_source = talk_history -%}
+    {% set history_start = 0 -%}
+    {% if talk_history|length == 0 -%}
+    あなたが最初の発言者です。あなたの持つ情報のうち、判断に最も関係しそうな要点を1〜2文でグループに共有してください。
+    {%- else -%}
+    これまでのグループ討論:
+    {{ block('history') }}
+    あなたの番です。あなたの情報と他の参加者の発言を踏まえ、1〜2文で討論に貢献してください（新情報の共有・他者への応答・賛否のいずれでも構いません）。
+    {%- endif %}
+    JSON形式ではなく、発言本文だけを返してください。
+  # 事後回答 (Y^post): 討論を踏まえた最終個別判断. JSONで回答 (主指標).
+  hb_post: |-
+    {% set history_source = talk_history -%}
+    {% set history_start = 0 -%}
+    グループ討論は終了しました。
+
+    ## 討論の記録
+    {{ block('history') }}
+
+    ## 選択肢
+    {% for o in hb.options %}- {{ o }}
+    {% endfor %}
+    あなた自身の情報とグループ討論の内容を踏まえ、最終的な判断を次のJSON形式で回答してください。
+    {"vote": "<選択肢のいずれか一つ>", "rationale": "<判断の理由を簡潔に>"}

@@ -1,0 +1,36 @@
+{#-
+  instruction.jinja (English)
+  Minimal per-request instruction line.
+  scenario_enabled=True: assumes the performer draws on the reference scripts.
+  scenario_enabled=False (ablation): drops all "reference script" mentions and
+  asks the LLM to play the character directly.
+  Expects: request_key, info (optional), scenario_enabled?
+-#}
+{%- set _scenario_enabled = scenario_enabled if scenario_enabled is defined else False -%}
+{% if request_key == 'talk' -%}
+{% if _scenario_enabled -%}
+Day {{ info.day }} talk. Draw on the discussion flow and utterance tempo of the reference scripts, and speak naturally as your character. Do not imitate the format — output your utterance content only.
+{%- else -%}
+Day {{ info.day }} talk. Speak naturally as your character. Output your utterance content only — no headings, tables, character labels, voiced others, or stage directions.
+{%- endif %}
+{% elif request_key == 'whisper' -%}
+Day {{ info.day }} whisper. Reply to your fellow werewolf naturally, staying in character.
+{% elif request_key == 'divine' -%}
+Divine request. Output only the name of the agent to divine.
+{% elif request_key == 'guard' -%}
+Guard request. Output only the name of the agent to guard.
+{% elif request_key == 'vote' -%}
+Vote request. You are "{{ info.agent }}". Considering the stance and declarations you yourself have publicly stated in the discussion (e.g. "I vote for @X"), any divination results you have received, and other agents' COs and claims, choose the most consistent execution-vote target. **Do not vote for yourself ("{{ info.agent }}") unless you have a specific reason to.** You do not need to follow the majority's vote declarations — stay consistent with your own stance and reasoning. Output only the target agent name with no additional characters.
+{% elif request_key == 'attack' -%}
+Attack request. Output only the name of the agent to attack.
+{% elif request_key == 'initialize' -%}
+{% if _scenario_enabled -%}
+Game initialize. Using the reference scripts you studied and the role/profile that follows, respond in English to subsequent requests.
+{%- else -%}
+Game initialize. Using the role/profile that follows, respond in English to subsequent requests.
+{%- endif %}
+{% elif request_key == 'daily_initialize' -%}
+Day {{ info.day }} has started.
+{% elif request_key == 'daily_finish' -%}
+Day {{ info.day }} has ended.
+{% endif -%}

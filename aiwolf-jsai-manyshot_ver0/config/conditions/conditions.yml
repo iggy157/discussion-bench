@@ -1,0 +1,73 @@
+# The six experimental conditions (3x2) of the INLG study, as a single registry.
+# INLG研究の6条件 (3x2) を1ファイルにまとめた定義.
+#
+# The inlg launcher (../../../inlg-system) reads this and, for a chosen (domain, lang,
+# condition), overlays the `scenario` block onto the agent's mode config and stamps the
+# `condition` label. Standalone manyshot runs default to `baseline` (scenario disabled).
+#
+# ランチャがこの定義を読み, 選んだ (ドメイン, 言語, 条件) に対して scenario ブロックを
+# モード設定へ重ね, condition ラベルを刻む. 単体実行の既定は baseline (scenario無効).
+#
+# Path templates use {domain}/{lang}; sample_dir is relative to the manyshot project root.
+# パステンプレートは {domain}/{lang}; sample_dir は manyshot プロジェクトルート相対.
+#
+# Each `inject` lists which exemplar kinds the condition feeds. The injection itself is the
+# SAME _feed_scenario_chunk() mechanism as werewolf (cross-domain fairness, methodology P2).
+
+conditions:
+  # (1) baseline: instructions only, no exemplars, no analysis.
+  baseline:
+    label: baseline
+    inject: []
+    scenario:
+      enabled: false
+
+  # (2) analysis_only: analysis text only (no script / no utterance examples).
+  analysis_only:
+    label: analysis_only
+    inject: [analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: data/exemplars/{domain}/{lang}/analysis
+
+  # (3) utterance_fewshot: single-utterance examples, no analysis.
+  utterance_fewshot:
+    label: utterance_fewshot
+    inject: [utterances]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: data/exemplars/{domain}/{lang}/utterances
+
+  # (4) utterance_fewshot_analysis: utterance examples + analysis (token-matched vs 6).
+  utterance_fewshot_analysis:
+    label: utterance_fewshot_analysis
+    inject: [utterances, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: data/exemplars/{domain}/{lang}/utterances
+
+  # (5) script_fewshot: full discussion transcripts, no analysis (token-matched vs 3).
+  script_fewshot:
+    label: script_fewshot
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: data/exemplars/{domain}/{lang}/scripts
+
+  # (6) script_fewshot_analysis: full transcripts + analysis (expected strongest).
+  script_fewshot_analysis:
+    label: script_fewshot_analysis
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: data/exemplars/{domain}/{lang}/scripts

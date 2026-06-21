@@ -1,0 +1,68 @@
+# メイン設定ファイル.
+# モード (multi_turn / single_turn) と共通設定 (web_socket / agent / log) を定義する.
+# モード固有の設定 (llm / prompt) は configs で指定された子configファイルから読み込まれ,
+# このファイルとマージされる. キー衝突時は子configの値が優先される.
+
+mode: multi_turn
+# プロンプトブロック (prompts/<lang>/) の言語. jp / en.
+lang: jp
+
+# プロンプトブロックの見出し設定.
+# enabled: true にすると各ブロック冒頭に見出しが付与される.
+# style: markdown | xml の2種から選択.
+#   markdown → "### 履歴"
+#   xml      → "<履歴>" ... "</履歴>" (閉じタグも自動付与)
+# 見出し文字列は prompts/<lang>/_labels.yml で定義 (未定義ならファイル名をそのまま使用).
+headings:
+  enabled: true
+  style: markdown
+
+# プロフィール情報のソース.
+#   server: サーバから送られてくる info.profile 文字列をそのまま使う
+#   local : data/prompts/profiles.<lang>.yml からキャラクター名 (info.agent) をキーに
+#           詳細プロフィールを identity に展開する. 台本と同名のキャラクターに紐づく.
+profile:
+  source: local
+
+configs:
+  multi_turn: ./config.multi_turn.jp.yml
+  single_turn: ./config.single_turn.jp.yml
+
+web_socket:
+  url: wss://cf18-219-50-213-89.ngrok-free.app/ws
+  token:
+  auto_reconnect: true
+
+agent:
+  num: 4
+  team: s-user01-0055070ey
+  kill_on_timeout: true
+  # freeform 仕様 (グループチャット方式; サーバが TALK_PHASE_START/END を送る) に最適化した
+  # 挙動を有効にするか.
+  #   true: scenario cache が ``sample_games_<num>_freeform/`` 配下を参照. 分析プロンプトに
+  #         「次発話者の選ばれ方」「残り発話回数を踏まえた振る舞い」観点が追加される. constraints
+  #         プロンプトに ``[PASS]`` 制御トークン + 残り発話回数マップが表示される.
+  #         handle_talk_phase / handle_whisper_phase が ``[PASS]`` を検出したら送信せず微小ジッタで
+  #         次サイクルへ進む. (1局あたり 1 LLM コール / cycle は変わらない).
+  #   false (default): 旧来挙動 (毎ターン必ず talk; cache は ``sample_games_<num>/``).
+  #         サーバが request/response 仕様, または freeform サーバへ繋いでもフォールバックで動かしたい時.
+  freeform: false
+
+log:
+  console_output: true
+  file_output: true
+  output_dir: ./log
+  level: debug
+
+  request:
+    name: false
+    initialize: false
+    daily_initialize: false
+    whisper: true
+    talk: true
+    daily_finish: false
+    divine: true
+    guard: true
+    vote: true
+    attack: true
+    finish: false

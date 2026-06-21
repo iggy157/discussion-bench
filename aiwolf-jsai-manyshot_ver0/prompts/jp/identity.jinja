@@ -1,0 +1,47 @@
+{#-
+  identity.jinja
+  担当する1名のキャラクターの自己情報.
+  scenario_enabled=True のときは「脚本家チームの一人としてお手本台本を参考に演じる」
+  というフレーミングを採用する (manyshot プリミングと整合).
+  scenario_enabled=False (アブレーション) のときはお手本台本への言及を一切削除し,
+  通常の人狼プレイヤーとして担当キャラを演じるフレーミングに切り替える.
+  - local_profile が注入されていれば (config.profile.source=local + 名前一致) 詳細な
+    data/prompts/profiles.<lang>.yml のプロフィールを profile_encoding 順にリッチ描画する.
+  - 無ければサーバ由来の info.profile 文字列にフォールバック.
+  - どちらも無ければ名前と役職のみ.
+  Expects: info, role, local_profile?, profile_encoding?, scenario_enabled?
+-#}
+{%- set _scenario_enabled = scenario_enabled if scenario_enabled is defined else False -%}
+{% if _scenario_enabled -%}
+あなたはこの人狼対局を書き上げる脚本家チームの一人で, 下記キャラクターの一手分 (発話または判断) を書く担当です。事前に読んだお手本台本を参考に, 担当キャラクターの一貫した口調・立ち位置で次の一手を書いてください。
+{%- else -%}
+あなたは下記キャラクターを担当する人狼対局のプレイヤーです。担当キャラクターの一貫した口調・立ち位置で, 次の一手 (発話または判断) を行ってください。
+{%- endif %}
+担当キャラクターの名前: {{ info.agent }}
+担当キャラクターの役職: {{ role.value }}
+{% if local_profile -%}
+{%- set sep = "、" -%}
+{%- for field, label in profile_encoding.items() -%}
+{%- set val = local_profile[field] if field in local_profile else none -%}
+{%- if val is none -%}
+{%- elif val is mapping -%}
+{{ label }}:
+{%- for k, v in val.items() %}
+  {{ k }}: {% if v is iterable and v is not string and v is not mapping %}{{ v | join(sep) }}{% else %}{{ v }}{% endif %}
+{%- endfor %}
+{% elif val is iterable and val is not string -%}
+{%- if val and val[0] is mapping and 'context' in val[0] -%}
+{{ label }}:
+{%- for ex in val %}
+  - （{{ ex.context }}）{{ ex.text }}
+{%- endfor %}
+{% else -%}
+{{ label }}: {{ val | join(sep) }}
+{% endif -%}
+{%- else -%}
+{{ label }}: {{ val }}
+{% endif -%}
+{%- endfor -%}
+{%- elif info.profile is not none -%}
+担当キャラクターのプロフィール: {{ info.profile }}
+{% endif -%}

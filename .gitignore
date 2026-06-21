@@ -1,0 +1,42 @@
+# --- Secrets (NEVER commit) / 秘密情報 ---
+.env
+*/.env
+**/config/.env
+*.key
+# keep the templates
+!.env.example
+!**/.env.example
+!**/config/.env.example
+!**/config/example.env
+
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+build/
+dist/
+
+# --- Node (web viewer, if added later) ---
+node_modules/
+
+# --- Go ---
+bin/
+*.exe
+
+# --- Runtime outputs / 実行時出力 ---
+log/
+*/log/
+**/log/
+log/results/
+inlg-web/log/human/
+
+# --- OS / editor ---
+.DS_Store
+*.swp
+.idea/
+.vscode/

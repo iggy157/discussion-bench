@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>INLG HiddenBench — human play / 人間参加</title>
+<style>
+  :root { font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN", sans-serif; }
+  body { margin: 0; background: #0f1221; color: #e8ecf5; }
+  header { padding: 12px 16px; background: #171b2e; display:flex; gap:12px; align-items:center; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+  main { max-width: 820px; margin: 0 auto; padding: 16px; }
+  .card { background:#1b2138; border:1px solid #2a3252; border-radius:10px; padding:14px 16px; margin:12px 0; }
+  .muted { color:#9aa6c4; font-size: 13px; }
+  .clue { background:#222a47; border-radius:6px; padding:6px 10px; margin:6px 0; }
+  .msg { padding:4px 0; border-bottom:1px solid #232a47; }
+  .msg b { color:#8fb7ff; }
+  button { background:#3a59d1; color:#fff; border:0; border-radius:8px; padding:9px 14px; cursor:pointer; font-size:14px; }
+  button.opt { background:#26305a; margin:4px 6px 4px 0; }
+  button.opt.sel { background:#3a59d1; }
+  input, textarea { width:100%; box-sizing:border-box; background:#10152b; color:#e8ecf5; border:1px solid #2a3252; border-radius:8px; padding:9px; font-size:14px; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .pill { font-size:12px; padding:2px 8px; border-radius:999px; background:#2a3252; }
+</style>
+</head>
+<body>
+<header>
+  <h1>INLG · HiddenBench</h1>
+  <span class="pill" id="phase">—</span>
+  <span class="muted">Play one seat. You collect human discussion data. / 1席を担当し、人間の議論データを集めます。</span>
+</header>
+<main>
+  <div class="card" id="join">
+    <div class="muted">Your display name / 表示名</div>
+    <div class="row" style="margin-top:8px">
+      <input id="name" placeholder="e.g. participant-01" />
+      <button id="joinBtn">Join / 参加</button>
+    </div>
+  </div>
+
+  <div class="card" id="scenario" style="display:none">
+    <div class="muted">Scenario / 状況</div>
+    <div id="desc"></div>
+    <div class="muted" style="margin-top:10px">Your information (order is shuffled) / あなたの情報（順不同）</div>
+    <div id="clues"></div>
+    <button id="readyBtn" style="margin-top:10px">Ready / 準備完了</button>
+  </div>
+
+  <div class="card" id="transcript" style="display:none">
+    <div class="muted">Discussion / 議論</div>
+    <div id="msgs"></div>
+  </div>
+
+  <div class="card" id="action" style="display:none">
+    <div id="actionLabel" class="muted"></div>
+    <div id="options"></div>
+    <textarea id="text" rows="2" placeholder="Your message / 発言, or rationale / 理由"></textarea>
+    <div class="row" style="margin-top:8px"><button id="sendBtn">Send / 送信</button></div>
+  </div>
+
+  <div class="card" id="done" style="display:none">Game finished. Thank you! / 終了しました。ありがとうございました。</div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let ws, selectedOption = null;
+
+function show(id, on=true){ $(id).style.display = on ? "block":"none"; }
+function setPhase(p){ $("phase").textContent = p; }
+
+$("joinBtn").onclick = () => {
+  const name = $("name").value.trim() || "participant";
+  ws = new WebSocket((location.protocol==="https:"?"wss":"ws")+"://"+location.host+"/play");
+  ws.onopen = () => ws.send(JSON.stringify({type:"join", name}));
+  ws.onmessage = (e) => handle(JSON.parse(e.data));
+  ws.onclose = () => setPhase("disconnected");
+  show("join", false);
+};
+
+$("readyBtn").onclick = () => { ws.send(JSON.stringify({type:"ready"})); show("scenario", false); };
+
+$("sendBtn").onclick = () => {
+  const value = $("text").value.trim();
+  const phase = $("action").dataset.phase;
+  if ((phase==="pre"||phase==="post") && !selectedOption){ alert("Pick an option / 選択肢を選んでください"); return; }
+  ws.send(JSON.stringify({type:"reply", value, option: selectedOption}));
+  $("text").value=""; selectedOption=null; show("action", false);
+};
+
+function renderTranscript(t){
+  if (!t || !t.length) return;
+  show("transcript");
+  $("msgs").innerHTML = t.map(m => `<div class="msg"><b>${m.agent}</b>: ${escapeHtml(m.text)}</div>`).join("");
+}
+function escapeHtml(s){ return (s||"").replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+function renderOptions(opts){
+  selectedOption = null;
+  $("options").innerHTML = "";
+  (opts||[]).forEach(o => {
+    const b = document.createElement("button");
+    b.className = "opt"; b.textContent = o;
+    b.onclick = () => { selectedOption = o; [...$("options").children].forEach(c=>c.classList.remove("sel")); b.classList.add("sel"); };
+    $("options").appendChild(b);
+  });
+}
+
+function handle(m){
+  if (m.type === "init"){
+    setPhase("setup");
+    show("scenario");
+    $("desc").textContent = m.payload.description || "";
+    $("clues").innerHTML = (m.payload.clues||[]).map(c=>`<div class="clue">${escapeHtml(c)}</div>`).join("");
+  } else if (m.type === "prompt"){
+    setPhase(m.phase);
+    renderTranscript(m.transcript);
+    show("action");
+    $("action").dataset.phase = m.phase;
+    if (m.phase === "discussion"){
+      $("actionLabel").textContent = "Your turn — contribute 1–2 sentences. / あなたの番です。1〜2文で発言を。";
+      $("options").innerHTML = "";
+    } else {
+      $("actionLabel").textContent = (m.phase==="pre"
+        ? "Initial decision before discussion. Pick one option. / 討論前の最初の判断。選択肢を1つ。"
+        : "Final decision after discussion. Pick one option. / 討論後の最終判断。選択肢を1つ。");
+      renderOptions(m.payload.options);
+    }
+  } else if (m.type === "finish"){
+    setPhase("finished");
+    show("action", false); show("done");
+  }
+}
+</script>
+</body>
+</html>
