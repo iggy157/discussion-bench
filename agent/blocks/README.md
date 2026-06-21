@@ -10,10 +10,10 @@ loaded at runtime (no need to touch the config YAML).
 
 ```
 agent/
-  prompts/<lang>/*.jinja                     # ① SHARED blocks used by both systems
-                                             #    両システム共通のブロック
+  blocks/<lang>/*.jinja                       # ① SHARED base blocks — the reusable parts
+                                             #    両システム共通の「土台ブロック」（再利用部品）
                                              #    history / identity / instruction / constraints /
-                                             #    event / scenario* ...  (referenced via {{ block('name') }})
+                                             #    event / scenario* ...  (used via {{ block('name') }})
   aiwolf/prompts/<lang>/<mode>/*.jinja        # ② Werewolf prompt set (per request type)
                                              #    人狼のプロンプト一式（リクエスト種別ごと）
                                              #    talk / whisper / vote / divine / guard / attack /
@@ -21,6 +21,11 @@ agent/
   hidden-bench/prompts/<lang>/<mode>/*.jinja  # ③ HiddenBench prompt set
                                              #    initialize / hb_pre / hb_discussion / hb_post
 ```
+
+Naming: the SHARED, reusable parts live in `blocks/` (referenced in code as `block('name')`);
+each domain's `prompts/` ASSEMBLE those blocks into a finished prompt per request type. So
+"blocks" = base parts, "prompts" = per-domain compositions. / 共有の再利用部品は `blocks/`、
+各ドメインの `prompts/` がそれを組み立てた完成プロンプト、という読み分け。
 
 - `<lang>` = `jp` | `en`; `<mode>` = `multi_turn` (the mode the experiments/UI use).
 - A file's stem is the request key: e.g. `talk.jinja` becomes `prompt.talk`. Domain files
@@ -43,5 +48,5 @@ If a directory is absent, the inline config is used as a fallback.
 
 - `single_turn` mode keeps its prompts inline in the config (no file dir yet); add
   `agent/aiwolf/prompts/<lang>/single_turn/` if you want to externalize it too.
-- The shared blocks (`prompts/<lang>/`) are cross-system by design (one definition of
+- The shared blocks (`blocks/<lang>/`) are cross-system by design (one definition of
   "history", "constraints", etc.); only the per-request compositions are split by system.

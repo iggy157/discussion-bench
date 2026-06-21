@@ -4,7 +4,7 @@ prompt rendering 用 Jinja2 Environment の共有ファクトリ.
 Agent (runtime) / prewarm_scenario.py / preview_prompt.py の 3 箇所で使われ,
 全部で同じ ``block()`` 関数 (見出し付与つき) ・ラベル読み込み挙動を共有する.
 
-prompts/<lang>/ をルートとする Environment を返し, グローバル関数 ``block(name)`` を
+blocks/<lang>/ をルートとする Environment を返し, グローバル関数 ``block(name)`` を
 登録する. ``block(name)`` は ``<name>.jinja`` を現在のコンテキストでレンダし,
 ``config.headings.enabled`` が True なら ``markdown`` / ``xml`` 形式の見出しを前置する.
 """
@@ -17,7 +17,7 @@ from typing import Any
 import yaml
 from jinja2 import Environment, FileSystemLoader, pass_context
 
-_PROMPTS_ROOT = Path(__file__).parent.joinpath("./../../prompts").resolve()
+_PROMPTS_ROOT = Path(__file__).parent.joinpath("./../../blocks").resolve()
 # Jinja2 Environment cache keyed by language code (jp / en).
 _JINJA_ENVS: dict[str, Environment] = {}
 
@@ -31,9 +31,9 @@ _HEADING_STYLES: dict[str, tuple[str, str, bool]] = {
 
 
 def _load_labels(blocks_dir: Path) -> dict[str, str]:
-    """Load heading label dictionary from ``prompts/<lang>/_labels.yml``.
+    """Load heading label dictionary from ``blocks/<lang>/_labels.yml``.
 
-    prompts/<lang>/_labels.yml から見出しラベル辞書を読み込む.
+    blocks/<lang>/_labels.yml から見出しラベル辞書を読み込む.
     ファイルが無い場合は空辞書を返し, ``block()`` は ``name`` そのものをフォールバックとして使う.
     """
     labels_path = blocks_dir / "_labels.yml"
@@ -45,17 +45,17 @@ def _load_labels(blocks_dir: Path) -> dict[str, str]:
 
 
 def get_jinja_env(lang: str, *, prompts_root: Path | None = None) -> Environment:
-    """Return (and cache) a Jinja2 Environment rooted at ``prompts/<lang>/``.
+    """Return (and cache) a Jinja2 Environment rooted at ``blocks/<lang>/``.
 
-    prompts/<lang>/ をルートとする Jinja2 Environment を返す (キャッシュ有り).
-    言語別ディレクトリが無ければ prompts/ 直下にフォールバックする.
+    blocks/<lang>/ をルートとする Jinja2 Environment を返す (キャッシュ有り).
+    言語別ディレクトリが無ければ blocks/ 直下にフォールバックする.
     Environment には ``block()`` グローバル関数が登録され, ブロック名 (jinja ファイルの stem)
     から本文レンダ + 見出し付与を 1 関数で行えるようになる.
 
     Args:
         lang: 言語コード (``jp`` / ``en``).
         prompts_root: テスト等で別ディレクトリを使いたいときの上書き. None なら
-            ``./../../prompts`` (= リポジトリルート/prompts) を採用.
+            ``./../../blocks`` (= agent/blocks) を採用.
 
     Returns:
         Jinja2 Environment with ``block`` registered as a global.
