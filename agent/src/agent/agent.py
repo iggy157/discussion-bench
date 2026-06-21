@@ -120,10 +120,10 @@ class Agent:
         # Game IDはINITIALIZEパケット受信時にself.infoから取得できる.
         self.game_id_cache: str = game_id
 
-        # Single central .env at the repo root (inlg/.env) is the source of truth; the
+        # Single central .env at the repo root (discussion-bench/.env) is the source of truth; the
         # legacy per-agent config/.env is loaded only as a fallback. Neither overrides env
         # vars already set by docker compose / run_local (load_dotenv won't clobber os.environ).
-        # 中央の inlg/.env を優先。旧 config/.env はフォールバック。既存の環境変数は上書きしない。
+        # 中央の discussion-bench/.env を優先。旧 config/.env はフォールバック。既存の環境変数は上書きしない。
         load_dotenv(Path(__file__).resolve().parents[3].joinpath(".env"))
         load_dotenv(Path(__file__).parent.joinpath("./../../config/.env"))
 

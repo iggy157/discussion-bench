@@ -9,7 +9,7 @@ game and aggregated across games:
   - Early convergence: convergence round, premature-consensus flag, terminal agreement.
   - Diversity/stagnation: distinct-1, distinct-2, self-repetition diversity.
   - Conformity/independence proxies (BenchForm-adapted).
-All non-native metrics are flagged in the report. See INLG_METHODOLOGY.md §4.
+All non-native metrics are flagged in the report. See METHODOLOGY.md §4.
 
 werewolf logs use a different schema; a thin transcript extractor can feed the same
 domain-general metrics (distinct-n / convergence / conformity) later.
@@ -35,7 +35,7 @@ from diversity import distinct_n, self_repetition_diversity
 from surfacing import first_round_each_fact_surfaced, surfacing_rate
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("inlg.eval")
+logger = logging.getLogger("eval")
 
 
 def _rounds_from_transcript(transcript: list[dict[str, Any]]) -> tuple[list[list[str]], dict[str, list[str]]]:
@@ -184,10 +184,10 @@ _LABELS = {
 def render_markdown(agg: dict[str, Any]) -> str:
     """Render the aggregate as a bilingual Markdown report / 集計を日英Markdownへ整形."""
     lines = [
-        "# INLG evaluation report / INLG評価レポート",
+        "# Evaluation report / 評価レポート",
         "",
         "Metrics marked `*self-defined` / `*adapted` are NOT verbatim from the cited "
-        "source — see INLG_METHODOLOGY.md §4. / `*自作`・`*適応` は出典の式そのままではない.",
+        "source — see METHODOLOGY.md §4. / `*自作`・`*適応` は出典の式そのままではない.",
         "",
     ]
     conds = [c for c in agg if c != "__all__"] + (["__all__"] if "__all__" in agg else [])

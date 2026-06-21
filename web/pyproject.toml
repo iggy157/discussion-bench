@@ -1,7 +1,7 @@
 [project]
-name = "inlg-web"
+name = "discussion-bench-web"
 version = "0.1.0"
-description = "Minimal web lobby for human-in-the-loop HiddenBench data collection (INLG study)"
+description = "Minimal web lobby for human-in-the-loop HiddenBench data collection (discussion-bench study)"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

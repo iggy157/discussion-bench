@@ -1,5 +1,5 @@
 # Werewolf game server (Go) for the UI / UI用の人狼ゲームサーバ(Go)
-# Build context = repo root (inlg/). Uses THIS repo's server/aiwolf so the human game
+# Build context = repo root (discussion-bench/). Uses THIS repo's server/aiwolf so the human game
 # runs on the exact same server the experiments use.
 FROM golang:1.24 AS build
 WORKDIR /src

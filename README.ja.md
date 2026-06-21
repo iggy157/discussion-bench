@@ -23,7 +23,7 @@
 | パス | 役割 |
 |------|------|
 | `.env` / `.env.example` | 設定の一元管理ファイル。言語・条件・ポート・LLMのAPIキーをここに書く。Docker Compose・ローカル実行・エージェントのすべてが参照する。 |
-| `config/inlg.yml` | 実行設定を一覧できる読み物（どの環境を・どの言語で・どんなパラメータで動かすか）。 |
+| `config/system.yml` | 実行設定を一覧できる読み物（どの環境を・どの言語で・どんなパラメータで動かすか）。 |
 | `config/conditions.yml` | 手本注入の condition プリセット定義。 |
 | `docker-compose.yml` | 2つの環境を Compose の profiles（`aiwolf` / `hiddenbench`）として定義。片方でも両方でも起動できる。 |
 | `docker/` | エージェント用と各サーバ用の Dockerfile。 |

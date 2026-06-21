@@ -31,7 +31,7 @@ The repository **root is the control surface**; everything else is a component.
 | Path | Role |
 |------|------|
 | `.env` / `.env.example` | The single settings file: language, condition, ports, and LLM API keys. Read by Docker Compose, the local runner, and the agent. |
-| `config/inlg.yml` | Human-readable map of the run settings (which environments, language, per-environment parameters). |
+| `config/system.yml` | Human-readable map of the run settings (which environments, language, per-environment parameters). |
 | `config/conditions.yml` | Presets for the example-injection **conditions** (what gets fed into the agent prompt). |
 | `docker-compose.yml` | Defines both environments as Compose **profiles** (`aiwolf`, `hiddenbench`); run one or both. |
 | `docker/` | Dockerfiles: the agent image and the two server images. |

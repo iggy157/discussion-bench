@@ -1,5 +1,5 @@
 # 中央コントロールファイル — システム全体を一望するための読み物。
-# （英語コメント版: inlg.yml）
+# （英語コメント版: system.yml）
 #
 # 実行内容をここに一覧としてまとめている。実際の操作はリポジトリ直下の `.env`
 # （秘密情報 + LANG_CODE / CONDITION / ポート）で行い、docker compose と run_local.sh が

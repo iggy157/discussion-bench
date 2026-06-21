@@ -1,8 +1,8 @@
-# INLG web UI — werewolf + HiddenBench human play in the browser.
-# INLG Web UI — 人狼とHiddenBenchをブラウザで人間プレイ。
+# discussion-bench web UI — werewolf + HiddenBench human play in the browser.
+# discussion-bench Web UI — 人狼とHiddenBenchをブラウザで人間プレイ。
 #
 # Build context is the repo root (..), so images can COPY this repo's server/ agent/
-# launcher/ config/. Run from inlg/ui:
+# launcher/ config/. Run from discussion-bench/ui:
 #   docker compose up --build      # then open http://localhost/demo (werewolf) or /hidden-bench
 #
 # Settings come from the single root .env (../.env): CONDITION / LANG_CODE / API keys.
@@ -13,7 +13,7 @@ services:
     build:
       context: ..
       dockerfile: ui/docker/game-server.Dockerfile
-    image: inlg-ui-game-server:local
+    image: discussion-bench-ui-game-server:local
     command: ["-c", "/app/config/${AIWOLF_SERVER_CONFIG:-default_5.yml}"]
     volumes:
       - ../server/aiwolf/config:/app/config:ro
@@ -26,7 +26,7 @@ services:
     build:
       context: ..
       dockerfile: docker/server-hidden-bench.Dockerfile
-    image: inlg-hidden-bench-server:local
+    image: discussion-bench-hidden-bench-server:local
     env_file: [../.env]
     environment:
       HB_LANG: ${LANG_CODE:-en}
@@ -39,7 +39,7 @@ services:
     build:
       context: ..
       dockerfile: ui/docker/lobby.Dockerfile
-    image: inlg-ui-lobby:local
+    image: discussion-bench-ui-lobby:local
     env_file: [../.env]
     environment:
       GAME_WS_INTERNAL_URL: ws://game-server:8080/ws
@@ -58,7 +58,7 @@ services:
     build:
       context: ..
       dockerfile: ui/docker/caddy.Dockerfile
-    image: inlg-ui-caddy:local
+    image: discussion-bench-ui-caddy:local
     environment:
       DEMO_SITE_ADDRESS: ${DEMO_SITE_ADDRESS:-:80}
     ports:

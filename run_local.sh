@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run the INLG system locally without docker (development).
+# Run the discussion-bench locally without docker (development).
 # docker を使わずローカルで起動する開発用スクリプト. リポジトリ直下から実行する.
 #
 # Usage:
@@ -36,7 +36,7 @@ if [ "$DOMAIN" = "hiddenbench" ]; then
   echo "[local] launching 4 HiddenBench agents (condition=$CONDITION)"
   "$VENV" "$ROOT/launcher/launch_agents.py" \
     --agent-dir "$AGENT_DIR" --domain hiddenbench --lang "$LANG_CODE" \
-    --condition "$CONDITION" --server-url ws://127.0.0.1:8090/ws --team inlg-hb --num 4 &
+    --condition "$CONDITION" --server-url ws://127.0.0.1:8090/ws --team discussion-bench-hb --num 4 &
   pids+=("$!")
 elif [ "$DOMAIN" = "aiwolf" ]; then
   echo "[local] starting werewolf (Go) server on :8080"
@@ -46,7 +46,7 @@ elif [ "$DOMAIN" = "aiwolf" ]; then
   echo "[local] launching 5 werewolf agents (lang=$LANG_CODE condition=$CONDITION)"
   "$VENV" "$ROOT/launcher/launch_agents.py" \
     --agent-dir "$AGENT_DIR" --domain aiwolf --lang "$LANG_CODE" \
-    --condition "$CONDITION" --server-url ws://127.0.0.1:8080/ws --team inlg-wolf --num 5 &
+    --condition "$CONDITION" --server-url ws://127.0.0.1:8080/ws --team discussion-bench-wolf --num 5 &
   pids+=("$!")
 else
   echo "unknown domain: $DOMAIN (use hiddenbench | aiwolf)"; exit 2

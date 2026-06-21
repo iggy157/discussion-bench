@@ -1,5 +1,5 @@
 # Central control file — a human-readable map of the whole system.
-# (Japanese-commented copy: inlg.ja.yml)
+# (Japanese-commented copy: system.ja.yml)
 #
 # This documents the run surface in one place. The OPERATIONAL knob is the root `.env`
 # (secrets + LANG_CODE/CONDITION/ports), which docker compose and run_local.sh consume.

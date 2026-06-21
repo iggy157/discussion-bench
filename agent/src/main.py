@@ -67,7 +67,7 @@ def load_config(config_path: Path) -> dict[str, Any]:
 
 # Prompts are managed as per-system files under agent/<pack>/prompts/<lang>/<mode>/*.jinja.
 # プロンプトは agent/<pack>/prompts/<lang>/<mode>/*.jinja にシステム別ファイルとして管理する.
-_AGENT_ROOT = Path(__file__).resolve().parent.parent  # inlg/agent
+_AGENT_ROOT = Path(__file__).resolve().parent.parent  # discussion-bench/agent
 
 
 def _load_domain_prompts(domain: str, lang: str, mode: str) -> dict[str, str]:

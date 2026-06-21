@@ -1,5 +1,5 @@
 # HiddenBench server image / HiddenBenchサーバ・イメージ
-# Build context = repo root (inlg/).
+# Build context = repo root (discussion-bench/).
 FROM python:3.11-slim
 
 WORKDIR /app

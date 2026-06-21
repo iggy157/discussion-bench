@@ -2,7 +2,7 @@
 
 多様性・停滞指標 (distinct-n, 語彙的な自己反復).
 
-Citations (verified against primary sources; see INLG_METHODOLOGY.md §4.2):
+Citations (verified against primary sources; see METHODOLOGY.md §4.2):
 - distinct-1 / distinct-2: Li, Galley, Brockett, Gao & Dolan (2016), NAACL, arXiv:1510.03055.
   Original definition: (# distinct n-grams) / (# total tokens) — we use total TOKENS as the
   denominator, matching the paper (some reimplementations divide by total n-grams instead).

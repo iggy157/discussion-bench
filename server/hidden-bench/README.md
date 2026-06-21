@@ -1,11 +1,11 @@
 # hidden-bench server
 
 Faithful **HiddenBench** (hidden-profile collaborative reasoning) WebSocket game server
-for the INLG study. Hosts the exact protocol of Li, Naito & Shirado
+for the discussion-bench study. Hosts the exact protocol of Li, Naito & Shirado
 ([arXiv:2505.11556](https://arxiv.org/abs/2505.11556)) so the shared manyshot agent can
 play HiddenBench the same way it plays werewolf.
 
-INLG研究のための **HiddenBench**（隠れプロファイル協調推論）WebSocketゲームサーバ。
+本研究のための **HiddenBench**（隠れプロファイル協調推論）WebSocketゲームサーバ。
 論文 (2505.11556) のプロトコルを忠実にホストし、共有エージェントが人狼と同じ要領で
 HiddenBenchをプレイできるようにする。
 
@@ -21,7 +21,7 @@ HiddenBenchをプレイできるようにする。
 | Data | HuggingFace `YuxuanLi1225/HiddenBench` (`data/benchmark.json`, 65 tasks) | dataset card |
 
 Cite the **paper** (Li et al.) for the paradigm/metrics and the **repo** (Radoff) only for
-prompt strings. See `../INLG_METHODOLOGY.md` §2.
+prompt strings. See `../METHODOLOGY.md` §2.
 
 ## Protocol on the wire / ワイヤプロトコル
 

@@ -20,7 +20,7 @@ from judge import DEFAULT_CONFIG as JUDGE_CONFIG
 from judge import judge_game, load_config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("inlg.evaluate_all")
+logger = logging.getLogger("evaluate_all")
 
 
 def main() -> None:

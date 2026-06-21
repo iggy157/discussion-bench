@@ -1,5 +1,5 @@
-# INLG agent image (shared agent core + launcher) / 共有エージェント+ランチャ
-# Build context = repo root (inlg/). The same image drives both werewolf and HiddenBench;
+# discussion-bench agent image (shared agent core + launcher) / 共有エージェント+ランチャ
+# Build context = repo root (discussion-bench/). The same image drives both werewolf and HiddenBench;
 # the launcher picks domain/condition/lang at run time from env.
 FROM python:3.11-slim
 
@@ -31,7 +31,7 @@ ENV DOMAIN=hiddenbench \
     LANG_CODE=en \
     CONDITION=baseline \
     SERVER_URL=ws://hiddenbench-server:8090/ws \
-    TEAM=inlg-agent \
+    TEAM=discussion-bench-agent \
     NUM=4
 
 CMD ["python", "/app/launcher/launch_agents.py"]

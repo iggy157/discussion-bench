@@ -1,15 +1,15 @@
 # eval (metrics + LLM-judge)
 
-Evaluation for the INLG study, computed over a WHOLE discussion log (self-play produces one
+Evaluation for the discussion-bench study, computed over a WHOLE discussion log (self-play produces one
 log per game): **objective failure-mode metrics** (rule-based) + a **subjective LLM-judge**
 (3 items). Bilingual report, aggregated by condition.
 
-INLG研究の評価。議論ログ全体に対して、客観的な失敗様態指標（ルールベース）＋主観LLM-judge（3項目）を
+本研究の評価。議論ログ全体に対して、客観的な失敗様態指標（ルールベース）＋主観LLM-judge（3項目）を
 計算し、条件別の日英レポートを出す。
 
 ## Objective metrics / 客観指標（出典は一次資料で検証済み）
 
-| Metric | Status | Faithful citation (see ../docs/INLG_METHODOLOGY.md §4) |
+| Metric | Status | Faithful citation (see ../docs/METHODOLOGY.md §4) |
 |--------|--------|--------------------------------------------------------|
 | pre/post/full accuracy, integration gain, majority | HiddenBench-native | Li, Naito & Shirado 2025 (arXiv:2505.11556) |
 | **information surfacing rate** (= information coverage) | **adaptation** | Lu, Yuan & McLeod 2012; Stasser & Titus 1985 — **NOT** HiddenBench |

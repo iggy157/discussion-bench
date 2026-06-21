@@ -38,7 +38,7 @@ Env: `HB_URL` (HiddenBench server WS URL), `HUMAN_LOG_DIR` (default `log/human`)
   `lang` (drop a `benchmark.ja.json` into the server for Japanese tasks).
 - This is intentionally minimal (single page, no auth, no queue). For a public,
   multi-table, QR-code deployment, fold it into the aiwolf-nlp-demo lobby/Caddy stack
-  later (see ../INLG_SYSTEM.md).
+  later (see ../SYSTEM.md).
 
 ## Layout / 構成
 

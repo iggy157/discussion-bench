@@ -1,7 +1,7 @@
 [project]
-name = "inlg-eval"
+name = "discussion-bench-eval"
 version = "0.1.0"
-description = "Transcript failure-mode metrics (surfacing, convergence, diversity, conformity) for the INLG study"
+description = "Transcript failure-mode metrics (surfacing, convergence, diversity, conformity) for the discussion-bench study"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

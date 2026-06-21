@@ -1,7 +1,7 @@
 [project]
 name = "hiddenbench-server"
 version = "0.1.0"
-description = "Faithful HiddenBench (hidden-profile collaborative reasoning) WebSocket game server for the INLG study"
+description = "Faithful HiddenBench (hidden-profile collaborative reasoning) WebSocket game server for the discussion-bench study"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

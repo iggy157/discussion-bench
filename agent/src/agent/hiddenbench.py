@@ -11,7 +11,7 @@ tracking) drives both werewolf and HiddenBench — only the I/O seam differs. Th
   (``hb_pre`` / ``hb_discussion`` / ``hb_post``).
 
 INITIALIZE still runs the shared ``initialize()`` (so the script+analysis injection layer
-is IDENTICAL to werewolf — see INLG_METHODOLOGY.md P2), priming the agent's clues into
+is IDENTICAL to werewolf — see METHODOLOGY.md P2), priming the agent's clues into
 history. No werewolf action handlers (vote/divine/guard/attack) are ever invoked.
 
 人狼と同じ共有コア (プロンプト構築・台本/分析注入・LLM呼出・コスト計上) で両ドメインを駆動し,

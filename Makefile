@@ -1,4 +1,4 @@
-# INLG system orchestration (run from repo root) / INLG統合システム (リポジトリ直下で実行)
+# discussion-bench orchestration (run from repo root) / discussion-bench 統合システム (リポジトリ直下で実行)
 # Usage / 使い方:
 #   make hiddenbench     # HiddenBench only (server + 4 agents) via docker compose
 #   make aiwolf          # Werewolf only

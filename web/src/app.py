@@ -35,13 +35,13 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("inlg.web")
+logger = logging.getLogger("web")
 
 HB_URL = os.environ.get("HB_URL", "ws://127.0.0.1:8090/ws")
 LOG_DIR = Path(os.environ.get("HUMAN_LOG_DIR", str(Path(__file__).resolve().parent.parent / "log" / "human")))
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
-app = FastAPI(title="INLG HiddenBench human lobby")
+app = FastAPI(title="discussion-bench HiddenBench human lobby")
 
 
 @app.get("/")

@@ -3,7 +3,7 @@
 `agent/<環境>/exemplars/` 以下は、6条件の実験で使う**手本**を置く場所です。台本・発話例・分析の3種類を、
 環境（人狼／HiddenBench）と言語（en／jp）ごとに収めます。現状は意図的に**空**にしてあり、あとからファイルを
 置く前提です。手本を1つも置いていない条件は、自動的に `baseline` と同じ挙動になります。条件の全体設計は
-[INLG_METHODOLOGY.md](INLG_METHODOLOGY.md) を参照してください。
+[METHODOLOGY.md](METHODOLOGY.md) を参照してください。
 
 ## どこに何を置くか
 

@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("inlg.werewolf_adapter")
+logger = logging.getLogger("werewolf_adapter")
 
 # Responses that are control tokens / skips, not real utterances.
 _SKIP = {"", "over", "skip", "[pass]", "了解しました", "understood."}

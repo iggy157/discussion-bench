@@ -42,8 +42,8 @@ from prompt_provider import (
 # 設定（環境変数）
 # ---------------------------------------------------------------------------
 HERE = Path(__file__).resolve().parent
-WORK_ROOT = HERE.parent  # inlg/ui/
-INLG_ROOT = WORK_ROOT.parent  # inlg/  (repo root)
+WORK_ROOT = HERE.parent  # discussion-bench/ui/
+REPO_ROOT = WORK_ROOT.parent  # discussion-bench/  (repo root)
 
 
 def _env(key: str, default: str) -> str:
@@ -51,14 +51,14 @@ def _env(key: str, default: str) -> str:
     return v if v is not None and v != "" else default
 
 
-# --- INLG integration ---
+# --- discussion-bench integration ---
 # Spawn OUR shared agent (agent/) via OUR launcher (launcher/launch_agents.py), so the UI
 # can pick which experimental condition fills the AI seats, and humans + AI use the SAME
 # server config the experiments use. The launcher builds the merged agent config.
 # 共有エージェントを我々のランチャ経由で起動し、UIから条件を選べるようにする。
-AGENT_LLM_DIR = Path(_env("AGENT_LLM_DIR", str(INLG_ROOT / "agent")))
-LAUNCHER_DIR = Path(_env("INLG_LAUNCHER_DIR", str(INLG_ROOT / "launcher")))
-CONDITIONS_PATH = Path(_env("INLG_CONDITIONS", str(INLG_ROOT / "config" / "conditions.yml")))
+AGENT_LLM_DIR = Path(_env("AGENT_LLM_DIR", str(REPO_ROOT / "agent")))
+LAUNCHER_DIR = Path(_env("LAUNCHER_DIR", str(REPO_ROOT / "launcher")))
+CONDITIONS_PATH = Path(_env("CONDITIONS_FILE", str(REPO_ROOT / "config" / "conditions.yml")))
 # Default experimental condition for AI seats (overridable per game via the API).
 DEFAULT_CONDITION = _env("CONDITION", "baseline")
 
@@ -649,7 +649,7 @@ class Lobby:
         from launch_agents import build_config
 
         cfg: dict[str, Any] = build_config(
-            agent_dir=AGENT_LLM_DIR,  # = inlg/agent
+            agent_dir=AGENT_LLM_DIR,  # = discussion-bench/agent
             domain=domain,
             lang=_map_lang(language),
             condition=condition or DEFAULT_CONDITION,

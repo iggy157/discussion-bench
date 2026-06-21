@@ -1,5 +1,5 @@
 # Caddy: TLS + static viewer + WS/api reverse proxy / TLS終端＋静的ビューア配信＋リバプロ
-# Build context = repo root (inlg/). Builds THIS repo's viewer (ui/viewer).
+# Build context = repo root (discussion-bench/). Builds THIS repo's viewer (ui/viewer).
 FROM node:22-slim AS build
 RUN corepack enable
 WORKDIR /viewer

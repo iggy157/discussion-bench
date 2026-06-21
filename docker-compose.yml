@@ -1,5 +1,5 @@
-# INLG unified system — werewolf (AIWolfDial) + HiddenBench in one compose.
-# INLG統合システム — 人狼(AIWolfDial)とHiddenBenchを1つのcomposeで.
+# discussion-bench (unified system) — werewolf (AIWolfDial) + HiddenBench in one compose.
+# discussion-bench 統合システム — 人狼(AIWolfDial)とHiddenBenchを1つのcomposeで.
 #
 # Lives at the repo root. The single root .env + this file + compose PROFILES select what
 # runs. Both domains are independent server+agent pairs on different ports (8080 werewolf,
@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: docker/server-aiwolf.Dockerfile
-    image: inlg-aiwolf-server:local
+    image: discussion-bench-aiwolf-server:local
     command: ["-c", "/app/config/${AIWOLF_SERVER_CONFIG:-default_5.yml}"]
     volumes:
       - ./server/aiwolf/config:/app/config:ro
@@ -33,7 +33,7 @@ services:
     build:
       context: .
       dockerfile: docker/agent.Dockerfile
-    image: inlg-agent:local
+    image: discussion-bench-agent:local
     depends_on: [aiwolf-server]
     env_file: [.env]
     environment:
@@ -41,7 +41,7 @@ services:
       LANG_CODE: ${LANG_CODE:-jp}
       CONDITION: ${CONDITION:-baseline}
       SERVER_URL: ws://aiwolf-server:8080/ws
-      TEAM: ${AIWOLF_TEAM:-inlg-wolf}
+      TEAM: ${AIWOLF_TEAM:-discussion-bench-wolf}
       NUM: ${AIWOLF_NUM:-5}
     volumes:
       - ./log/aiwolf-agents:/app/agent/log
@@ -53,7 +53,7 @@ services:
     build:
       context: .
       dockerfile: docker/server-hidden-bench.Dockerfile
-    image: inlg-hidden-bench-server:local
+    image: discussion-bench-hidden-bench-server:local
     command: ["python", "src/server.py", "-c", "config/hiddenbench.yml"]
     env_file: [.env]
     environment:
@@ -73,7 +73,7 @@ services:
     build:
       context: .
       dockerfile: docker/agent.Dockerfile
-    image: inlg-agent:local
+    image: discussion-bench-agent:local
     depends_on: [hidden-bench-server]
     env_file: [.env]
     environment:
@@ -81,7 +81,7 @@ services:
       LANG_CODE: ${LANG_CODE:-en}
       CONDITION: ${CONDITION:-baseline}
       SERVER_URL: ws://hidden-bench-server:8090/ws
-      TEAM: ${HB_TEAM:-inlg-hb}
+      TEAM: ${HB_TEAM:-discussion-bench-hb}
       NUM: 4
     volumes:
       - ./log/hidden-bench-agents:/app/agent/log

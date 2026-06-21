@@ -1,6 +1,6 @@
-"""INLG agent launcher: pick domain/condition/lang, build a config, run the agents.
+"""discussion-bench agent launcher: pick domain/condition/lang, build a config, run the agents.
 
-INLGエージェント・ランチャ: ドメイン/条件/言語を選び, 設定を組み立ててエージェントを起動する.
+discussion-bench エージェント・ランチャ: ドメイン/条件/言語を選び, 設定を組み立ててエージェントを起動する.
 
 This is the single seam that makes "one config selects what runs" true. It:
   1. resolves the agent main config for (domain, lang),
@@ -31,7 +31,7 @@ from typing import Any
 import yaml
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("inlg.launcher")
+logger = logging.getLogger("launcher")
 
 VALID_DOMAINS = {"aiwolf", "hiddenbench"}
 EXEMPLAR_KINDS = {"scripts", "utterances", "analysis"}
@@ -163,13 +163,13 @@ def _apply_file_prompts(merged: dict[str, Any], agent_dir: Path, domain: str, la
 
 def main() -> None:
     """CLI / 環境変数優先のCLI."""
-    parser = argparse.ArgumentParser(description="Launch INLG agents for a domain/condition/lang")
+    parser = argparse.ArgumentParser(description="Launch discussion-bench agents for a domain/condition/lang")
     parser.add_argument("--agent-dir", default=os.environ.get("AGENT_DIR", ""), help="manyshot project dir")
     parser.add_argument("--domain", default=os.environ.get("DOMAIN", "hiddenbench"))
     parser.add_argument("--lang", default=os.environ.get("LANG_CODE", "en"))
     parser.add_argument("--condition", default=os.environ.get("CONDITION", "baseline"))
     parser.add_argument("--server-url", default=os.environ.get("SERVER_URL", "ws://127.0.0.1:8090/ws"))
-    parser.add_argument("--team", default=os.environ.get("TEAM", "inlg-agent"))
+    parser.add_argument("--team", default=os.environ.get("TEAM", "discussion-bench-agent"))
     parser.add_argument("--num", type=int, default=int(os.environ.get("NUM", "4")))
     parser.add_argument("--dry-run", action="store_true", help="print the merged config and exit")
     args = parser.parse_args()
@@ -181,8 +181,8 @@ def main() -> None:
     if not (agent_dir / "src" / "main.py").is_file():
         logger.error("agent-dir %s does not look like the manyshot project (no src/main.py)", agent_dir)
         sys.exit(2)
-    # The 6-condition registry lives at the repo-root central config (agent_dir is inlg/agent).
-    # 6条件レジストリはリポジトリ直下の中央config (agent_dir は inlg/agent).
+    # The 6-condition registry lives at the repo-root central config (agent_dir is discussion-bench/agent).
+    # 6条件レジストリはリポジトリ直下の中央config (agent_dir は discussion-bench/agent).
     conditions_path = agent_dir.parent / "config" / "conditions.yml"
     if not conditions_path.is_file():
         conditions_path = agent_dir / "config" / "conditions" / "conditions.yml"  # legacy fallback
@@ -207,7 +207,7 @@ def main() -> None:
         args.server_url,
     )
 
-    tmp = Path(tempfile.gettempdir()) / f"inlg_agent_{args.domain}_{args.lang}_{args.condition}.yml"
+    tmp = Path(tempfile.gettempdir()) / f"dbagent_{args.domain}_{args.lang}_{args.condition}.yml"
     with tmp.open("w", encoding="utf-8") as f:
         yaml.safe_dump(merged, f, allow_unicode=True, sort_keys=False)
     logger.info("merged config written to %s", tmp)

@@ -1,5 +1,5 @@
 # Werewolf game server (Go) image / 人狼ゲームサーバ (Go) イメージ
-# Build context = repo root (inlg/). Mirrors aiwolf-nlp-demo's game-server build.
+# Build context = repo root (discussion-bench/). Mirrors aiwolf-nlp-demo's game-server build.
 FROM golang:1.24 AS build
 WORKDIR /src
 COPY server/aiwolf/ ./

@@ -1,7 +1,7 @@
 # HiddenBench multi-turn child config — English prompts.
 # The 3x2 exemplar injection is controlled by the scenario section + data/exemplars/.
 # Exemplars are empty for now, so scenario.enabled=false (= baseline behaviour). Enable
-# per-condition once exemplars exist (see INLG_METHODOLOGY.md §3).
+# per-condition once exemplars exist (see METHODOLOGY.md §3).
 
 # Experiment condition label recorded in logs (keep in sync with the server condition).
 #   baseline | analysis_only | utterance_fewshot | utterance_fewshot_analysis |

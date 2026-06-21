@@ -34,9 +34,9 @@
   `domain=aiwolf` ＋ 選択された `condition` ＋ 言語で**本リポジトリのエージェント設定**を生成します。
 - AI席のプロセスは demo と同じ Popen 機構で起動されますが、起動先は `agent/`（本リポジトリの共有エージェント）です。
 - 起動先・ランチャ・条件は環境変数で差し替え可能：
-  - `AGENT_LLM_DIR`（既定 `../agent`）, `INLG_LAUNCHER_DIR`（既定 `../launcher`）,
-    `INLG_CONDITIONS`（既定 `../config/conditions.yml`）, `CONDITION`（既定 `baseline`）,
-    `AGENT_LLM_PYTHON` / `INLG_PYTHON`（エージェント用のPython）。
+  - `AGENT_LLM_DIR`（既定 `../agent`）, `LAUNCHER_DIR`（既定 `../launcher`）,
+    `CONDITIONS_FILE`（既定 `../config/conditions.yml`）, `CONDITION`（既定 `baseline`）,
+    `AGENT_LLM_PYTHON` / `AGENT_LLM_PYTHON`（エージェント用のPython）。
 - LLMのモデル・プロバイダは**エージェント設定（`agent/aiwolf/config`）側**が決めます（実験と同一設定で人間も対戦するため、
   demoの `LLM_PROVIDER/LLM_MODEL` は適用しません）。
 
@@ -46,7 +46,7 @@
 # リポジトリ直下の .env を用意（APIキー・CONDITION・LANG_CODE）
 cp ../.env.example ../.env   # まだなら
 
-cd .   # inlg/ui
+cd .   # discussion-bench/ui
 docker compose up --build
 # ブラウザで:
 #   http://localhost/demo          … 人狼（AIWolf）

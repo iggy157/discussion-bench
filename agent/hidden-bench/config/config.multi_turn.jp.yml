@@ -1,7 +1,7 @@
 # HiddenBench multi-turn 子設定 — 日本語プロンプト.
 # 6条件 (3x2) の手本注入は scenario セクション + data/exemplars/ で制御する.
 # 手本 (台本/発話few-shot/分析) は一旦空のため scenario.enabled=false (= ベースライン挙動).
-# 手本を用意したら condition 別 config で scenario を有効化する (INLG_METHODOLOGY.md §3).
+# 手本を用意したら condition 別 config で scenario を有効化する (METHODOLOGY.md §3).
 
 # 実験条件ラベル (結果ログに記録). サーバ側 condition と揃える.
 #   baseline | analysis_only | utterance_fewshot | utterance_fewshot_analysis |

@@ -28,7 +28,7 @@ from typing import Any
 import yaml
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("inlg.judge")
+logger = logging.getLogger("judge")
 
 DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "config" / "judge.yml"
 

@@ -2,7 +2,7 @@
 
 このドキュメントは、本システムが「何を・どういう作りで実現しているか」を上から順に追える地図です。
 個々の使い方は [README](../README.ja.md) に、研究上の設計判断は
-[INLG_METHODOLOGY.md](INLG_METHODOLOGY.md) と [INLG_VERIFICATION.md](INLG_VERIFICATION.md) に
+[METHODOLOGY.md](METHODOLOGY.md) と [VERIFICATION.md](VERIFICATION.md) に
 それぞれ譲り、ここでは全体のかたちを掴むことに集中します。
 
 ## 一言でいうと

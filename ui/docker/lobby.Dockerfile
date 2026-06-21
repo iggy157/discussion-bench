@@ -1,6 +1,6 @@
 # Lobby backend (FastAPI) + THIS repo's shared agent + launcher.
 # ロビーbackend(FastAPI) ＋ 本リポジトリの共有エージェント＋ランチャを同梱。
-# Build context = repo root (inlg/). The lobby spawns AI seats by calling our launcher,
+# Build context = repo root (discussion-bench/). The lobby spawns AI seats by calling our launcher,
 # which builds the shared agent's config (domain=aiwolf + selected condition).
 FROM python:3.11-slim
 
@@ -31,8 +31,8 @@ COPY ui/lobby/ /app/lobby/
 COPY ui/configs/ /app/configs/
 
 ENV AGENT_LLM_DIR=/app/agent \
-    INLG_LAUNCHER_DIR=/app/launcher \
-    INLG_CONDITIONS=/app/config/conditions.yml \
+    LAUNCHER_DIR=/app/launcher \
+    CONDITIONS_FILE=/app/config/conditions.yml \
     AGENT_LLM_PYTHON=python \
     AGENTS_DIR=/app/configs/agents \
     DEFAULT_LANGUAGE=ja \

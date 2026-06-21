@@ -136,7 +136,7 @@ def select_tasks(tasks: list[Task], ids: list[int] | None, limit: int | None) ->
     """Select a subset of tasks by explicit ids or a leading limit.
 
     明示IDまたは先頭limit件でタスク部分集合を選ぶ.
-    Held-out exemplar leakage control (see INLG_METHODOLOGY.md L1) is the caller's
+    Held-out exemplar leakage control (see METHODOLOGY.md L1) is the caller's
     responsibility: evaluation ids and exemplar ids must be disjoint.
     """
     if ids:
