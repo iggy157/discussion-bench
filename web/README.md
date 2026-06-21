@@ -1,14 +1,13 @@
+<!-- Language: **English** | [日本語](README.ja.md) -->
+
 # web (human lobby)
 
 Minimal web lobby so a **human can play one HiddenBench seat in the browser** — to collect
 human (and human↔LLM) discussion data using the **same faithful protocol** the LLM agents
-use. The lobby is just another agent client to `hidden-bench server`, so the server needs no
-changes.
+use. The lobby is just another agent client to the `hidden-bench` server, so the server needs
+no changes. (Superseded by the richer `ui/`; kept as a minimal reference.)
 
-人間がブラウザで**HiddenBenchの1席をプレイ**できる最小Webロビー。LLMエージェントと
-**同一の忠実プロトコル**で人間の議論データを集める。サーバ改変は不要。
-
-## How it works / 仕組み
+## How it works
 
 ```
 browser  <--FastAPI WS-->  web  <--WS-->  hidden-bench server
@@ -18,7 +17,7 @@ packet to the browser: INITIALIZE shows the human their clues+options; TALK(pre/
 for an option + rationale; TALK(discussion) asks for a 1–2 sentence message; FINISH ends.
 Each human session transcript is saved under `log/human/` for data collection.
 
-## Run / 実行
+## Run
 
 ```bash
 uv sync
@@ -30,17 +29,16 @@ HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src app:app --host 0.0.0.
 
 Env: `HB_URL` (HiddenBench server WS URL), `HUMAN_LOG_DIR` (default `log/human`).
 
-## Notes / 注意
+## Notes
 
 - For an all-human game, open the lobby in 4 browsers and set the server `agent_count: 4`
   (the lobby fills one seat per browser).
 - The UI is bilingual (EN/JP labels inline). Task content language follows the server's
   `lang` (drop a `benchmark.ja.json` into the server for Japanese tasks).
-- This is intentionally minimal (single page, no auth, no queue). For a public,
-  multi-table, QR-code deployment, fold it into the aiwolf-nlp-demo lobby/Caddy stack
-  later (see ../SYSTEM.md).
+- This is intentionally minimal (single page, no auth, no queue). The full browser UI with
+  matchmaking, a viewer, and werewolf support is `../ui/` (see ../docs/SYSTEM.md).
 
-## Layout / 構成
+## Layout
 
 ```
 src/app.py            -- FastAPI bridge (browser WS <-> hidden-bench server WS) + session logging

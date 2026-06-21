@@ -1,13 +1,12 @@
+<!-- Language: **English** | [日本語](README.ja.md) -->
+
 # eval (metrics + LLM-judge)
 
-Evaluation for the discussion-bench study, computed over a WHOLE discussion log (self-play produces one
-log per game): **objective failure-mode metrics** (rule-based) + a **subjective LLM-judge**
-(3 items). Bilingual report, aggregated by condition.
+Evaluation computed over a WHOLE discussion log (self-play produces one log per game):
+**objective failure-mode metrics** (rule-based) + a **subjective LLM-judge** (3 items).
+Bilingual report, aggregated by condition.
 
-本研究の評価。議論ログ全体に対して、客観的な失敗様態指標（ルールベース）＋主観LLM-judge（3項目）を
-計算し、条件別の日英レポートを出す。
-
-## Objective metrics / 客観指標（出典は一次資料で検証済み）
+## Objective metrics (attributions verified against primary sources)
 
 | Metric | Status | Faithful citation (see ../docs/METHODOLOGY.md §4) |
 |--------|--------|--------------------------------------------------------|
@@ -19,12 +18,12 @@ log per game): **objective failure-mode metrics** (rule-based) + a **subjective 
 | lexical self-repetition (1 − Self-BLEU vs own history) | **adaptation** | Self-BLEU = Zhu et al. 2018 (Texygen); 100−Self-BLEU framing = Liang et al. 2024 |
 | conformity / independence proxy | **adaptation** | BenchForm ICLR2025 (2501.13381). Our IR = 1−CR (BenchForm's IR is conjunctive Trust∩Doubt, ≠ 1−CR) |
 
-The attributions above were corrected after checking primary sources: surfacing is **not** a
+The attributions were corrected after checking primary sources: surfacing is **not** a
 HiddenBench metric (it's Lu/Stasser information coverage); distinct-n / Self-BLEU are **not**
 DMAD/DoT; "self-repetition" is **lexical** (surface n-gram), not semantic. Adapted/self-defined
 metrics are flagged in the report (`*self-defined`, `*adapted`).
 
-## Subjective LLM-judge / 主観LLM-judge
+## Subjective LLM-judge
 
 Three items scored over the whole log: **naturalness / coherence (non-contradiction) /
 topic development**. (AIWolfDial's A–F rubric is a relative/ranking scheme for cross-play and
@@ -33,7 +32,7 @@ managed in `config/judge.yml` (English) / `config/judge.ja.yml` (Japanese refere
 provider/model/temperature/scale/lang. The API key is read from the root `.env`. A `mock`
 provider is included for offline testing.
 
-## Run / 実行 (from repo root via Make)
+## Run (from repo root via Make)
 
 ```bash
 make eval     # objective only (no API)   -> server/hidden-bench/log/results/eval/report.md
@@ -47,7 +46,7 @@ PYTHONPATH=src python src/evaluate_all.py <results_dir> -c config/judge.yml   # 
 PYTHONPATH=src python src/evaluate_all.py <results_dir> --no-judge  # objective only
 ```
 
-### Werewolf logs / 人狼ログ
+### Werewolf logs
 The eval consumes HiddenBench result JSON directly. For werewolf, convert the server's JSON
 game logs first (HB-native metrics are N/A; distinct-n / self-repetition / the LLM-judge apply):
 ```bash
@@ -55,14 +54,14 @@ PYTHONPATH=src python src/werewolf_adapter.py <server-json-log-dir> -o <out> --c
 make judge HB_RESULTS=<out>
 ```
 
-## Notes / 注意
+## Notes
 - **Tokenization**: EN = word tokens; JP/JA = character tokens (no MeCab). distinct-n ÷ total tokens.
 - **Stance extraction** for convergence/conformity is rule-based option-mention (faithful to
   BenchForm, which is also rule-based; options are known in HiddenBench). `src/stance.py` is the
   seam if you ever want an LLM extractor.
 - Aggregation is by `condition` → running all six conditions fills one comparison table.
 
-## Layout / 構成
+## Layout
 ```
 config/judge.yml (.ja.yml)  -- judge model config (provider/model/scale/items)
 prompts/judge.en.txt judge.ja.txt  -- judge prompt skeleton (file-managed; %%ITEMS%%/%%TRANSCRIPT%%/%%SCALE%%/%%SCHEMA%%)
