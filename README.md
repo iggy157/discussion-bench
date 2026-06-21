@@ -45,6 +45,16 @@ The repository **root is the control surface**; everything else is a component.
 | `web/` | Minimal earlier prototype lobby for HiddenBench human play (superseded by `ui/`). |
 | `docs/` | Design and methodology notes (background; not needed to run the system). |
 
+## Documentation
+
+Deeper docs live under `docs/` (each has an English `.md` and a Japanese `.ja.md`):
+
+- [docs/SYSTEM.md](docs/SYSTEM.md) — system map + how to run each component
+- [docs/METHODOLOGY.md](docs/METHODOLOGY.md) — the research design (6 conditions) + verified citations
+- [docs/VERIFICATION.md](docs/VERIFICATION.md) — why the werewolf server can't host HiddenBench
+- [docs/EXEMPLARS.md](docs/EXEMPLARS.md) — how to author the example slots
+- [docs/PROMPTS.md](docs/PROMPTS.md) — how agent prompts are managed as files
+
 ## Requirements
 
 - Docker + Docker Compose **or**, for local runs, [`uv`](https://docs.astral.sh/uv/),

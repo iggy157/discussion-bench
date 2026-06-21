@@ -74,6 +74,24 @@ make judge                    # objective + subjective LLM-judge
 cd ui && docker compose up --build   # http://localhost/demo and /hidden-bench
 ```
 
+## Running a component on its own
+
+Each component is also runnable standalone (the per-directory details that used to live in
+component READMEs):
+
+- **HiddenBench server** (`server/hidden-bench`): `uv run src/server.py -c config/hiddenbench.yml`;
+  agents then connect to `ws://<host>:8090/ws`. Config knobs (`agent_count`, `total_rounds`,
+  `task_ids`/`task_limit`, `seed`, `output_dir`) are documented in `config/hiddenbench.yml`.
+  Smoke test without an LLM: run the server, then `python tests/stub_agent.py ws://127.0.0.1:8090/ws P1` ×4.
+- **Evaluation** (`eval`): `make eval` (objective only, no API) / `make judge` (objective +
+  subjective LLM-judge). Judge model in `eval/config/judge.yml`; judge prompt in
+  `eval/prompts/judge.{en,ja}.txt`. For werewolf, first convert logs with
+  `eval/src/werewolf_adapter.py`. Metric provenance is in [METHODOLOGY.md](METHODOLOGY.md) §4.
+- **UI** (`ui`): `cd ui && docker compose up --build` → `/demo` and `/hidden-bench`. For local
+  dev without compose: run `server/aiwolf` (`go run .`), the lobby (`uvicorn main:app`), and the
+  viewer (`pnpm dev`) separately. The SvelteKit frontend is not browser-verified in this repo.
+- **web** (`web`): the earlier minimal HiddenBench lobby, superseded by `ui/`; kept for reference.
+
 ## Status
 
 Servers, the agent's HiddenBench support, the metrics, launcher, compose, and the web lobby

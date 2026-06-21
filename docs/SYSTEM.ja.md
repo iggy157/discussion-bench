@@ -75,6 +75,22 @@ cd web && uv sync && HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src 
 # HiddenBenchサーバ + 3エージェントを起動し、http://localhost:8000 を開いて4席目に入る
 ```
 
+## 各コンポーネントを単体で動かす
+
+各コンポーネントは単体でも動かせます（以前は各ディレクトリのREADMEにあった内容）：
+
+- **HiddenBenchサーバ**（`server/hidden-bench`）：`uv run src/server.py -c config/hiddenbench.yml`。
+  エージェントは `ws://<host>:8090/ws` に接続。設定項目（`agent_count`・`total_rounds`・
+  `task_ids`/`task_limit`・`seed`・`output_dir`）は `config/hiddenbench.yml` にコメントで記載。
+  LLM不要のスモークテスト：サーバ起動後に `python tests/stub_agent.py ws://127.0.0.1:8090/ws P1` を×4。
+- **評価**（`eval`）：`make eval`（客観のみ・API不要）/ `make judge`（客観＋主観LLM-judge）。判定モデルは
+  `eval/config/judge.yml`、判定プロンプトは `eval/prompts/judge.{en,ja}.txt`。人狼は先に
+  `eval/src/werewolf_adapter.py` でログ変換。指標の出典は [METHODOLOGY.ja.md](METHODOLOGY.ja.md) §客観評価。
+- **UI**（`ui`）：`cd ui && docker compose up --build` → `/demo` と `/hidden-bench`。composeを使わない
+  ローカル開発では `server/aiwolf`（`go run .`）・ロビー（`uvicorn main:app`）・ビューア（`pnpm dev`）を個別に起動。
+  SvelteKitフロントは本リポジトリではブラウザ未検証。
+- **web**（`web`）：旧・最小のHiddenBenchロビー。`ui/` に置き換え済み（参照用に残置）。
+
 ## いまの状態
 
 サーバ・エージェントのHiddenBench対応・指標計算・ランチャ・compose・Webロビーは、いずれも構築済みで

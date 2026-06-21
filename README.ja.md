@@ -36,6 +36,16 @@
 | `web/` | 人間がHiddenBenchに参加するためのブラウザ用ロビー。 |
 | `docs/` | 設計・手法の補足資料（背景情報。動かすだけなら不要）。 |
 
+## ドキュメント
+
+詳しい資料は `docs/` 配下にあります（各ファイルは英語 `.md` と日本語 `.ja.md` の対）：
+
+- [docs/SYSTEM.ja.md](docs/SYSTEM.ja.md) — 全体図 + 各コンポーネントの動かし方
+- [docs/METHODOLOGY.ja.md](docs/METHODOLOGY.ja.md) — 研究設計（6条件）+ 検証済みの引用
+- [docs/VERIFICATION.ja.md](docs/VERIFICATION.ja.md) — なぜ人狼サーバでHiddenBenchを動かせないか
+- [docs/EXEMPLARS.ja.md](docs/EXEMPLARS.ja.md) — 手本スロットの作り方
+- [docs/PROMPTS.ja.md](docs/PROMPTS.ja.md) — エージェントのプロンプトのファイル管理
+
 ## 用意するもの
 
 - Docker と Docker Compose。ローカルで動かす場合は [`uv`](https://docs.astral.sh/uv/) と Python 3.11以上、人狼サーバを使うなら Go 1.24以上。
