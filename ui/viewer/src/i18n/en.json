@@ -1,0 +1,510 @@
+{
+  "appName": "aiwolf-nlp-viewer",
+  "navigation": {
+    "home": "Home",
+    "realtime": "Realtime Log",
+    "archive": "Archive Log",
+    "agent": "Agent",
+    "token": "Token Generation",
+    "statistics": "Statistics"
+  },
+  "home": {
+    "title": "aiwolf-nlp-viewer",
+    "realtimeLog": {
+      "title": "Realtime Log",
+      "description": "Display game logs in real-time\nSupports JSONL format files"
+    },
+    "archiveLog": {
+      "title": "Archive Log",
+      "description": "Display archived game logs\nSupports LOG format files"
+    },
+    "agent": {
+      "title": "Agent",
+      "description": "Connect to game server and participate as an agent"
+    },
+    "sourceCode": "Source Code",
+    "gameServer": "Game Server",
+    "sampleAgent": "Sample Agent",
+    "sampleAgentLLM": "Sample Agent (LLM)",
+    "viewer": "Viewer"
+  },
+  "realtime": {
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "settings": "Settings",
+    "pasteFromClipboard": "Paste from Clipboard",
+    "websocketUrl": "WebSocket URL",
+    "authKey": "Authorization Key",
+    "optional": "Optional",
+    "displaySettings": "Display Settings",
+    "canvasAgentInfo": "Agent Information on Canvas",
+    "messageBoxAgentInfo": "Agent Information on Message Box",
+    "listAgentInfo": "Agent Information on List",
+    "largeScreen": "Large Screen",
+    "name": "Name",
+    "teamName": "Team Name",
+    "role": "Role",
+    "enable": "Enable",
+    "notConnected": "Not Connected",
+    "day": "Day {day}",
+    "daytime": "Day",
+    "nighttime": "Night",
+    "events": {
+      "disconnected": "Disconnected",
+      "whispered": "Whispered",
+      "attack_voted_with_target": "{from} voted to attack {to}",
+      "attack_voted": "Voted to attack",
+      "voted_with_target": "{from} voted for {to}",
+      "voted": "{from} voted",
+      "no_execute": "No one was executed",
+      "executed": "{target} was executed",
+      "no_attack": "No one was attacked",
+      "attacked_but_guarded": "{target} was attacked but guarded",
+      "attacked": "{target} was attacked",
+      "divined_with_result": "{from} divined {to} and found them to be {result}",
+      "divined": "Divined",
+      "guarded_with_target": "{from} set {to} as guard target",
+      "guarded": "Guarded",
+      "game_ended": "{winner} won",
+      "unknown": "Unknown event"
+    },
+    "eventTypes": {
+      "未接続": "Disconnected",
+      "トーク": "Talk",
+      "囁き": "Whisper",
+      "投票": "Vote",
+      "襲撃投票": "Attack Vote",
+      "追放": "Execute",
+      "襲撃": "Attack",
+      "占い": "Divine",
+      "護衛": "Guard",
+      "終了": "End"
+    }
+  },
+  "archive": {
+    "selectFolder": "Select Folder",
+    "selectLog": "Select Log",
+    "pasteFromClipboard": "Paste from Clipboard",
+    "agents": "Agents",
+    "whispers": "Whispers",
+    "talk": "Talk",
+    "voting": "Voting",
+    "votedFor": " voted for ",
+    "execute": "Execute",
+    "wasExecuted": " was executed",
+    "divination": "Divination",
+    "divined": " divined ",
+    "guard": "Guard",
+    "protected": " protected ",
+    "attackVotes": "Attack Votes",
+    "attack": "Attack",
+    "wasAttacked": " was attacked: ",
+    "success": "Success",
+    "failure": "Failure",
+    "noAttackTarget": "No attack target",
+    "result": "Result",
+    "won": " won",
+    "particle": ""
+  },
+  "agent": {
+    "talkHistory": "Talk History",
+    "whisperHistory": "Whisper History",
+    "agentSettings": "Agent Settings",
+    "teamName": "Team Name",
+    "notConnected": "Not Connected",
+    "selectTarget": "Please select a target",
+    "enterContent": "Please enter content",
+    "remainingChars": "{count} characters remaining",
+    "exceededChars": "{count} characters exceeded",
+    "send": "Send"
+  },
+  "statistics": {
+    "downloadCsv": "Download as CSV"
+  },
+  "token": {
+    "title": "Token Generation",
+    "description": "Generate tokens required when connection authentication is enabled on the game server. The secret key is generated in the browser and never sent to the server.",
+    "agentDescription": "If connecting as an agent, please enter a team name.",
+    "generateSecret": "Generate Secret Key",
+    "secretKey": "Secret Key",
+    "agent": "Agent",
+    "realtimeLog": "Realtime Log",
+    "teamName": "Team Name",
+    "copyToken": "Copy Token",
+    "errorOccurred": "An error occurred"
+  },
+  "common": {
+    "close": "Close",
+    "language": "Language"
+  },
+  "displaySettings": {
+    "title": "Display Item Settings",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "reset": "Reset",
+    "before": "Before",
+    "after": "After",
+    "allFields": "All Fields",
+    "noFields": "No Fields",
+    "fields": {
+      "agents": {
+        "gameName": "Agent Name",
+        "originalName": "Original Name",
+        "role": "Role",
+        "status": "Status"
+      },
+      "beforeWhisper": {
+        "agentName": "Agent Name",
+        "originalName": "Original Name",
+        "text": "Text",
+        "talkIdx": "Talk ID",
+        "turnIdx": "Turn",
+        "timestamp": "Timestamp"
+      },
+      "talks": {
+        "agentName": "Agent Name",
+        "originalName": "Original Name",
+        "text": "Text",
+        "talkIdx": "Talk ID",
+        "turnIdx": "Turn",
+        "timestamp": "Timestamp"
+      },
+      "votes": {
+        "voterName": "Voter",
+        "targetName": "Target"
+      },
+      "execution": {
+        "agentName": "Executed Agent",
+        "role": "Role"
+      },
+      "divine": {
+        "seerName": "Seer",
+        "targetName": "Target",
+        "result": "Result"
+      },
+      "afterWhisper": {
+        "agentName": "Agent Name",
+        "originalName": "Original Name",
+        "text": "Text",
+        "talkIdx": "Talk ID",
+        "turnIdx": "Turn",
+        "timestamp": "Timestamp"
+      },
+      "guard": {
+        "guardName": "Guard",
+        "targetName": "Target",
+        "result": "Result"
+      },
+      "attackVotes": {
+        "voterName": "Voter",
+        "targetName": "Target"
+      },
+      "attack": {
+        "targetName": "Target",
+        "result": "Result"
+      },
+      "result": {
+        "winSide": "Winning Side",
+        "villagers": "Villagers Count",
+        "werewolves": "Werewolves Count"
+      }
+    }
+  },
+  "audio": {
+    "play": "Play",
+    "stop": "Stop"
+  },
+  "game": {
+    "role": {
+      "WEREWOLF": "Werewolf",
+      "POSSESSED": "Possessed",
+      "SEER": "Seer",
+      "BODYGUARD": "Bodyguard",
+      "VILLAGER": "Villager",
+      "MEDIUM": "Medium"
+    },
+    "species": {
+      "HUMAN": "Human",
+      "WEREWOLF": "Werewolf"
+    },
+    "status": {
+      "ALIVE": "Alive",
+      "DEAD": "Dead"
+    },
+    "teams": {
+      "VILLAGER": "Villager Team",
+      "WEREWOLF": "Werewolf Team"
+    },
+    "request": {
+      "NAME": "Name",
+      "TALK": "Talk",
+      "WHISPER": "Whisper",
+      "VOTE": "Vote",
+      "DIVINE": "Divine",
+      "GUARD": "Guard",
+      "ATTACK": "Attack",
+      "INITIALIZE": "Game Start",
+      "DAILY_INITIALIZE": "Day Start",
+      "DAILY_FINISH": "Day End",
+      "FINISH": "Game End"
+    }
+  },
+  "demo": {
+    "title": "AIWolf Contest — Natural Language Division Demo",
+    "titleShort": "AIWolf Contest",
+    "subtitle": "Natural Language Division Demo",
+    "tagline": "Play Werewolf with AI agents. You can speak when it is your turn.",
+    "mode": {
+      "title": "Choose how to play",
+      "solo": "Solo",
+      "soloDesc": "You + AI (starts right away)",
+      "multi": "Multiplayer",
+      "multiDesc": "Play with friends (join the same table by code)",
+      "agent": "Edit AI agent",
+      "spectate": "Watch AI",
+      "back": "Back",
+      "spectateDesc": "Watch AI vs AI"
+    },
+    "spectate": {
+      "title": "Watch AI",
+      "intro": "Spectate an AI-vs-AI game. You take a seat but don't act (auto-pass).",
+      "myAi": "Number of your AIs",
+      "composition": "{my} of your AI + {def} default AI",
+      "start": "Start watching",
+      "watching": "👁 Spectating (watching the AIs play)",
+      "needAgent": "Create your AI first in “Create your AI” to include it"
+    },
+    "agent": {
+      "title": "Edit the AI agent's prompts",
+      "intro": "Edit the prompt sent to the AI for each action (intro, talk, divination, etc.) to tune how it plays. Characters and names use the existing ones. Your edits are saved on this device.",
+      "nickname": "AI name",
+      "nicknamePh": "e.g. Aggressive Seer",
+      "requests": "Action to edit",
+      "reqHint": "Edit each action's prompt separately. ● marks edited actions.",
+      "vars": "Insert variable:",
+      "varsHint": "Variables are replaced with real values (your role, talk history, etc.) during the game. ★ marks the ones commonly used for this action — you can still insert the others, but they render empty when no value applies.",
+      "chars": "{count} / {max} chars",
+      "save": "Save",
+      "saved": "Saved",
+      "preview": "Preview",
+      "previewTitle": "Prompt sent to the AI (variables shown as examples)",
+      "empty": "Nothing written yet",
+      "resetReq": "Reset to default",
+      "req": {
+        "initialize": "Intro",
+        "daily_initialize": "Morning",
+        "talk": "Talk",
+        "whisper": "Whisper",
+        "daily_finish": "Day end",
+        "divine": "Divine",
+        "guard": "Guard",
+        "vote": "Vote",
+        "attack": "Attack"
+      },
+      "var": {
+        "name": "Your name",
+        "role": "Role",
+        "day": "Day",
+        "profile": "Profile",
+        "divine_result": "Divination result",
+        "medium_result": "Medium result",
+        "executed_agent": "Executed player",
+        "attacked_agent": "Attacked player",
+        "vote_list": "Vote results",
+        "attack_vote_list": "Attack votes",
+        "remain_talk": "Remaining talks",
+        "remain_skip": "Remaining skips",
+        "talk_history": "Talk history",
+        "whisper_history": "Whisper history",
+        "alive_agents": "Alive players",
+        "turn": "Turn"
+      },
+      "branch": {
+        "title": "Conditional",
+        "withElse": "with else",
+        "insert": "Insert",
+        "hint": "Switch text based on a condition (e.g. bluff only when you're a werewolf). Write each branch's body in the editor below."
+      },
+      "unsavedConfirm": "You have unsaved changes. Going back without saving will discard them. Continue?",
+      "condIf": "If",
+      "addText": "＋ Text",
+      "addCond": "＋ Condition",
+      "removeBlock": "Remove",
+      "textPh": "Enter text (you can insert variables too)",
+      "condBodyPh": "Text to use when this condition holds",
+      "pickFieldHint": "Tip: click the field you want first, then press a variable",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "dragHint": "Drag to move",
+      "insertBlock": "Insert here",
+      "textBlock": "Text",
+      "condBlock": "Condition",
+      "emptyBlocks": "Start with “＋ Text / ＋ Condition” below",
+      "splitHint": "Enter splits into a new paragraph · Shift+Enter for a line break · Backspace at line start merges with the previous paragraph"
+    },
+    "multi": {
+      "create": "Create a room",
+      "join": "Join with a code",
+      "humans": "Number of humans",
+      "aiFill": "{count} AI will fill the remaining seats",
+      "createBtn": "Create room",
+      "code": "Room code",
+      "codeHint": "Share this code with the people you want to play with",
+      "copy": "Copy",
+      "copied": "Copied",
+      "enterCode": "Enter room code",
+      "joinBtn": "Join",
+      "participants": "Players ({count}/{max})",
+      "host": "Host",
+      "you2": "You",
+      "waiting": "Waiting for other players…",
+      "startBtn": "Start game",
+      "waitHost": "Waiting for the host to start…",
+      "leave": "Leave",
+      "roomClosed": "The room was closed",
+      "full": "Room is full",
+      "notFound": "Room not found",
+      "useMyAgent": "If I leave, my custom AI takes over my seat",
+      "useMyAgentNone": "If you leave, your AI takes over (create one first in “Create your AI”)"
+    },
+    "status": {
+      "connected": "Connected",
+      "connecting": "Connecting…",
+      "disconnected": "Disconnected"
+    },
+    "header": {
+      "pause": "Pause",
+      "resume": "Resume",
+      "info": "Info",
+      "leave": "Quit",
+      "myInfo": "My info"
+    },
+    "day": "Day {day}",
+    "banner": {
+      "connecting": "Connecting…",
+      "disconnected": "Disconnected",
+      "pausedYourTurn": "Paused (your turn: {action})",
+      "yourTurn": "Your turn: {action} ({hint})",
+      "othersTurn": "{name} is typing…",
+      "voting": "Voting…",
+      "nightAction": "Night action in progress…",
+      "morning": "Morning has come",
+      "night": "Night has fallen",
+      "finished": "Game over",
+      "inProgress": "In progress…",
+      "waitingStart": "Waiting for the game to start"
+    },
+    "remain": "{sec}s left",
+    "action": {
+      "TALK": "Talk",
+      "WHISPER": "Whisper",
+      "VOTE": "Vote",
+      "DIVINE": "Divine",
+      "GUARD": "Guard",
+      "ATTACK": "Attack",
+      "fallback": "Action"
+    },
+    "hint": {
+      "talk": "Type a message",
+      "vote": "Choose who to execute",
+      "divine": "Choose who to divine",
+      "guard": "Choose who to guard",
+      "attack": "Choose who to attack",
+      "fallback": "Choose a target"
+    },
+    "roleDesc": {
+      "VILLAGER": "You have no special ability. Find the werewolves through discussion and voting.",
+      "WEREWOLF": "You are a werewolf. Hide your identity and attack with your allies at night. Deceive the villagers.",
+      "SEER": "Each night you divine one person to learn if they are a werewolf or a human. Use it to guide the village.",
+      "MEDIUM": "Each night you learn whether the executed player was a werewolf.",
+      "BODYGUARD": "Each night you guard one person and protect them from the werewolves' attack.",
+      "POSSESSED": "You are the possessed (looks human but sides with the werewolves). Help the werewolves win."
+    },
+    "result": {
+      "villagerWin": "Villager team wins",
+      "werewolfWin": "Werewolf team wins",
+      "youWin": "You win 🎉",
+      "youLose": "You lose…",
+      "title": "🏁 Game over",
+      "reveal": "Roles revealed",
+      "backHome": "Back to home"
+    },
+    "info": {
+      "title": "Player info",
+      "role": "Role: {role}",
+      "team": "Team: {team}",
+      "noProfile": "No profile",
+      "participants": "Participants",
+      "you": " (you)",
+      "alive": "Alive",
+      "dead": "Dead",
+      "privacyNote": "Note: other players' roles and profiles are kept hidden, as is the nature of Werewolf.",
+      "divineResults": "🔮 Divination results",
+      "mediumResults": "🔮 Medium results",
+      "close": "Close"
+    },
+    "intro": {
+      "yourCharacter": "The character you play",
+      "instruction": "Please act as this character and role during the game.",
+      "start": "Start the game"
+    },
+    "start": {
+      "villageSize": "Village size",
+      "role": "Role",
+      "character": "Character",
+      "random": "Random",
+      "useMyAgent": "Use my AI persona for the AIs ({name})",
+      "useMyAgentNone": "Use my AI persona for the AIs",
+      "noAgentHint": "First write a personality in “Create your AI”",
+      "village5": "5 players",
+      "village9": "9 players",
+      "comp5": "2 villagers, seer, werewolf, possessed (you + 4 AI)",
+      "comp9": "3 villagers, seer, bodyguard, medium, 2 werewolves, possessed (you + 8 AI)",
+      "gameLanguage": "Game language",
+      "gameLanguageHint": "The language the AI speaks (switch the screen language at the top right).",
+      "start": "Start game",
+      "joining": "Requesting to join…",
+      "queued": "In queue",
+      "queuePosition": "You are number {pos}",
+      "queueNote": "The game starts automatically when a table frees up",
+      "preparing": "Preparing the table…",
+      "error": "Error: {message}",
+      "retry": "Retry",
+      "displayName": "Your display name: {name}",
+      "unknownError": "Unknown error",
+      "startFailed": "Failed to start the session"
+    },
+    "feed": {
+      "waitingStart": "Waiting for the game to start…",
+      "waitingConnect": "Waiting to connect. Open from the QR link (?url=…&team=…).",
+      "talkOver": "(end of talk)",
+      "talkSkip": "(skipped)",
+      "morning": "── Morning of Day {day} ──",
+      "executed": "🗳 {name} was executed by yesterday's vote",
+      "attacked": "🌙 At dawn, {name} was found attacked",
+      "vote": "🗳 Day {day} discussion is over. Time to vote",
+      "night": "🌙 Night falls. Each role takes action",
+      "finished": "🏁 Game over",
+      "divineResult": "🔮 [Divination] {name} was {species}",
+      "mediumResult": "🔮 [Medium] {name} was {species}",
+      "takeover": "👤 {name} left — an AI is now playing in their place"
+    },
+    "footer": {
+      "skip": "Skip",
+      "over": "End",
+      "send": "Send",
+      "pausedYourTurn": "⏸ Paused (your turn: {action})",
+      "resumeInput": "Resume and type",
+      "actionHint": "{action}: {hint}",
+      "talkPlaceholder": "Type a message (Enter to send)",
+      "lockedPlaceholder": "You can type when it is your turn",
+      "help": "💡 \"End\" = finish speaking for today / \"Skip\" = pass this time. If typing manually, use capitalized Over / Skip (lowercase over/skip become normal messages).",
+      "noTarget": "No target"
+    },
+    "leaveConfirm": "Quit the game and return home? (This table will end.)",
+    "tab": {
+      "play": "Play",
+      "agent": "Edit agent"
+    }
+  }
+}

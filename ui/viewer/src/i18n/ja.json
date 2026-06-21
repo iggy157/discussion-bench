@@ -1,0 +1,510 @@
+{
+  "appName": "aiwolf-nlp-viewer",
+  "navigation": {
+    "home": "ホーム",
+    "realtime": "リアルタイムログ",
+    "archive": "アーカイブログ",
+    "agent": "エージェント",
+    "token": "トークン生成",
+    "statistics": "統計情報"
+  },
+  "home": {
+    "title": "aiwolf-nlp-viewer",
+    "realtimeLog": {
+      "title": "リアルタイムログ",
+      "description": "リアルタイムでゲームログを表示します\nJSONL形式のファイルに対応しています"
+    },
+    "archiveLog": {
+      "title": "アーカイブログ",
+      "description": "アーカイブされたゲームログを表示します\nLOG形式のファイルに対応しています"
+    },
+    "agent": {
+      "title": "エージェント",
+      "description": "ゲームサーバに接続して、エージェントとして参加します"
+    },
+    "sourceCode": "ソースコード",
+    "gameServer": "ゲームサーバ",
+    "sampleAgent": "サンプルエージェント",
+    "sampleAgentLLM": "サンプルエージェント (LLM)",
+    "viewer": "ビューア"
+  },
+  "realtime": {
+    "connect": "接続",
+    "disconnect": "切断",
+    "settings": "設定",
+    "pasteFromClipboard": "クリップボードから貼り付け",
+    "websocketUrl": "WebSocket URL",
+    "authKey": "Authorization Key",
+    "optional": "Optional",
+    "displaySettings": "表示設定",
+    "canvasAgentInfo": "キャンバス上のエージェント情報",
+    "messageBoxAgentInfo": "メッセージボックス上のエージェント情報",
+    "listAgentInfo": "一覧のエージェント情報",
+    "largeScreen": "大画面向け",
+    "name": "名前",
+    "teamName": "チーム名",
+    "role": "役職",
+    "enable": "有効",
+    "notConnected": "未接続",
+    "day": "{day}日目",
+    "daytime": "昼",
+    "nighttime": "夜",
+    "events": {
+      "disconnected": "未接続",
+      "whispered": "囁きました",
+      "attack_voted_with_target": "{from} が {to} に襲撃投票しました",
+      "attack_voted": "襲撃投票しました",
+      "voted_with_target": "{from} が {to} に投票しました",
+      "voted": "{from} が投票しました",
+      "no_execute": "誰も追放されませんでした",
+      "executed": "{target} を追放しました",
+      "no_attack": "誰も襲撃されませんでした",
+      "attacked_but_guarded": "{target} が襲撃されましたが、護衛されました",
+      "attacked": "{target} が襲撃されました",
+      "divined_with_result": "{from} が {to} を占った結果、{result} でした",
+      "divined": "占いました",
+      "guarded_with_target": "{from} が {to} を護衛対象にしました",
+      "guarded": "護衛しました",
+      "game_ended": "{winner} が勝利しました",
+      "unknown": "不明なイベント"
+    },
+    "eventTypes": {
+      "未接続": "未接続",
+      "トーク": "トーク",
+      "囁き": "囁き",
+      "投票": "投票",
+      "襲撃投票": "襲撃投票",
+      "追放": "追放",
+      "襲撃": "襲撃",
+      "占い": "占い",
+      "護衛": "護衛",
+      "終了": "終了"
+    }
+  },
+  "archive": {
+    "selectFolder": "フォルダを選択",
+    "selectLog": "ログを選択",
+    "pasteFromClipboard": "クリップボードから貼り付け",
+    "agents": "エージェント",
+    "whispers": "囁き",
+    "talk": "トーク",
+    "voting": "投票",
+    "votedFor": "に投票",
+    "execute": "追放",
+    "wasExecuted": "を追放",
+    "divination": "占い",
+    "divined": "を占い:",
+    "guard": "護衛",
+    "protected": "を護衛",
+    "attackVotes": "襲撃投票",
+    "attack": "襲撃",
+    "wasAttacked": "を襲撃:",
+    "success": "成功",
+    "failure": "失敗",
+    "noAttackTarget": "襲撃対象なし",
+    "result": "結果",
+    "won": "が勝利",
+    "particle": "が"
+  },
+  "agent": {
+    "talkHistory": "トーク履歴",
+    "whisperHistory": "囁き履歴",
+    "agentSettings": "エージェント設定",
+    "teamName": "チーム名",
+    "notConnected": "未接続",
+    "selectTarget": "対象を選択してください",
+    "enterContent": "内容を入力してください",
+    "remainingChars": "残り{count}文字",
+    "exceededChars": "{count}文字超過",
+    "send": "送信"
+  },
+  "statistics": {
+    "downloadCsv": "CSV形式でダウンロードする"
+  },
+  "token": {
+    "title": "トークン生成",
+    "description": "対戦サーバにおける接続認証を有効にした場合に必要となるトークンを生成します。秘密鍵はブラウザ上で生成され、サーバには一切送信されません。",
+    "agentDescription": "エージェントとして接続する場合は、チーム名を入力してください。",
+    "generateSecret": "秘密鍵を生成する",
+    "secretKey": "秘密鍵",
+    "agent": "エージェント",
+    "realtimeLog": "リアルタイムログ",
+    "teamName": "チーム名",
+    "copyToken": "トークンをコピーする",
+    "errorOccurred": "エラーが発生しました"
+  },
+  "common": {
+    "close": "閉じる",
+    "language": "言語"
+  },
+  "displaySettings": {
+    "title": "表示項目設定",
+    "selectAll": "すべて選択",
+    "deselectAll": "すべて解除",
+    "reset": "リセット",
+    "before": "前",
+    "after": "後",
+    "allFields": "全項目",
+    "noFields": "非表示",
+    "fields": {
+      "agents": {
+        "gameName": "エージェント名",
+        "originalName": "元の名前",
+        "role": "役職",
+        "status": "状態"
+      },
+      "beforeWhisper": {
+        "agentName": "エージェント名",
+        "originalName": "元の名前",
+        "text": "テキスト",
+        "talkIdx": "トークID",
+        "turnIdx": "ターン",
+        "timestamp": "タイムスタンプ"
+      },
+      "talks": {
+        "agentName": "エージェント名",
+        "originalName": "元の名前",
+        "text": "テキスト",
+        "talkIdx": "トークID",
+        "turnIdx": "ターン",
+        "timestamp": "タイムスタンプ"
+      },
+      "votes": {
+        "voterName": "投票者",
+        "targetName": "投票先"
+      },
+      "execution": {
+        "agentName": "追放されたエージェント",
+        "role": "役職"
+      },
+      "divine": {
+        "seerName": "占い師",
+        "targetName": "占い先",
+        "result": "結果"
+      },
+      "afterWhisper": {
+        "agentName": "エージェント名",
+        "originalName": "元の名前",
+        "text": "テキスト",
+        "talkIdx": "トークID",
+        "turnIdx": "ターン",
+        "timestamp": "タイムスタンプ"
+      },
+      "guard": {
+        "guardName": "護衛者",
+        "targetName": "護衛先",
+        "result": "結果"
+      },
+      "attackVotes": {
+        "voterName": "投票者",
+        "targetName": "襲撃候補"
+      },
+      "attack": {
+        "targetName": "襲撃対象",
+        "result": "結果"
+      },
+      "result": {
+        "winSide": "勝利陣営",
+        "villagers": "村人数",
+        "werewolves": "人狼数"
+      }
+    }
+  },
+  "audio": {
+    "play": "再生",
+    "stop": "停止"
+  },
+  "game": {
+    "role": {
+      "WEREWOLF": "人狼",
+      "POSSESSED": "狂人",
+      "SEER": "占い師",
+      "BODYGUARD": "騎士",
+      "VILLAGER": "村人",
+      "MEDIUM": "霊媒師"
+    },
+    "species": {
+      "HUMAN": "人間",
+      "WEREWOLF": "人狼"
+    },
+    "status": {
+      "ALIVE": "生存",
+      "DEAD": "死亡"
+    },
+    "teams": {
+      "VILLAGER": "村人陣営",
+      "WEREWOLF": "人狼陣営"
+    },
+    "request": {
+      "NAME": "名前",
+      "TALK": "トーク",
+      "WHISPER": "囁き",
+      "VOTE": "投票",
+      "DIVINE": "占い",
+      "GUARD": "護衛",
+      "ATTACK": "襲撃",
+      "INITIALIZE": "ゲーム開始",
+      "DAILY_INITIALIZE": "昼開始",
+      "DAILY_FINISH": "昼終了",
+      "FINISH": "ゲーム終了"
+    }
+  },
+  "demo": {
+    "title": "人狼知能大会 自然言語部門 体験デモ",
+    "titleShort": "人狼知能大会",
+    "subtitle": "自然言語部門 体験デモ",
+    "tagline": "AIエージェントと人狼ゲーム。あなたの番になったら発言できます。",
+    "mode": {
+      "title": "プレイ方法を選ぶ",
+      "solo": "ソロプレイ",
+      "soloDesc": "あなた1人＋AI（すぐ開始）",
+      "multi": "マルチプレイ",
+      "multiDesc": "友達と一緒に（合言葉で同じ卓に入る）",
+      "agent": "AIエージェントを編集",
+      "spectate": "AI観戦",
+      "back": "戻る",
+      "spectateDesc": "AI同士の対戦を観る"
+    },
+    "spectate": {
+      "title": "AI観戦",
+      "intro": "AI同士の対戦を観戦します。あなたも席に着きますが操作はしません（自動でパス）。",
+      "myAi": "自作AIの数",
+      "composition": "自作AI {my} 体 ＋ 既定AI {def} 体",
+      "start": "観戦を始める",
+      "watching": "👁 観戦中（AI同士の対戦を観ています）",
+      "needAgent": "自作AIを入れるには先に「自作AIを作る」で作成してください"
+    },
+    "agent": {
+      "title": "AIエージェントのプロンプトを編集",
+      "intro": "各アクション（自己紹介・会話・占いなど）でAIに渡すプロンプトを編集して、AIの強さを調整できます。キャラクターや名前は既存のものを使います。編集内容はこの端末に保存されます。",
+      "nickname": "AIの名前",
+      "nicknamePh": "例: アグレッシブ占い師",
+      "requests": "編集するアクション",
+      "reqHint": "各アクションのプロンプトを個別に編集できます。●印は編集済み。",
+      "vars": "変数を挿入:",
+      "varsHint": "変数はゲーム中に実際の値（あなたの役職・会話履歴など）に置き換わります。★はこのリクエストでよく使う変数です（他のものも挿入できますが、その場面で値が無ければ空になります）。",
+      "chars": "{count} / {max} 文字",
+      "save": "保存",
+      "saved": "保存しました",
+      "preview": "プレビュー",
+      "previewTitle": "AIに渡されるプロンプト（変数は例で表示）",
+      "empty": "まだ何も書かれていません",
+      "resetReq": "既定に戻す",
+      "req": {
+        "initialize": "自己紹介",
+        "daily_initialize": "朝",
+        "talk": "会話",
+        "whisper": "囁き",
+        "daily_finish": "終了時",
+        "divine": "占い",
+        "guard": "護衛",
+        "vote": "投票",
+        "attack": "襲撃"
+      },
+      "var": {
+        "name": "あなたの名前",
+        "role": "役職",
+        "day": "日数",
+        "profile": "プロフィール",
+        "divine_result": "占い結果",
+        "medium_result": "霊媒結果",
+        "executed_agent": "処刑された人",
+        "attacked_agent": "襲撃された人",
+        "vote_list": "投票結果",
+        "attack_vote_list": "襲撃投票",
+        "remain_talk": "残り発言数",
+        "remain_skip": "残りスキップ数",
+        "talk_history": "会話履歴",
+        "whisper_history": "囁き履歴",
+        "alive_agents": "生存者一覧",
+        "turn": "ターン数"
+      },
+      "branch": {
+        "title": "条件分岐",
+        "withElse": "それ以外も",
+        "insert": "挿入",
+        "hint": "選んだ条件で文を切り替えます（例: 人狼のときだけ強気に）。分岐の中身は下のエディタに書いてください。"
+      },
+      "unsavedConfirm": "保存していない変更があります。保存せずに戻ると破棄されますが、よろしいですか？",
+      "condIf": "もし",
+      "addText": "＋ 文章",
+      "addCond": "＋ 条件分岐",
+      "removeBlock": "削除",
+      "textPh": "文章を入力（変数も挿入できます）",
+      "condBodyPh": "この条件のときに入れる文章",
+      "pickFieldHint": "※ 入れたい欄をクリックしてから変数を押してください",
+      "moveUp": "上へ",
+      "moveDown": "下へ",
+      "dragHint": "ドラッグで移動",
+      "insertBlock": "ここに挿入",
+      "textBlock": "文章",
+      "condBlock": "条件分岐",
+      "emptyBlocks": "下の「＋文章 / ＋条件分岐」から作り始められます",
+      "splitHint": "Enterで段落を分割・Shift+Enterで改行・行頭のBackspaceで前の段落と結合"
+    },
+    "multi": {
+      "create": "部屋を作る",
+      "join": "合言葉で参加",
+      "humans": "人間の人数",
+      "aiFill": "残り {count} 人はAIが入ります",
+      "createBtn": "部屋を作成",
+      "code": "合言葉",
+      "codeHint": "この合言葉を、一緒に遊ぶ人に伝えてください",
+      "copy": "コピー",
+      "copied": "コピーしました",
+      "enterCode": "合言葉を入力",
+      "joinBtn": "参加する",
+      "participants": "参加者（{count}/{max}）",
+      "host": "ホスト",
+      "you2": "あなた",
+      "waiting": "他のプレイヤーを待っています…",
+      "startBtn": "ゲーム開始",
+      "waitHost": "ホストが開始するのを待っています…",
+      "leave": "退出",
+      "roomClosed": "部屋が閉じられました",
+      "full": "満員です",
+      "notFound": "合言葉が見つかりません",
+      "useMyAgent": "離脱したら自作AIが席を引き継ぐ",
+      "useMyAgentNone": "離脱したら自作AIが引き継ぐ（先に「自作AIを作る」で作成）"
+    },
+    "status": {
+      "connected": "接続中",
+      "connecting": "接続中…",
+      "disconnected": "未接続"
+    },
+    "header": {
+      "pause": "一時停止",
+      "resume": "再開",
+      "info": "情報",
+      "leave": "中断",
+      "myInfo": "自分の情報"
+    },
+    "day": "{day}日目",
+    "banner": {
+      "connecting": "接続中…",
+      "disconnected": "未接続",
+      "pausedYourTurn": "一時停止中（あなたの番：{action}）",
+      "yourTurn": "あなたの番です：{action}（{hint}）",
+      "othersTurn": "{name} さんが入力中…",
+      "voting": "投票中…",
+      "nightAction": "夜のアクション中…",
+      "morning": "朝になりました",
+      "night": "夜になりました",
+      "finished": "ゲーム終了",
+      "inProgress": "進行中…",
+      "waitingStart": "ゲーム開始を待っています"
+    },
+    "remain": "残り {sec}s",
+    "action": {
+      "TALK": "発言",
+      "WHISPER": "囁き",
+      "VOTE": "投票",
+      "DIVINE": "占い",
+      "GUARD": "護衛",
+      "ATTACK": "襲撃",
+      "fallback": "アクション"
+    },
+    "hint": {
+      "talk": "メッセージを入力",
+      "vote": "追放する相手を選択",
+      "divine": "占う相手を選択",
+      "guard": "護衛する相手を選択",
+      "attack": "襲撃する相手を選択",
+      "fallback": "対象を選択"
+    },
+    "roleDesc": {
+      "VILLAGER": "特殊能力はありません。議論と投票で人狼を見つけ出してください。",
+      "WEREWOLF": "あなたは人狼です。正体を隠し、夜は仲間と襲撃します。村人を欺いてください。",
+      "SEER": "毎晩1人を占い、人狼か人間かを知れます。情報を活かして村を導いてください。",
+      "MEDIUM": "追放された人が人狼だったか毎晩わかります。",
+      "BODYGUARD": "毎晩1人を護衛し、人狼の襲撃から守れます。",
+      "POSSESSED": "あなたは狂人（人間陣営に見えるが人狼の味方）。人狼の勝利に協力してください。"
+    },
+    "result": {
+      "villagerWin": "村人陣営の勝利",
+      "werewolfWin": "人狼陣営の勝利",
+      "youWin": "あなたの勝ち 🎉",
+      "youLose": "あなたの負け…",
+      "title": "🏁 ゲーム終了",
+      "reveal": "役職の開示",
+      "backHome": "ホームに戻る"
+    },
+    "info": {
+      "title": "プレイヤー情報",
+      "role": "役職: {role}",
+      "team": "接続チーム: {team}",
+      "noProfile": "プロフィール情報なし",
+      "participants": "参加者",
+      "you": "（あなた）",
+      "alive": "生存",
+      "dead": "死亡",
+      "privacyNote": "※ 他プレイヤーの役職・プロフィールは人狼ゲームの性質上、原則非公開です。",
+      "divineResults": "🔮 占い結果",
+      "mediumResults": "🔮 霊媒結果",
+      "close": "閉じる"
+    },
+    "intro": {
+      "yourCharacter": "あなたが担当するキャラクター",
+      "instruction": "あなたはこのキャラクター・役職としてゲーム内で振る舞ってください。",
+      "start": "ゲームを開始する"
+    },
+    "start": {
+      "villageSize": "村の人数",
+      "role": "役職",
+      "character": "キャラクター",
+      "random": "おまかせ",
+      "useMyAgent": "AIに自作プロンプトを使う（{name}）",
+      "useMyAgentNone": "AIに自作プロンプトを使う",
+      "noAgentHint": "先に「自作AIを作る」で性格を書いてください",
+      "village5": "5人村",
+      "village9": "9人村",
+      "comp5": "村人2・占い師・人狼・狂人（あなた＋AI4体）",
+      "comp9": "村人3・占い師・騎士・霊媒師・人狼2・狂人（あなた＋AI8体）",
+      "gameLanguage": "ゲームの言語",
+      "gameLanguageHint": "AIが話す言語です（画面の言語は右上で切り替えできます）",
+      "start": "ゲーム開始",
+      "joining": "参加を要求しています…",
+      "queued": "順番待ち",
+      "queuePosition": "あなたは {pos} 番目です",
+      "queueNote": "空き卓ができ次第、自動で開始します",
+      "preparing": "卓を準備しています…",
+      "error": "エラー: {message}",
+      "retry": "再試行",
+      "displayName": "あなたの表示名: {name}",
+      "unknownError": "不明なエラー",
+      "startFailed": "セッションの起動に失敗しました"
+    },
+    "feed": {
+      "waitingStart": "ゲームの開始を待っています…",
+      "waitingConnect": "接続待ち。QRリンク（?url=…&team=…）から開いてください。",
+      "talkOver": "（発言終了）",
+      "talkSkip": "（スキップ）",
+      "morning": "── {day}日目の朝 ──",
+      "executed": "🗳 前日の投票で {name} が追放されました",
+      "attacked": "🌙 夜が明け、{name} が無残な姿で発見されました",
+      "vote": "🗳 {day}日目の昼の議論が終了。投票の時間です",
+      "night": "🌙 夜になりました。各役職が行動します",
+      "finished": "🏁 ゲーム終了",
+      "divineResult": "🔮【占い結果】{name} は {species} でした",
+      "mediumResult": "🔮【霊媒結果】{name} は {species} でした",
+      "takeover": "👤 {name} が退出したため、AIが代わりに参加しました"
+    },
+    "footer": {
+      "skip": "スキップ",
+      "over": "終了",
+      "send": "送信",
+      "pausedYourTurn": "⏸ 一時停止中（あなたの番：{action}）",
+      "resumeInput": "再開して入力",
+      "actionHint": "{action}：{hint}",
+      "talkPlaceholder": "メッセージを入力（Enterで送信）",
+      "lockedPlaceholder": "あなたの番になると入力できます",
+      "help": "💡「終了」=本日の発言を終える ／「スキップ」=今回はパス。手入力する場合は大文字始まりの Over / Skip（小文字 over/skip は通常の発言になります）。",
+      "noTarget": "対象なし"
+    },
+    "leaveConfirm": "ゲームを中断してホームに戻りますか？（この卓は終了します）",
+    "tab": {
+      "play": "遊ぶ",
+      "agent": "エージェント編集"
+    }
+  }
+}

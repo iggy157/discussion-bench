@@ -1,0 +1,515 @@
+{
+  "_meta": {
+    "language": "ur",
+    "name": "Urdu",
+    "translated": true
+  },
+  "appName": "aiwolf-nlp-viewer",
+  "navigation": {
+    "home": "ہوم",
+    "realtime": "ریئل ٹائم لاگ",
+    "archive": "آرکائیو لاگ",
+    "agent": "ایجنٹ",
+    "token": "ٹوکن جنریشن",
+    "statistics": "اعداد و شمار"
+  },
+  "home": {
+    "title": "aiwolf-nlp-viewer",
+    "realtimeLog": {
+      "title": "ریئل ٹائم لاگ",
+      "description": "گیم لاگ کو ریئل ٹائم میں دکھائیں\nJSONL فارمیٹ کی فائلوں کی حمایت کرتا ہے"
+    },
+    "archiveLog": {
+      "title": "آرکائیو لاگ",
+      "description": "محفوظ شدہ گیم لاگ دکھائیں\nLOG فارمیٹ کی فائلوں کی حمایت کرتا ہے"
+    },
+    "agent": {
+      "title": "ایجنٹ",
+      "description": "گیم سرور سے جڑیں اور ایک ایجنٹ کے طور پر شرکت کریں"
+    },
+    "sourceCode": "سورس کوڈ",
+    "gameServer": "گیم سرور",
+    "sampleAgent": "نمونہ ایجنٹ",
+    "sampleAgentLLM": "نمونہ ایجنٹ (LLM)",
+    "viewer": "ویور"
+  },
+  "realtime": {
+    "connect": "جوڑیں",
+    "disconnect": "منقطع کریں",
+    "settings": "ترتیبات",
+    "pasteFromClipboard": "کلپ بورڈ سے پیسٹ کریں",
+    "websocketUrl": "WebSocket URL",
+    "authKey": "Authorization Key",
+    "optional": "اختیاری",
+    "displaySettings": "ڈسپلے ترتیبات",
+    "canvasAgentInfo": "کینوس پر ایجنٹ کی معلومات",
+    "messageBoxAgentInfo": "میسج باکس پر ایجنٹ کی معلومات",
+    "listAgentInfo": "فہرست پر ایجنٹ کی معلومات",
+    "largeScreen": "بڑی اسکرین",
+    "name": "نام",
+    "teamName": "ٹیم کا نام",
+    "role": "کردار",
+    "enable": "فعال",
+    "notConnected": "غیر منسلک",
+    "day": "دن {day}",
+    "daytime": "دن",
+    "nighttime": "رات",
+    "events": {
+      "disconnected": "منقطع",
+      "whispered": "سرگوشی کی",
+      "attack_voted_with_target": "{from} نے {to} پر حملے کا ووٹ دیا",
+      "attack_voted": "حملے کا ووٹ دیا",
+      "voted_with_target": "{from} نے {to} کو ووٹ دیا",
+      "voted": "{from} نے ووٹ دیا",
+      "no_execute": "کسی کو سزائے موت نہیں دی گئی",
+      "executed": "{target} کو سزائے موت دی گئی",
+      "no_attack": "کسی پر حملہ نہیں ہوا",
+      "attacked_but_guarded": "{target} پر حملہ ہوا لیکن اس کی حفاظت کی گئی",
+      "attacked": "{target} پر حملہ ہوا",
+      "divined_with_result": "{from} نے {to} کا کشف کیا اور انہیں {result} پایا",
+      "divined": "کشف کیا",
+      "guarded_with_target": "{from} نے {to} کو حفاظت کا ہدف بنایا",
+      "guarded": "حفاظت کی",
+      "game_ended": "{winner} جیت گیا",
+      "unknown": "نامعلوم واقعہ"
+    },
+    "eventTypes": {
+      "未接続": "منقطع",
+      "トーク": "گفتگو",
+      "囁き": "سرگوشی",
+      "投票": "ووٹ",
+      "襲撃投票": "حملے کا ووٹ",
+      "追放": "سزائے موت",
+      "襲撃": "حملہ",
+      "占い": "کشف",
+      "護衛": "حفاظت",
+      "終了": "اختتام"
+    }
+  },
+  "archive": {
+    "selectFolder": "فولڈر منتخب کریں",
+    "selectLog": "لاگ منتخب کریں",
+    "pasteFromClipboard": "کلپ بورڈ سے پیسٹ کریں",
+    "agents": "ایجنٹس",
+    "whispers": "سرگوشیاں",
+    "talk": "گفتگو",
+    "voting": "ووٹنگ",
+    "votedFor": " نے ووٹ دیا ",
+    "execute": "سزائے موت",
+    "wasExecuted": " کو سزائے موت دی گئی",
+    "divination": "کشف",
+    "divined": " کا کشف کیا: ",
+    "guard": "حفاظت",
+    "protected": " کی حفاظت کی ",
+    "attackVotes": "حملے کے ووٹ",
+    "attack": "حملہ",
+    "wasAttacked": " پر حملہ ہوا: ",
+    "success": "کامیاب",
+    "failure": "ناکام",
+    "noAttackTarget": "حملے کا کوئی ہدف نہیں",
+    "result": "نتیجہ",
+    "won": " جیت گیا",
+    "particle": ""
+  },
+  "agent": {
+    "talkHistory": "گفتگو کی تاریخ",
+    "whisperHistory": "سرگوشی کی تاریخ",
+    "agentSettings": "ایجنٹ ترتیبات",
+    "teamName": "ٹیم کا نام",
+    "notConnected": "غیر منسلک",
+    "selectTarget": "براہ کرم ایک ہدف منتخب کریں",
+    "enterContent": "براہ کرم مواد درج کریں",
+    "remainingChars": "{count} حروف باقی ہیں",
+    "exceededChars": "{count} حروف زیادہ ہو گئے",
+    "send": "بھیجیں"
+  },
+  "statistics": {
+    "downloadCsv": "CSV کے طور پر ڈاؤن لوڈ کریں"
+  },
+  "token": {
+    "title": "ٹوکن جنریشن",
+    "description": "گیم سرور پر کنکشن تصدیق فعال ہونے پر درکار ٹوکن تیار کریں۔ خفیہ کلید براؤزر میں تیار ہوتی ہے اور کبھی سرور کو نہیں بھیجی جاتی۔",
+    "agentDescription": "اگر ایجنٹ کے طور پر جڑ رہے ہیں تو براہ کرم ٹیم کا نام درج کریں۔",
+    "generateSecret": "خفیہ کلید تیار کریں",
+    "secretKey": "خفیہ کلید",
+    "agent": "ایجنٹ",
+    "realtimeLog": "ریئل ٹائم لاگ",
+    "teamName": "ٹیم کا نام",
+    "copyToken": "ٹوکن کاپی کریں",
+    "errorOccurred": "ایک خرابی پیش آئی"
+  },
+  "common": {
+    "close": "بند کریں",
+    "language": "زبان"
+  },
+  "displaySettings": {
+    "title": "ڈسپلے آئٹم ترتیبات",
+    "selectAll": "سب منتخب کریں",
+    "deselectAll": "سب غیر منتخب کریں",
+    "reset": "ری سیٹ کریں",
+    "before": "پہلے",
+    "after": "بعد",
+    "allFields": "تمام فیلڈز",
+    "noFields": "کوئی فیلڈ نہیں",
+    "fields": {
+      "agents": {
+        "gameName": "ایجنٹ کا نام",
+        "originalName": "اصل نام",
+        "role": "کردار",
+        "status": "حیثیت"
+      },
+      "beforeWhisper": {
+        "agentName": "ایجنٹ کا نام",
+        "originalName": "اصل نام",
+        "text": "متن",
+        "talkIdx": "گفتگو ID",
+        "turnIdx": "باری",
+        "timestamp": "ٹائم اسٹیمپ"
+      },
+      "talks": {
+        "agentName": "ایجنٹ کا نام",
+        "originalName": "اصل نام",
+        "text": "متن",
+        "talkIdx": "گفتگو ID",
+        "turnIdx": "باری",
+        "timestamp": "ٹائم اسٹیمپ"
+      },
+      "votes": {
+        "voterName": "ووٹر",
+        "targetName": "ہدف"
+      },
+      "execution": {
+        "agentName": "سزا یافتہ ایجنٹ",
+        "role": "کردار"
+      },
+      "divine": {
+        "seerName": "کاہن",
+        "targetName": "ہدف",
+        "result": "نتیجہ"
+      },
+      "afterWhisper": {
+        "agentName": "ایجنٹ کا نام",
+        "originalName": "اصل نام",
+        "text": "متن",
+        "talkIdx": "گفتگو ID",
+        "turnIdx": "باری",
+        "timestamp": "ٹائم اسٹیمپ"
+      },
+      "guard": {
+        "guardName": "محافظ",
+        "targetName": "ہدف",
+        "result": "نتیجہ"
+      },
+      "attackVotes": {
+        "voterName": "ووٹر",
+        "targetName": "ہدف"
+      },
+      "attack": {
+        "targetName": "ہدف",
+        "result": "نتیجہ"
+      },
+      "result": {
+        "winSide": "جیتنے والا فریق",
+        "villagers": "گاؤں والوں کی تعداد",
+        "werewolves": "بھیڑیوں کی تعداد"
+      }
+    }
+  },
+  "audio": {
+    "play": "چلائیں",
+    "stop": "روکیں"
+  },
+  "game": {
+    "role": {
+      "WEREWOLF": "بھیڑیا (Werewolf)",
+      "POSSESSED": "آسیب زدہ (Possessed)",
+      "SEER": "کاہن (Seer)",
+      "BODYGUARD": "محافظ (Bodyguard)",
+      "VILLAGER": "گاؤں والا (Villager)",
+      "MEDIUM": "روح بین (Medium)"
+    },
+    "species": {
+      "HUMAN": "انسان",
+      "WEREWOLF": "بھیڑیا (Werewolf)"
+    },
+    "status": {
+      "ALIVE": "زندہ",
+      "DEAD": "مردہ"
+    },
+    "teams": {
+      "VILLAGER": "گاؤں والوں کی ٹیم",
+      "WEREWOLF": "بھیڑیوں کی ٹیم"
+    },
+    "request": {
+      "NAME": "نام",
+      "TALK": "گفتگو",
+      "WHISPER": "سرگوشی",
+      "VOTE": "ووٹ",
+      "DIVINE": "کشف",
+      "GUARD": "حفاظت",
+      "ATTACK": "حملہ",
+      "INITIALIZE": "گیم کا آغاز",
+      "DAILY_INITIALIZE": "دن کا آغاز",
+      "DAILY_FINISH": "دن کا اختتام",
+      "FINISH": "گیم کا اختتام"
+    }
+  },
+  "demo": {
+    "title": "AIWolf مقابلہ — قدرتی زبان شعبہ ڈیمو",
+    "titleShort": "AIWolf مقابلہ",
+    "subtitle": "قدرتی زبان شعبہ ڈیمو",
+    "tagline": "AI ایجنٹس کے ساتھ بھیڑیا (Werewolf) کھیلیں۔ جب آپ کی باری ہو تو آپ بول سکتے ہیں۔",
+    "status": {
+      "connected": "منسلک",
+      "connecting": "جڑ رہا ہے…",
+      "disconnected": "غیر منسلک"
+    },
+    "header": {
+      "pause": "وقفہ",
+      "resume": "دوبارہ شروع کریں",
+      "info": "معلومات",
+      "leave": "چھوڑیں",
+      "myInfo": "میری معلومات"
+    },
+    "day": "دن {day}",
+    "banner": {
+      "connecting": "جڑ رہا ہے…",
+      "disconnected": "غیر منسلک",
+      "pausedYourTurn": "وقفہ (آپ کی باری: {action})",
+      "yourTurn": "آپ کی باری: {action} ({hint})",
+      "othersTurn": "{name} لکھ رہے ہیں…",
+      "voting": "ووٹنگ جاری ہے…",
+      "nightAction": "رات کی کارروائی جاری ہے…",
+      "morning": "صبح ہو گئی",
+      "night": "رات ہو گئی",
+      "finished": "گیم ختم",
+      "inProgress": "جاری ہے…",
+      "waitingStart": "گیم شروع ہونے کا انتظار ہے"
+    },
+    "remain": "{sec}s باقی",
+    "action": {
+      "TALK": "گفتگو",
+      "WHISPER": "سرگوشی",
+      "VOTE": "ووٹ",
+      "DIVINE": "کشف",
+      "GUARD": "حفاظت",
+      "ATTACK": "حملہ",
+      "fallback": "کارروائی"
+    },
+    "hint": {
+      "talk": "ایک پیغام لکھیں",
+      "vote": "منتخب کریں کسے سزائے موت دینی ہے",
+      "divine": "منتخب کریں کس کا کشف کرنا ہے",
+      "guard": "منتخب کریں کس کی حفاظت کرنی ہے",
+      "attack": "منتخب کریں کس پر حملہ کرنا ہے",
+      "fallback": "ایک ہدف منتخب کریں"
+    },
+    "roleDesc": {
+      "VILLAGER": "آپ کے پاس کوئی خاص صلاحیت نہیں ہے۔ بحث اور ووٹنگ کے ذریعے بھیڑیوں (Werewolf) کو تلاش کریں۔",
+      "WEREWOLF": "آپ ایک بھیڑیا (Werewolf) ہیں۔ اپنی شناخت چھپائیں اور رات کو اپنے ساتھیوں کے ساتھ حملہ کریں۔ گاؤں والوں کو دھوکہ دیں۔",
+      "SEER": "آپ کاہن (Seer) ہیں۔ ہر رات آپ ایک شخص کا کشف کرتے ہیں تاکہ جان سکیں کہ وہ بھیڑیا ہے یا انسان۔ اسے گاؤں کی رہنمائی کے لیے استعمال کریں۔",
+      "MEDIUM": "آپ روح بین (Medium) ہیں۔ ہر رات آپ جان لیتے ہیں کہ جس کو سزائے موت دی گئی وہ بھیڑیا تھا یا نہیں۔",
+      "BODYGUARD": "آپ محافظ (Bodyguard) ہیں۔ ہر رات آپ ایک شخص کی حفاظت کرتے ہیں اور انہیں بھیڑیوں کے حملے سے بچاتے ہیں۔",
+      "POSSESSED": "آپ آسیب زدہ (Possessed) ہیں (دیکھنے میں انسان لیکن بھیڑیوں کے ساتھی)۔ بھیڑیوں کی جیت میں مدد کریں۔"
+    },
+    "result": {
+      "villagerWin": "گاؤں والوں کی ٹیم جیت گئی",
+      "werewolfWin": "بھیڑیوں کی ٹیم جیت گئی",
+      "youWin": "آپ جیت گئے 🎉",
+      "youLose": "آپ ہار گئے…",
+      "title": "🏁 گیم ختم",
+      "reveal": "کردار ظاہر کیے گئے",
+      "backHome": "ہوم پر واپس جائیں"
+    },
+    "info": {
+      "title": "کھلاڑی کی معلومات",
+      "role": "کردار: {role}",
+      "team": "ٹیم: {team}",
+      "noProfile": "کوئی پروفائل نہیں",
+      "participants": "شرکاء",
+      "you": " (آپ)",
+      "alive": "زندہ",
+      "dead": "مردہ",
+      "privacyNote": "نوٹ: بھیڑیا گیم کی نوعیت کے مطابق دوسرے کھلاڑیوں کے کردار اور پروفائل پوشیدہ رکھے جاتے ہیں۔",
+      "divineResults": "🔮 کشف کے نتائج",
+      "mediumResults": "🔮 روح بین کے نتائج",
+      "close": "بند کریں"
+    },
+    "intro": {
+      "yourCharacter": "وہ کردار جو آپ ادا کریں گے",
+      "instruction": "براہ کرم گیم کے دوران اسی کردار اور رول کے طور پر برتاؤ کریں۔",
+      "start": "گیم شروع کریں"
+    },
+    "start": {
+      "villageSize": "گاؤں کا حجم",
+      "village5": "5 کھلاڑی",
+      "village9": "9 کھلاڑی",
+      "comp5": "2 گاؤں والے، کاہن، بھیڑیا، آسیب زدہ (آپ + 4 AI)",
+      "comp9": "3 گاؤں والے، کاہن، محافظ، روح بین، 2 بھیڑیے، آسیب زدہ (آپ + 8 AI)",
+      "gameLanguage": "گیم کی زبان",
+      "gameLanguageHint": "وہ زبان جو AI بولتا ہے (اسکرین کی زبان اوپر دائیں جانب سے تبدیل کریں)۔",
+      "start": "گیم شروع کریں",
+      "joining": "شامل ہونے کی درخواست…",
+      "queued": "قطار میں",
+      "queuePosition": "آپ نمبر {pos} ہیں",
+      "queueNote": "جب کوئی میز خالی ہوتی ہے تو گیم خود بخود شروع ہو جاتی ہے",
+      "preparing": "میز تیار کی جا رہی ہے…",
+      "error": "خرابی: {message}",
+      "retry": "دوبارہ کوشش کریں",
+      "displayName": "آپ کا ظاہری نام: {name}",
+      "unknownError": "نامعلوم خرابی",
+      "startFailed": "سیشن شروع کرنے میں ناکامی",
+      "role": "کردار کی قسم",
+      "character": "کردار",
+      "random": "بے ترتیب",
+      "useMyAgent": "AI کے لیے میرا AI پرسونا استعمال کریں ({name})",
+      "useMyAgentNone": "AI کے لیے میرا AI پرسونا استعمال کریں",
+      "noAgentHint": "پہلے ”اپنا AI بنائیں“ میں شخصیت لکھیں"
+    },
+    "feed": {
+      "waitingStart": "گیم شروع ہونے کا انتظار ہے…",
+      "waitingConnect": "جڑنے کا انتظار ہے۔ QR لنک سے کھولیں (?url=…&team=…)۔",
+      "talkOver": "(گفتگو کا اختتام)",
+      "talkSkip": "(چھوڑ دیا گیا)",
+      "morning": "── دن {day} کی صبح ──",
+      "executed": "🗳 کل کے ووٹ میں {name} کو سزائے موت دے دی گئی",
+      "attacked": "🌙 صبح ہوئی تو {name} پر حملہ ہوا پایا گیا",
+      "vote": "🗳 دن {day} کی دوپہر کی بحث ختم ہوئی۔ ووٹ کا وقت ہے",
+      "night": "🌙 رات ہو گئی۔ ہر کردار اپنی کارروائی کرے گا",
+      "finished": "🏁 گیم ختم",
+      "divineResult": "🔮【کشف کا نتیجہ】{name} {species} تھا",
+      "mediumResult": "🔮【روح بین کا نتیجہ】{name} {species} تھا",
+      "takeover": "👤 {name} گیم سے نکل گئے، اس لیے اب ایک AI ان کی جگہ کھیل رہا ہے"
+    },
+    "footer": {
+      "skip": "چھوڑیں",
+      "over": "اختتام",
+      "send": "بھیجیں",
+      "pausedYourTurn": "⏸ وقفہ (آپ کی باری: {action})",
+      "resumeInput": "دوبارہ شروع کر کے لکھیں",
+      "actionHint": "{action}: {hint}",
+      "talkPlaceholder": "ایک پیغام لکھیں (بھیجنے کے لیے Enter)",
+      "lockedPlaceholder": "جب آپ کی باری ہو تو آپ لکھ سکتے ہیں",
+      "help": "💡 \"Over\" = آج کے لیے بولنا ختم کریں / \"Skip\" = اس بار چھوڑ دیں۔ اگر دستی طور پر لکھ رہے ہیں تو بڑے حروف والے Over / Skip استعمال کریں (چھوٹے حروف والے over/skip عام پیغام بن جاتے ہیں)۔",
+      "noTarget": "کوئی ہدف نہیں"
+    },
+    "leaveConfirm": "گیم چھوڑ کر ہوم پر واپس جائیں؟ (یہ میز ختم ہو جائے گی۔)",
+    "mode": {
+      "title": "کھیلنے کا طریقہ منتخب کریں",
+      "solo": "اکیلے",
+      "soloDesc": "آپ + AI (فوراً شروع)",
+      "multi": "ملٹی پلیئر",
+      "multiDesc": "دوستوں کے ساتھ کھیلیں (کوڈ سے ایک ہی میز پر شامل ہوں)",
+      "back": "واپس",
+      "agent": "اے آئی ایجنٹ میں ترمیم کریں",
+      "spectate": "اے آئی دیکھیں",
+      "spectateDesc": "اے آئی بمقابلہ اے آئی دیکھیں"
+    },
+    "multi": {
+      "create": "کمرہ بنائیں",
+      "join": "کوڈ سے شامل ہوں",
+      "humans": "کھلاڑیوں کی تعداد",
+      "aiFill": "باقی {count} نشستیں AI پُر کرے گا",
+      "createBtn": "کمرہ بنائیں",
+      "code": "کمرے کا کوڈ",
+      "codeHint": "یہ کوڈ ان لوگوں کو دیں جن کے ساتھ کھیلنا ہے",
+      "copy": "کاپی",
+      "copied": "کاپی ہو گیا",
+      "enterCode": "کمرے کا کوڈ درج کریں",
+      "joinBtn": "شامل ہوں",
+      "participants": "کھلاڑی ({count}/{max})",
+      "host": "میزبان",
+      "you2": "آپ",
+      "waiting": "دوسرے کھلاڑیوں کا انتظار ہے…",
+      "startBtn": "کھیل شروع کریں",
+      "waitHost": "میزبان کے شروع کرنے کا انتظار ہے…",
+      "leave": "نکلیں",
+      "roomClosed": "کمرہ بند کر دیا گیا",
+      "full": "کمرہ بھرا ہوا ہے",
+      "notFound": "کمرہ نہیں ملا",
+      "useMyAgent": "اگر میں چلا جاؤں تو میرا اپنا اے آئی میری نشست سنبھال لیتا ہے",
+      "useMyAgentNone": "اگر آپ چھوڑ دیں تو آپ کا اپنا AI آپ کی نشست سنبھال لے گا (پہلے «اپنا AI بنائیں» میں بنائیں)"
+    },
+    "agent": {
+      "title": "اے آئی ایجنٹ کے پرامپٹس میں ترمیم کریں",
+      "intro": "اے آئی کس طرح کھیلتا ہے اسے بہتر بنانے کے لیے ہر عمل (تعارف، گفتگو، نجوم بینی وغیرہ) کے لیے اے آئی کو بھیجا جانے والا پرامپٹ ترمیم کریں۔ کردار اور نام موجودہ ہی استعمال ہوتے ہیں۔ آپ کی ترامیم اسی آلے پر محفوظ ہوتی ہیں۔",
+      "nickname": "AI کا نام",
+      "nicknamePh": "مثلاً: جارحانہ نجومی",
+      "requests": "ترمیم کرنے کا عمل",
+      "reqHint": "ہر عمل کے پرامپٹ میں الگ الگ ترمیم کریں۔ ● ترمیم شدہ اعمال کو ظاہر کرتا ہے۔",
+      "vars": "ویری ایبل داخل کریں:",
+      "varsHint": "کھیل کے دوران ویری ایبلز کو حقیقی اقدار سے بدل دیا جاتا ہے (آپ کا کردار، گفتگو کی تاریخ، وغیرہ)۔ ★ کا نشان اس عمل کے لیے عام طور پر استعمال ہونے والے ویری ایبلز کو ظاہر کرتا ہے — آپ دیگر بھی شامل کر سکتے ہیں، لیکن جب کوئی قدر لاگو نہ ہو تو وہ خالی دکھائی دیتے ہیں۔",
+      "chars": "{count} / {max} حروف",
+      "save": "محفوظ کریں",
+      "saved": "محفوظ ہو گیا",
+      "preview": "پیش منظر",
+      "previewTitle": "AI کو بھیجا گیا پرامپٹ (ویری ایبلز مثال کے طور پر دکھائے گئے ہیں)",
+      "empty": "ابھی تک کچھ نہیں لکھا گیا",
+      "resetReq": "ڈیفالٹ پر ری سیٹ کریں",
+      "req": {
+        "initialize": "تعارف",
+        "daily_initialize": "صبح",
+        "talk": "گفتگو",
+        "whisper": "سرگوشی",
+        "daily_finish": "دن کا اختتام",
+        "divine": "پیشین گوئی",
+        "guard": "حفاظت",
+        "vote": "ووٹ",
+        "attack": "حملہ"
+      },
+      "var": {
+        "name": "آپ کا نام",
+        "role": "کردار",
+        "day": "دن",
+        "profile": "پروفائل",
+        "divine_result": "پیشین گوئی کا نتیجہ",
+        "medium_result": "میڈیم کا نتیجہ",
+        "executed_agent": "سزا یافتہ کھلاڑی",
+        "attacked_agent": "حملہ شدہ کھلاڑی",
+        "vote_list": "ووٹنگ کے نتائج",
+        "attack_vote_list": "حملے کے ووٹ",
+        "remain_talk": "باقی گفتگو",
+        "remain_skip": "باقی اسکپ",
+        "talk_history": "گفتگو کی تاریخ",
+        "whisper_history": "سرگوشی کی تاریخ",
+        "alive_agents": "زندہ کھلاڑی",
+        "turn": "باری"
+      },
+      "branch": {
+        "title": "مشروط",
+        "withElse": "else کے ساتھ",
+        "insert": "داخل کریں",
+        "hint": "کسی شرط کی بنیاد پر متن تبدیل کریں (مثلاً صرف اُسی وقت دھوکا دیں جب آپ ویئر وولف ہوں)۔ ہر شاخ کا مواد نیچے دیے گئے ایڈیٹر میں لکھیں۔"
+      },
+      "unsavedConfirm": "آپ کے پاس غیر محفوظ شدہ تبدیلیاں ہیں۔ محفوظ کیے بغیر واپس جانے سے وہ ضائع ہو جائیں گی۔ جاری رکھیں؟",
+      "condIf": "اگر",
+      "addText": "＋ متن",
+      "addCond": "＋ شرط",
+      "removeBlock": "ہٹائیں",
+      "textPh": "متن درج کریں (آپ متغیرات بھی شامل کر سکتے ہیں)",
+      "condBodyPh": "یہ شرط پوری ہونے پر استعمال ہونے والا متن",
+      "pickFieldHint": "اشارہ: پہلے مطلوبہ خانے پر کلک کریں، پھر کوئی متغیر دبائیں",
+      "moveUp": "اوپر منتقل کریں",
+      "moveDown": "نیچے منتقل کریں",
+      "dragHint": "منتقل کرنے کے لیے گھسیٹیں",
+      "insertBlock": "یہاں شامل کریں",
+      "textBlock": "متن",
+      "condBlock": "شرط",
+      "emptyBlocks": "نیچے ”＋ متن / ＋ شرط“ سے شروع کریں",
+      "splitHint": "Enter دبانے سے نیا پیراگراف بنتا ہے · Shift+Enter سے لائن بریک · لائن کے آغاز پر Backspace پچھلے پیراگراف کے ساتھ ضم ہو جاتا ہے"
+    },
+    "spectate": {
+      "title": "AI دیکھیں",
+      "intro": "AI بمقابلہ AI کھیل دیکھیں۔ آپ نشست لیتے ہیں لیکن کوئی کارروائی نہیں کرتے (خودکار پاس)۔",
+      "myAi": "آپ کے AI کی تعداد",
+      "composition": "آپ کے {my} AI ＋ {def} طے شدہ AI",
+      "start": "دیکھنا شروع کریں",
+      "watching": "👁 دیکھ رہے ہیں (AI کو کھیلتے ہوئے دیکھ رہے ہیں)",
+      "needAgent": "اپنا AI شامل کرنے کے لیے پہلے ”اپنا AI بنائیں“ میں بنائیں"
+    },
+    "tab": {
+      "play": "کھیلیں",
+      "agent": "ایجنٹ میں ترمیم"
+    }
+  }
+}
