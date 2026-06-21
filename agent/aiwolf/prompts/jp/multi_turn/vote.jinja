@@ -1,0 +1,10 @@
+{% set history_source = talk_history -%}
+{% set history_start = 0 -%}
+{{ block('history') }}
+{{ block('instruction') }}
+対象:
+{% for k, v in info.status_map.items() -%}
+{%- if v == 'ALIVE' %}{{ k }}
+{% endif -%}
+{%- endfor %}
+{{ block('constraints') }}

@@ -1,0 +1,7 @@
+{{ block('instruction') }}
+{{ block('event') }}
+{% set history_source = talk_history -%}
+{% set history_start = sent_talk_count -%}
+{{ block('history') }}
+
+This is a day-end notice. **Do not generate in-character dialogue, reflections, or commentary.** Reply only with "Acknowledged.". The actual utterances will come in the next day's talk / whisper requests.

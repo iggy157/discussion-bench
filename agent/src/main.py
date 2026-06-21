@@ -49,7 +49,7 @@ def load_config(config_path: Path) -> dict[str, Any]:
     mode = main_config.get("mode")
     configs = main_config.get("configs")
     if mode is None or configs is None:
-        return main_config
+        return _apply_file_prompts(main_config)
 
     child_rel = configs.get(mode)
     if not child_rel:
@@ -62,7 +62,44 @@ def load_config(config_path: Path) -> dict[str, Any]:
 
     merged: dict[str, Any] = {**main_config, **child_config}
     merged["mode"] = mode
-    return merged
+    return _apply_file_prompts(merged)
+
+
+# Prompts are managed as per-system files under agent/<pack>/prompts/<lang>/<mode>/*.jinja.
+# プロンプトは agent/<pack>/prompts/<lang>/<mode>/*.jinja にシステム別ファイルとして管理する.
+_AGENT_ROOT = Path(__file__).resolve().parent.parent  # inlg/agent
+
+
+def _load_domain_prompts(domain: str, lang: str, mode: str) -> dict[str, str]:
+    """Load per-system prompt files into a {request_key: template} dict / プロンプトファイルを読む.
+
+    Files live in agent/<pack>/prompts/<lang>/<mode>/*.jinja, where pack = aiwolf |
+    hidden-bench. Returns {} if the directory is absent (then inline config is used).
+    """
+    pack = "hidden-bench" if str(domain).lower() == "hiddenbench" else "aiwolf"
+    prompt_dir = _AGENT_ROOT / pack / "prompts" / str(lang) / str(mode)
+    out: dict[str, str] = {}
+    if prompt_dir.is_dir():
+        for p in sorted(prompt_dir.glob("*.jinja")):
+            out[p.stem] = p.read_text(encoding="utf-8")
+    return out
+
+
+def _apply_file_prompts(config: dict[str, Any]) -> dict[str, Any]:
+    """Overlay per-system prompt files onto config['prompt'] / ファイルプロンプトを重ねる.
+
+    File prompts override inline config entries (keeping non-template flags like
+    ``narration_split``). If no files exist, the inline config is kept unchanged.
+    ファイルが優先。narration_split 等の非テンプレ設定は config 側を維持。
+    """
+    file_prompts = _load_domain_prompts(
+        config.get("domain", "aiwolf"),
+        config.get("lang", "jp"),
+        config.get("mode", "multi_turn"),
+    )
+    if file_prompts:
+        config["prompt"] = {**(config.get("prompt") or {}), **file_prompts}
+    return config
 
 
 def execute(config_path: Path) -> None:

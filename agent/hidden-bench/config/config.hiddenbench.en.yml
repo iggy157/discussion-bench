@@ -48,51 +48,5 @@ anthropic:
   cache_ttl: "5m"
 
 prompt:
-  # INITIALIZE: prime the situation + this agent's clues into history (acknowledge only).
-  initialize: |-
-    You are participating in a group decision-making task. You will ultimately choose one option for the scenario below.
-
-    ## Scenario
-    {{ hb.description }}
-
-    ## Your Information
-    {% for c in hb.clues %}- {{ c }}
-    {% endfor %}
-    IMPORTANT: The order of these facts is randomly shuffled. The order does not indicate importance or any relationship between facts. Please reason carefully about all the information.
-
-    This is a setup message. Do NOT generate any in-character utterance — reply with only "Understood."
-  # Pre-discussion decision (Y^pre): individual judgement before discussion, as JSON.
-  hb_pre: |-
-    Based solely on the information you have (before any group discussion), make an initial decision.
-
-    ## Available Options
-    {% for o in hb.options %}- {{ o }}
-    {% endfor %}
-    Respond with your decision in JSON format, choosing exactly one of the options above.
-    {"vote": "<your chosen option - exactly one of the options above>", "rationale": "<brief explanation of your reasoning>"}
-  # Discussion turn: see the full transcript, contribute 1-2 sentences, message text only.
-  hb_discussion: |-
-    {% set history_source = talk_history -%}
-    {% set history_start = 0 -%}
-    {% if talk_history|length == 0 -%}
-    You are the first to speak. Based on the information you have, share your initial thoughts with the group in one or two sentences, focusing on the facts most relevant to the decision.
-    {%- else -%}
-    Previous messages from the group discussion:
-    {{ block('history') }}
-    It's your turn to speak. Based on your information and what others have shared, contribute to the discussion in one or two sentences (you may share new information, respond to others, or express agreement/disagreement).
-    {%- endif %}
-    Respond with just your discussion message (not in JSON format).
-  # Post-discussion decision (Y^post): final individual judgement (primary outcome), as JSON.
-  hb_post: |-
-    {% set history_source = talk_history -%}
-    {% set history_start = 0 -%}
-    The group discussion has concluded.
-
-    ## Discussion Summary
-    {{ block('history') }}
-
-    ## Available Options
-    {% for o in hb.options %}- {{ o }}
-    {% endfor %}
-    Based on your original information and the group discussion, make your final decision in JSON format.
-    {"vote": "<your chosen option - exactly one of the options above>", "rationale": "<brief explanation of your reasoning>"}
+  # 発話テンプレートは agent/hidden-bench/prompts/<lang>/multi_turn/*.jinja に外出し（main.py のローダが読み込む）。
+  # Prompt templates live in agent/hidden-bench/prompts/<lang>/multi_turn/*.jinja (loaded by main.py).

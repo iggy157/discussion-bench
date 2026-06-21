@@ -1,0 +1,7 @@
+{{ block('instruction') }}
+{{ block('event') }}
+{% set history_source = talk_history -%}
+{% set history_start = sent_talk_count -%}
+{{ block('history') }}
+
+これは日付終了の通知です。**役のセリフ・感想・反省を生成せず**, 「了解しました」とだけ返してください。実際の発話は次の日の talk / whisper リクエストで行います。

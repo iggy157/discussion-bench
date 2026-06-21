@@ -49,51 +49,5 @@ anthropic:
   cache_ttl: "5m"
 
 prompt:
-  # INITIALIZE: 状況と「自分の手がかり」を履歴に積む (役を演じさせず承諾のみ).
-  initialize: |-
-    あなたはグループ意思決定タスクに参加しています。以下の状況について、最終的にひとつの選択肢を選びます。
-
-    ## 状況
-    {{ hb.description }}
-
-    ## あなたが持っている情報
-    {% for c in hb.clues %}- {{ c }}
-    {% endfor %}
-    重要: これらの情報の順序はランダムにシャッフルされており、順序は重要度や関係性を表しません。すべての情報を慎重に検討してください。
-
-    これはセットアップメッセージです。役のセリフを生成せず、「了解しました」とだけ返してください。
-  # 事前回答 (Y^pre): 討論前の個別判断. JSONで回答.
-  hb_pre: |-
-    グループ討論を始める前に、いまあなたが持っている情報だけにもとづいて、最初の判断を行ってください。
-
-    ## 選択肢
-    {% for o in hb.options %}- {{ o }}
-    {% endfor %}
-    次のJSON形式で、上の選択肢のいずれか一つを正確に選んで回答してください。
-    {"vote": "<選択肢のいずれか一つ>", "rationale": "<判断の理由を簡潔に>"}
-  # 議論ターン: 全履歴を見て1〜2文で貢献. JSONではなく発言本文のみ.
-  hb_discussion: |-
-    {% set history_source = talk_history -%}
-    {% set history_start = 0 -%}
-    {% if talk_history|length == 0 -%}
-    あなたが最初の発言者です。あなたの持つ情報のうち、判断に最も関係しそうな要点を1〜2文でグループに共有してください。
-    {%- else -%}
-    これまでのグループ討論:
-    {{ block('history') }}
-    あなたの番です。あなたの情報と他の参加者の発言を踏まえ、1〜2文で討論に貢献してください（新情報の共有・他者への応答・賛否のいずれでも構いません）。
-    {%- endif %}
-    JSON形式ではなく、発言本文だけを返してください。
-  # 事後回答 (Y^post): 討論を踏まえた最終個別判断. JSONで回答 (主指標).
-  hb_post: |-
-    {% set history_source = talk_history -%}
-    {% set history_start = 0 -%}
-    グループ討論は終了しました。
-
-    ## 討論の記録
-    {{ block('history') }}
-
-    ## 選択肢
-    {% for o in hb.options %}- {{ o }}
-    {% endfor %}
-    あなた自身の情報とグループ討論の内容を踏まえ、最終的な判断を次のJSON形式で回答してください。
-    {"vote": "<選択肢のいずれか一つ>", "rationale": "<判断の理由を簡潔に>"}
+  # 発話テンプレートは agent/hidden-bench/prompts/<lang>/multi_turn/*.jinja に外出し（main.py のローダが読み込む）。
+  # Prompt templates live in agent/hidden-bench/prompts/<lang>/multi_turn/*.jinja (loaded by main.py).

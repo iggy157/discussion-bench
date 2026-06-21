@@ -143,6 +143,21 @@ def build_config(
     merged["agent"]["num"] = num
     # Ensure domain is explicit for the agent dispatch.
     merged["domain"] = domain
+    # Overlay per-system prompt files (agent/<pack>/prompts/<lang>/<mode>/*.jinja) so the
+    # written config is complete; the agent also loads these at runtime (main.py).
+    merged = _apply_file_prompts(merged, agent_dir, domain, lang)
+    return merged
+
+
+def _apply_file_prompts(merged: dict[str, Any], agent_dir: Path, domain: str, lang: str) -> dict[str, Any]:
+    """Overlay per-system prompt files onto config['prompt'] / システム別プロンプトを重ねる."""
+    pack = _domain_pack(domain)
+    mode = str(merged.get("mode", "multi_turn"))
+    prompt_dir = agent_dir / pack / "prompts" / lang / mode
+    if prompt_dir.is_dir():
+        files = {p.stem: p.read_text(encoding="utf-8") for p in sorted(prompt_dir.glob("*.jinja"))}
+        if files:
+            merged["prompt"] = {**(merged.get("prompt") or {}), **files}
     return merged
 
 

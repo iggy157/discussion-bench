@@ -1,0 +1,12 @@
+{% set history_source = talk_history -%}
+{% set history_start = 0 -%}
+The group discussion has concluded.
+
+## Discussion Summary
+{{ block('history') }}
+
+## Available Options
+{% for o in hb.options %}- {{ o }}
+{% endfor %}
+Based on your original information and the group discussion, make your final decision in JSON format.
+{"vote": "<your chosen option - exactly one of the options above>", "rationale": "<brief explanation of your reasoning>"}

@@ -1,0 +1,12 @@
+{% set history_source = talk_history -%}
+{% set history_start = 0 -%}
+グループ討論は終了しました。
+
+## 討論の記録
+{{ block('history') }}
+
+## 選択肢
+{% for o in hb.options %}- {{ o }}
+{% endfor %}
+あなた自身の情報とグループ討論の内容を踏まえ、最終的な判断を次のJSON形式で回答してください。
+{"vote": "<選択肢のいずれか一つ>", "rationale": "<判断の理由を簡潔に>"}

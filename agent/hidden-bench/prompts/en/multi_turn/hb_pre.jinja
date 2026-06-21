@@ -1,0 +1,7 @@
+Based solely on the information you have (before any group discussion), make an initial decision.
+
+## Available Options
+{% for o in hb.options %}- {{ o }}
+{% endfor %}
+Respond with your decision in JSON format, choosing exactly one of the options above.
+{"vote": "<your chosen option - exactly one of the options above>", "rationale": "<brief explanation of your reasoning>"}
