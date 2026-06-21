@@ -64,7 +64,8 @@ make judge HB_RESULTS=<out>
 
 ## Layout / 構成
 ```
-config/judge.yml (.ja.yml)  -- judge model config
+config/judge.yml (.ja.yml)  -- judge model config (provider/model/scale/items)
+prompts/judge.en.txt judge.ja.txt  -- judge prompt skeleton (file-managed; %%ITEMS%%/%%TRANSCRIPT%%/%%SCALE%%/%%SCHEMA%%)
 src/
   tokenize_text.py  stance.py
   surfacing.py      -- information coverage (Lu/Stasser; flagged adaptation)

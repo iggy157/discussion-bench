@@ -17,7 +17,7 @@ profile:
   source: server
 
 configs:
-  multi_turn: ./config.hiddenbench.jp.yml
+  multi_turn: ./config.multi_turn.jp.yml
 
 web_socket:
   # HiddenBenchサーバ (hiddenbench-server) の待受. compose内では service名 hiddenbench-server.

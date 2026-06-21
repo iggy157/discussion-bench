@@ -1,0 +1,11 @@
+You are evaluating a multi-party discussion. Read the WHOLE transcript below and rate each
+item with an integer from 1 to %%SCALE%% (%%SCALE%% = best).
+
+## Items
+%%ITEMS%%
+
+## Transcript
+%%TRANSCRIPT%%
+
+Respond with ONLY this JSON (no prose):
+{"scores": {%%SCHEMA%%}, "rationale": {<each item key>: "brief reason"}}

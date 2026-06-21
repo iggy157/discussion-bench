@@ -56,35 +56,49 @@ def build_transcript_text(result: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+# The judge prompt skeleton is managed as a file (like the agent prompts):
+# eval/prompts/judge.<lang>.txt with %%SCALE%% / %%ITEMS%% / %%TRANSCRIPT%% / %%SCHEMA%% tokens.
+# 判定プロンプトの骨格もファイル管理: eval/prompts/judge.<lang>.txt（トークン差し替え）。
+_PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
+
+
 def _rubric_prompt(transcript: str, config: dict[str, Any]) -> str:
-    """Build the judge prompt (bilingual-aware) / 採点プロンプトを構築."""
+    """Build the judge prompt from the per-language template file / テンプレファイルから構築."""
     lang = str(config.get("lang", "en"))
     scale = int(config.get("scale", 5))
     items = config.get("items") or []
-    item_lines = []
-    for it in items:
-        label = it.get(lang) or it.get("en") or it["key"]
-        item_lines.append(f'- "{it["key"]}": {label}')
-    items_block = "\n".join(item_lines)
+    items_block = "\n".join(f'- "{it["key"]}": {it.get(lang) or it.get("en") or it["key"]}' for it in items)
     keys = [it["key"] for it in items]
     schema = ", ".join(f'"{k}": <1-{scale}>' for k in keys)
-    if lang in ("ja", "jp"):
-        return (
-            "あなたは多人数議論の評価者です。以下の議論ログ全体を読み、各項目を"
-            f"1〜{scale}の整数で採点してください（{scale}が最良）。\n\n"
-            f"## 評価項目\n{items_block}\n\n"
-            f"## 議論ログ\n{transcript}\n\n"
-            "次のJSON形式のみで回答してください（説明文は不要）:\n"
-            f'{{"scores": {{{schema}}}, "rationale": {{<各項目キー>: "短い理由"}}}}'
-        )
-    return (
-        "You are evaluating a multi-party discussion. Read the WHOLE transcript below and "
-        f"rate each item with an integer from 1 to {scale} ({scale} = best).\n\n"
-        f"## Items\n{items_block}\n\n"
-        f"## Transcript\n{transcript}\n\n"
-        "Respond with ONLY this JSON (no prose):\n"
-        f'{{"scores": {{{schema}}}, "rationale": {{<each item key>: "brief reason"}}}}'
+
+    fname = "judge.ja.txt" if lang in ("ja", "jp") else "judge.en.txt"
+    template_path = _PROMPTS_DIR / fname
+    template = template_path.read_text(encoding="utf-8") if template_path.is_file() else _INLINE_TEMPLATE.get(
+        "ja" if lang in ("ja", "jp") else "en", _INLINE_TEMPLATE["en"]
     )
+    return (
+        template.replace("%%SCALE%%", str(scale))
+        .replace("%%ITEMS%%", items_block)
+        .replace("%%TRANSCRIPT%%", transcript)
+        .replace("%%SCHEMA%%", schema)
+    )
+
+
+# Inline fallback templates (used only if the prompt files are missing).
+_INLINE_TEMPLATE = {
+    "en": (
+        "You are evaluating a multi-party discussion. Read the WHOLE transcript below and rate "
+        "each item with an integer from 1 to %%SCALE%% (%%SCALE%% = best).\n\n"
+        "## Items\n%%ITEMS%%\n\n## Transcript\n%%TRANSCRIPT%%\n\n"
+        'Respond with ONLY this JSON (no prose):\n{"scores": {%%SCHEMA%%}, "rationale": {<each item key>: "brief reason"}}'
+    ),
+    "ja": (
+        "あなたは多人数議論の評価者です。以下の議論ログ全体を読み、各項目を1〜%%SCALE%%の整数で"
+        "採点してください（%%SCALE%%が最良）。\n\n"
+        "## 評価項目\n%%ITEMS%%\n\n## 議論ログ\n%%TRANSCRIPT%%\n\n"
+        '次のJSON形式のみで回答してください（説明文は不要）:\n{"scores": {%%SCHEMA%%}, "rationale": {<各項目キー>: "短い理由"}}'
+    ),
+}
 
 
 # --- LLM providers ---------------------------------------------------------

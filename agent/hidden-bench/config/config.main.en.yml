@@ -16,7 +16,7 @@ profile:
   source: server
 
 configs:
-  multi_turn: ./config.hiddenbench.en.yml
+  multi_turn: ./config.multi_turn.en.yml
 
 web_socket:
   url: ws://127.0.0.1:8090/ws
