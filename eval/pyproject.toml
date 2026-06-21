@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Transcript failure-mode metrics (surfacing, convergence, diversity, conformity) for the INLG study"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "pyyaml>=6.0.2",        # judge config
+    "openai>=1.0",          # subjective LLM-judge (provider: openai); not needed for provider: mock
+]
 
 [tool.ruff]
 line-length = 120

@@ -1,0 +1,30 @@
+# Subjective LLM-judge config. (Japanese-commented copy: judge.ja.yml)
+# Centralizes the judge model so it is managed in one place. The judge rates the WHOLE
+# discussion transcript on three subjective items (whole-log evaluation, faithful to the
+# self-play setting where per-agent relative scoring would be meaningless).
+
+# Provider: openai (and OpenAI-compatible endpoints via base_url) | mock (for testing, no API)
+provider: openai
+model: gpt-4o
+temperature: 0.0
+# base_url:            # optional: OpenAI-compatible endpoint (vLLM / local / ollama-openai)
+api_key_env: OPENAI_API_KEY   # which env var holds the API key (read from the root .env)
+
+# Rubric language for the judge prompt (en | ja). The judge reads the transcript as-is.
+lang: en
+# Likert scale max (scores are integers 1..scale).
+scale: 5
+# Judge each game this many times and average (reduces variance; 1 = single pass).
+repeats: 1
+
+# The three subjective items, scored over the whole discussion log.
+items:
+  - key: naturalness
+    en: "Naturalness of the utterances (do they read as natural, fluent dialogue?)"
+    ja: "発話の自然さ（自然で流暢な対話として読めるか）"
+  - key: coherence
+    en: "Coherence & non-contradiction (do turns connect and stay consistent, without contradictions?)"
+    ja: "噛み合い・非矛盾（応答が噛み合い、矛盾なく一貫しているか）"
+  - key: topic_development
+    en: "Topic development (does the discussion advance and develop topics rather than stagnate?)"
+    ja: "話題展開（議論が停滞せず深まり・展開していくか）"

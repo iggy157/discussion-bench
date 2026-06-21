@@ -1,0 +1,29 @@
+# 主観LLM-judge の設定。（英語コメント版: judge.yml。実際に読まれるのは judge.yml）
+# 判定モデルをここで一元管理する。judge は議論ログ「全体」を3項目で採点する
+# （自己対戦では席ごとの相対評価が無意味なため、ログ全体の絶対評価にする）。
+
+# provider: openai（base_url でOpenAI互換も）| mock（API不要のテスト用）
+provider: openai
+model: gpt-4o
+temperature: 0.0
+# base_url:            # 任意: OpenAI互換エンドポイント（vLLM / ローカル / ollama-openai）
+api_key_env: OPENAI_API_KEY   # APIキーを保持する環境変数名（ルートの .env から読む）
+
+# 採点プロンプトの言語（en | ja）。トランスクリプトはそのまま読ませる。
+lang: ja
+# Likert尺度の最大値（採点は 1..scale の整数）。
+scale: 5
+# 1ゲームを何回採点して平均するか（分散低減。1=単発）。
+repeats: 1
+
+# 議論ログ全体に対して採点する3項目。
+items:
+  - key: naturalness
+    en: "Naturalness of the utterances (do they read as natural, fluent dialogue?)"
+    ja: "発話の自然さ（自然で流暢な対話として読めるか）"
+  - key: coherence
+    en: "Coherence & non-contradiction (do turns connect and stay consistent, without contradictions?)"
+    ja: "噛み合い・非矛盾（応答が噛み合い、矛盾なく一貫しているか）"
+  - key: topic_development
+    en: "Topic development (does the discussion advance and develop topics rather than stagnate?)"
+    ja: "話題展開（議論が停滞せず深まり・展開していくか）"

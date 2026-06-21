@@ -31,9 +31,14 @@ down:
 logs:
 	$(COMPOSE) logs -f
 
-# Aggregate HiddenBench per-game results into failure-mode metrics + bilingual report.
+# Objective failure-mode metrics only (no API needed) -> bilingual report.
 eval:
 	PYTHONPATH=eval/src $(VENV) eval/src/evaluate.py $(HB_RESULTS)
+
+# Objective + subjective LLM-judge in one pass (judge model = eval/config/judge.yml).
+# 客観 + 主観LLM-judge を一括 -> 統合レポート。判定モデルは eval/config/judge.yml。
+judge:
+	PYTHONPATH=eval/src $(VENV) eval/src/evaluate_all.py $(HB_RESULTS) -c eval/config/judge.yml
 
 # Local (no-docker) runs for development.
 local-hb:

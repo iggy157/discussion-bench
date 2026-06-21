@@ -1,18 +1,23 @@
-"""Diversity / stagnation metrics (distinct-n, Self-BLEU-style self-repetition).
+"""Diversity / stagnation metrics (distinct-n, lexical self-repetition).
 
-多様性・停滞指標 (distinct-n, Self-BLEU風の自己反復).
+多様性・停滞指標 (distinct-n, 語彙的な自己反復).
 
-Citations (see INLG_METHODOLOGY.md §4.2):
+Citations (verified against primary sources; see INLG_METHODOLOGY.md §4.2):
 - distinct-1 / distinct-2: Li, Galley, Brockett, Gao & Dolan (2016), NAACL, arXiv:1510.03055.
-  Convention here: (# distinct n-grams) / (# total tokens). Stated explicitly per the
-  paper; some reimplementations divide by total n-grams instead.
-- Self-repetition diversity: adaptation of Liang et al. (2024), EMNLP, arXiv:2305.19118
-  ("Diversity = 100 - Self-BLEU"). We compute a dependency-free Self-BLEU surrogate using
-  modified n-gram precision (BLEU-style) between an utterance and the agent's own prior
-  utterances. NOT corpus-level Self-BLEU of Zhu et al. 2018 — flagged as an adaptation.
+  Original definition: (# distinct n-grams) / (# total tokens) — we use total TOKENS as the
+  denominator, matching the paper (some reimplementations divide by total n-grams instead).
+- Lexical self-repetition: Self-BLEU originates with Zhu et al. (2018), "Texygen", SIGIR,
+  arXiv:1802.01886; the "Diversity = 100 - Self-BLEU" framing is Liang et al. (2024), EMNLP,
+  arXiv:2305.19118 (there a single pairwise compare between two sides' answers). We compute a
+  dependency-free Self-BLEU surrogate between an utterance and the SAME agent's prior
+  utterances and report 1 - Self-BLEU — an ADAPTATION (per-agent self-history), flagged as ours.
 
-NOTE: DMAD (ICLR2025) does NOT define semantic/self-repetition diversity; do not cite it
-for these. / DMADは意味的多様性を定義していないので, ここでは引用しない.
+NAMING: this is LEXICAL (surface n-gram) self-repetition, NOT semantic — Self-BLEU measures
+n-gram overlap, not meaning. / これは語彙的(表層n-gram)な自己反復であって「意味的」ではない.
+
+NOTE: DMAD (ICLR2025) does NOT define distinct-n / Self-BLEU / semantic diversity; its
+"diversity" is reasoning-strategy coverage. Do NOT cite DMAD for these.
+/ DMADはこれらを定義していない (DMADの多様性は推論戦略の多様性). 引用しない.
 """
 
 from __future__ import annotations

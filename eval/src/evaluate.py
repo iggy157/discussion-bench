@@ -147,10 +147,12 @@ def aggregate(per_game: list[dict[str, Any]]) -> dict[str, Any]:
         "conformity_conformity_rate",
         "conformity_independence_rate",
     ]
+    # Subjective LLM-judge keys (subj_*) are included when present (make judge).
+    subj_keys = sorted({k for g in per_game for k in g if k.startswith("subj_")})
     out: dict[str, Any] = {}
     for cond, games in groups.items():
         agg = {"n_games": len(games)}
-        for k in numeric_keys:
+        for k in numeric_keys + subj_keys:
             agg[k] = _mean([g.get(k) for g in games])
         agg["premature_consensus_rate"] = _mean([1.0 if g.get("premature_consensus") else 0.0 for g in games])
         agg["post_majority_correct_rate"] = _mean([1.0 if g.get("post_majority_correct") else 0.0 for g in games])
@@ -209,8 +211,10 @@ def render_markdown(agg: dict[str, Any]) -> str:
         "conformity_conformity_rate",
         "conformity_independence_rate",
     ]
-    for m in metric_order:
-        jp, en = _LABELS.get(m, (m, m))
+    # Append any subjective LLM-judge rows present (make judge).
+    subj_keys = sorted({k for c in agg for k in agg[c] if k.startswith("subj_")})
+    for m in metric_order + subj_keys:
+        jp, en = _LABELS.get(m, (m.replace("subj_", "subjective: "), m.replace("subj_", "主観: ")))
         label = m if m == "n_games" else f"{en} / {jp}"
         row = [label]
         for c in conds:

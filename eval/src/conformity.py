@@ -2,16 +2,26 @@
 
 同調率・独立率の代理指標 (ラウンド毎の立場ポーリング) — 適応指標.
 
-IMPORTANT (defensibility): BenchForm (Weng et al., ICLR2025, arXiv:2501.13381) defines
-Conformity Rate and Independence Rate for a scripted-confederate reasoning-QA setup; its
-IR is a conjunctive robustness measure, NOT 1 - CR. We CANNOT apply BenchForm's exact
-formula to free discussion, so we report an ADAPTED proxy based on per-round stance flips
-(cf. the correct->incorrect transition taxonomy of "Talk Isn't Always Cheap",
-arXiv:2509.05396). Label as an adaptation; an LLM-based stance extractor is recommended
-over the rule-based one for the paper.
+IMPORTANT (defensibility, verified against primary sources): BenchForm (Weng, Chen & Wang,
+ICLR2025, arXiv:2501.13381) defines Conformity Rate and Independence Rate for a
+scripted-confederate reasoning-QA setup with a Raw solo baseline. Its CR = |Q✗^P ∩ Q✓^R| /
+|Q✓^R| (correct-under-Raw answers that flip to wrong under misleading protocol P), and its
+IR = |Q✓^T ∩ Q✓^D ∩ Q✓^R| / |Q✓^R| is a CONJUNCTIVE robustness measure (correct under both
+Trust AND Doubt) — explicitly NOT 1 - CR. BenchForm extracts answers by RULE-BASED string
+parsing (not an LLM).
 
-重要: BenchFormのCR/IRは台本付き推論QA向けで, IR≠1-CR. 自由議論には厳密適用できないため,
-ラウンド毎の立場反転にもとづく適応代理を報告する (Talk Isn't Always Cheap の遷移分類を参照).
+Our setting (self-play free discussion, no Raw baseline, no scripted confederate, known
+option set) cannot use BenchForm's formula as-is. We report an ADAPTATION: restrict to
+transitions where an agent is in the minority vs the majority-of-others (this replaces the
+confederate-induced pressure), then measure flip-vs-hold. By construction our
+independence_rate = 1 - conformity_rate within that pressured population — this differs from
+BenchForm's conjunctive IR, and we say so. Cf. the per-round re-prompt + correct->incorrect
+transition taxonomy of "Talk Isn't Always Cheap" (Wynn et al., arXiv:2509.05396).
+
+重要(一次資料で確認): BenchFormのCR/IRは台本付き推論QA＋Raw基準線向けで, IRはTrust∩Doubtの
+連言(=1-CRではない), 抽出はルールベース. 自由議論(自己対戦)では基準線も台本も無いため厳密適用
+できず, 「多数派に対し少数派のとき」の反転/維持にもとづく適応版を報告する. 我々のIRは構成上
+1-CR（BenchFormの連言IRとは別物）であることを明記する.
 
 Proxy definitions / 代理定義 (per agent, across the rounds it speaks):
 - conformity_flip: agent's stance changes to match the majority-of-others at the previous
