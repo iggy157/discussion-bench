@@ -2,118 +2,111 @@
 
 # マルチエージェントLLM議論プラットフォーム
 
-**複数のLLMエージェントによる議論**を2つの環境で実行・評価するためのプラットフォームです。
+複数のLLMエージェントに議論をさせ、その結果を評価するためのプラットフォームです。対象は次の2つの環境です。
 
-- **人狼（Werewolf）** — 社会的推理の対話ゲーム（AIWolfDialプロトコル、5人）。
-- **HiddenBench** — 隠れプロファイル型の協調推論タスク（4エージェントが情報を分担して持ち、
-  議論して正解に到達する）。
+- **人狼（Werewolf）** — 5人で行う社会的推理の対話ゲーム（AIWolfDialプロトコル）。
+- **HiddenBench** — 4体のエージェントが手がかりを分担して持ち、議論を通じて正解にたどり着く協調推論タスク。
 
-1つの設定可能なLLMエージェントが両方をプレイします。制御はすべてリポジトリ直下
-（`.env` と `config/`）から行い、Docker かローカルで片方／両方の環境を起動し、得られた
-トランスクリプトを同梱の評価ツールで採点します。小さなWebロビーを使えば、人間が
-HiddenBenchの1席に参加できます（人間の議論データ収集などに利用）。
+どちらの環境も、同じ1つのエージェントがプレイします。操作はリポジトリ直下の `.env` と `config/` に集約されており、Docker でもローカルでも、片方だけでも両方同時でも起動できます。実行後はトランスクリプトを同梱の評価ツールで採点でき、Webロビーを使えば人間がHiddenBenchに1人分のプレイヤーとして参加することもできます（人間の議論データを集めたいときに便利です）。
 
-## 何ができるか
+## できること
 
-- いずれかの環境で1ゲーム／タスクを通しで実行し、ゲームごとのトランスクリプトと結果を出力。
-- 両環境で同一のエージェントコードを使用。LLMプロバイダ（OpenAI / Google / Anthropic /
-  Ollama）とプロンプトは設定で指定。
-- エージェントのプロンプトに手本（完全トランスクリプト／単一発話例／分析メモ）を注入できる。
-  どれを注入するかは名前付きの **condition（条件）** で選択。既定の `baseline` は何も注入しない。
-- トランスクリプトから失敗様態の指標（情報の表面化、早期収束、語彙多様性、同調）を計算し、
-  日英レポートを出力。
+- 人狼・HiddenBenchのいずれかを1ゲーム通しで実行し、トランスクリプトと結果を保存する。
+- エージェントのコードは両環境で共通。使用するLLM（OpenAI / Google / Anthropic / Ollama）やプロンプトは設定で切り替える。
+- エージェントのプロンプトに「手本」を注入できる。注入する手本（完全なトランスクリプト・単一発話の例・分析メモ）は **condition（条件）** という名前付きプリセットで選ぶ。既定の `baseline` では何も注入しない。
+- トランスクリプトから議論の失敗様態（情報の表面化、早期収束、語彙の多様性、同調など）を指標化し、日英併記のレポートを出力する。
 
 ## ディレクトリ構成
 
-リポジトリの**直下が制御面**で、その他は部品です。
+リポジトリ直下が操作の起点で、その下に各部品がぶら下がる形です。
 
 | パス | 役割 |
 |------|------|
-| `.env` / `.env.example` | 唯一の設定ファイル。言語・条件・ポート・LLM APIキー。Docker Compose／ローカル実行／エージェントが参照。 |
-| `config/inlg.yml` | 実行設定の可読マップ（どの環境・言語・環境別パラメータ）。 |
-| `config/conditions.yml` | 手本注入の **condition** プリセット（エージェントのプロンプトに何を入れるか）。 |
-| `docker-compose.yml` | 両環境を Compose の **profiles**（`aiwolf` / `hiddenbench`）として定義。片方／両方を起動。 |
-| `docker/` | Dockerfile群：エージェント用と2つのサーバ用。 |
-| `launcher/` | （環境・言語・条件）を受け取り、エージェント設定を組み立ててエージェントを起動。 |
-| `Makefile`, `run_local.sh` | Docker／ローカル実行のエントリポイント。 |
-| `agent/` | 両環境をプレイするLLMエージェント。`src/` がエンジン本体、`aiwolf/`・`hidden-bench/` は各環境の設定と手本スロット、`prompts/`・`data/` は共有。 |
+| `.env` / `.env.example` | 設定の一元管理ファイル。言語・条件・ポート・LLMのAPIキーをここに書く。Docker Compose・ローカル実行・エージェントのすべてが参照する。 |
+| `config/inlg.yml` | 実行設定を一覧できる読み物（どの環境を・どの言語で・どんなパラメータで動かすか）。 |
+| `config/conditions.yml` | 手本注入の condition プリセット定義。 |
+| `docker-compose.yml` | 2つの環境を Compose の profiles（`aiwolf` / `hiddenbench`）として定義。片方でも両方でも起動できる。 |
+| `docker/` | エージェント用と各サーバ用の Dockerfile。 |
+| `launcher/` | 環境・言語・条件を受け取り、エージェント設定を組み立てて起動する。 |
+| `Makefile` / `run_local.sh` | Docker 実行・ローカル実行の入り口。 |
+| `agent/` | 両環境をプレイするLLMエージェント。`src/` が本体、`aiwolf/`・`hidden-bench/` に各環境の設定と手本スロット、`prompts/`・`data/` は共通部分。 |
 | `server/aiwolf/` | 人狼ゲームサーバ（Go）。 |
 | `server/hidden-bench/` | HiddenBenchサーバ（Python）。 |
-| `eval/` | トランスクリプトから指標を計算しレポート出力。 |
-| `web/` | 人間がHiddenBenchの1席に参加するためのブラウザロビー（データ収集）。 |
-| `docs/` | 設計・手法メモ（背景資料。実行には不要）。 |
+| `eval/` | トランスクリプトから指標を計算し、レポートを書き出す。 |
+| `web/` | 人間がHiddenBenchに参加するためのブラウザ用ロビー。 |
+| `docs/` | 設計・手法の補足資料（背景情報。動かすだけなら不要）。 |
 
-## 必要なもの
+## 用意するもの
 
-- Docker + Docker Compose、**または**ローカル実行用に
-  [`uv`](https://docs.astral.sh/uv/)・Python 3.11+・Go 1.24+（人狼サーバ用のみ）。
-- LLMプロバイダのAPIキー（OpenAI / Google / Anthropic）、**または**ローカルの Ollama。
+- Docker と Docker Compose。ローカルで動かす場合は [`uv`](https://docs.astral.sh/uv/) と Python 3.11以上、人狼サーバを使うなら Go 1.24以上。
+- LLMプロバイダのAPIキー（OpenAI / Google / Anthropic）。または手元の Ollama。
 
 ## 設定
 
 ```bash
 cp .env.example .env
-# その後 .env を編集:
-#   LANG_CODE=en|jp           両環境の言語
-#   CONDITION=baseline        手本注入プリセット（config/conditions.yml 参照）
-#   OPENAI_API_KEY=...         （および/または GOOGLE_API_KEY / CLAUDE_API_KEY）
 ```
 
-LLMプロバイダとモデルはエージェントの環境別設定
-（`agent/aiwolf/config/…` と `agent/hidden-bench/config/…`）で指定します。既定は OpenAI。
+`.env` を開いて、最低限つぎの3つを設定します。
 
-## Dockerで実行
+- `LANG_CODE` — 言語（`en` または `jp`）。両環境に適用される。
+- `CONDITION` — 手本注入のプリセット（`baseline` ほか。詳細は `config/conditions.yml`）。
+- `OPENAI_API_KEY` など — 使うプロバイダのAPIキー。
+
+LLMのプロバイダとモデル自体は、エージェントの環境別設定（`agent/aiwolf/config/…`・`agent/hidden-bench/config/…`）で指定します。既定は OpenAI です。
+
+## Docker で動かす
 
 ```bash
-docker compose --profile hiddenbench up --build              # HiddenBenchのみ
-docker compose --profile aiwolf up --build                   # 人狼のみ
+docker compose --profile hiddenbench up --build                    # HiddenBench だけ
+docker compose --profile aiwolf up --build                         # 人狼だけ
 docker compose --profile aiwolf --profile hiddenbench up --build   # 両方同時
+```
 
-# 同等の Make ターゲット:
+同じことが Make でもできます。
+
+```bash
 make hiddenbench   |   make aiwolf   |   make both   |   make down   |   make logs
 ```
 
-2環境は別ポート（人狼8080、HiddenBench8090）を使うので並走できます。
+2つの環境はポートが別（人狼が8080、HiddenBenchが8090）なので、同時に動かしても干渉しません。
 
-## ローカルで実行（Dockerなし）
-
-```bash
-cd agent && uv sync && cd ..      # エージェントの仮想環境を一度だけ作成
-make local-hb                     # HiddenBenchサーバ + 4エージェント
-make local-aiwolf                 # 人狼サーバ(Go) + 5エージェント
-# 直接実行する場合:  ./run_local.sh hiddenbench
-```
-
-## 評価
+## ローカルで動かす（Dockerなし）
 
 ```bash
-make eval        # server/hidden-bench/log/results/ を読み、.../eval/report.md と metrics.json を出力
+cd agent && uv sync && cd ..      # エージェントの仮想環境を最初に一度だけ作る
+make local-hb                     # HiddenBenchサーバ + エージェント4体
+make local-aiwolf                 # 人狼サーバ(Go) + エージェント5体
 ```
 
-レポートは condition 別に集計されるので、複数条件を回すと1つの比較表になります。
+`./run_local.sh hiddenbench` のように直接呼んでも構いません。
 
-## 人間の参加（HiddenBench）
+## 評価する
+
+```bash
+make eval
+```
+
+`server/hidden-bench/log/results/` の結果を読み込み、同じ場所の `eval/report.md` と `metrics.json` を生成します。レポートは condition ごとに集計されるので、複数の条件で回せばそのまま比較表になります。
+
+## 人間が参加する（HiddenBench）
 
 ```bash
 cd web && uv sync
 HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src app:app --port 8000
-# HiddenBenchサーバ + 3エージェントを起動し、http://localhost:8000 を開いて4席目に入る
 ```
 
-人間のセッションは `web/log/human/` に保存され、後で分析できます。
+HiddenBenchサーバとエージェント3体を起動したうえで `http://localhost:8000` を開くと、残り1席に人間として参加できます。各セッションの記録は `web/log/human/` に保存されます。
 
-## 実行の流れ
+## 動作の流れ
 
-1. サーバ（人狼またはHiddenBench）が起動し、必要人数のエージェント接続を待つ。
-2. ランチャが選択した環境／言語／条件のエージェント設定を組み立て、エージェントを起動。
-   エージェントはWebSocketでサーバに接続する。
-3. サーバがゲーム／タスクを進行し、エージェントは各リクエストに設定済みのLLMで応答する。
-4. サーバがゲームごとの結果を書き出し、`eval/` がトランスクリプトを指標に変換する。
+1. サーバ（人狼またはHiddenBench）が起動し、必要な人数のエージェントが揃うのを待つ。
+2. ランチャが、選んだ環境・言語・条件に合わせてエージェント設定を組み立て、エージェントを起動する。エージェントはWebSocketでサーバにつなぐ。
+3. サーバがゲーム／タスクを進め、エージェントは各リクエストに対し設定したLLMで応答する。
+4. サーバがゲームごとの結果を書き出し、`eval/` がそれを指標へ変換する。
 
 ## 補足
 
-- `server/aiwolf/` と `agent/` はベンダリングしたスナップショット。共有パケットライブラリ
-  `aiwolf-nlp-common` は PyPI（`==0.7.0`）から導入し、同梱はしない。
-- 手本スロット（`agent/<env>/exemplars/`）は**空**で同梱。ファイルを追加するまで、`baseline`
-  以外の条件は自動的に `baseline` と同じ挙動になる。
-- `.env`・仮想環境・`log/` は git 管理外。実APIキーは絶対にコミットしないこと。
+- `server/aiwolf/` と `agent/` は外部リポジトリのスナップショットを取り込んだものです。共通パケットライブラリ `aiwolf-nlp-common` は同梱せず、PyPI（`==0.7.0`）から入れます。
+- 手本スロット（`agent/<環境>/exemplars/`）は空の状態で同梱しています。ファイルを置くまでは、`baseline` 以外の条件を選んでも自動的に `baseline` と同じ挙動になります。
+- `.env`・仮想環境・`log/` は Git の管理対象外です。実際のAPIキーは絶対にコミットしないでください。
