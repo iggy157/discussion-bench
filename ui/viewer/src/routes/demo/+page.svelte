@@ -278,6 +278,28 @@
   let pollTimer: ReturnType<typeof setTimeout> | null = null;
   let villageSize = $state(5); // 村の人数（5 or 9）。最初のページで選択。
 
+  // INLG: AI席に使う実験条件（baseline / script_fewshot ...）。/api/conditions から取得。
+  let selectedCondition = $state<string>("baseline");
+  let conditionList = $state<string[]>(["baseline"]);
+  async function loadConditions() {
+    try {
+      const res = await fetch(`${lobbyBase}/api/conditions`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data.conditions) && data.conditions.length) conditionList = data.conditions;
+      if (data.default) selectedCondition = data.default;
+    } catch (_e) {
+      /* keep defaults */
+    }
+  }
+  let _condsLoaded = false;
+  $effect(() => {
+    if (!_condsLoaded) {
+      _condsLoaded = true;
+      loadConditions();
+    }
+  });
+
   // 任意の役職・キャラ指定（既定=おまかせ=ランダム。今と同じ挙動）。
   // 役職は村サイズに存在するものだけ。キャラは characterList の index（サーバの profiles 並びと一致）。
   let selectedRole = $state<string>(""); // ""=おまかせ
@@ -632,6 +654,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: "solo", size: villageSize, language: gameLanguage, token: deviceToken,
+          domain: "aiwolf", condition: selectedCondition,
           // 自作AIを k 体・残りはサンプル（k は AI席=size-1 を超えない）
           agent_prompts: hasCustomAgent ? ($myAgent.prompts ?? {}) : {},
           my_ai_count: hasCustomAgent ? Math.min(myAiCount, villageSize - 1) : 0,
@@ -671,6 +694,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: "solo", size: villageSize, language: gameLanguage, token: deviceToken,
+          domain: "aiwolf", condition: selectedCondition,
           agent_prompts: hasCustomAgent ? ($myAgent.prompts ?? {}) : {},
           my_ai_count: hasCustomAgent ? Math.min(myAiCount, villageSize - 1) : 0,
         }),
@@ -721,6 +745,7 @@
         body: JSON.stringify({
           mode: "multi", size: villageSize, language: gameLanguage,
           human_slots: humanSlots, token: deviceToken,
+          domain: "aiwolf", condition: selectedCondition,
           agent_prompts: myPromptsPayload(),
         }),
       });
@@ -1366,6 +1391,15 @@
               <span class="text-xs font-normal opacity-80">{$_("demo.mode.spectateDesc")}</span>
             </button>
             <button class="btn btn-ghost btn-sm" onclick={() => (screen = "multiJoin")}>{$_("demo.multi.join")}</button>
+            <!-- INLG: AI席に使う実験条件（台本あり/なし等）。AI同士・人間混在のどちらにも適用。 -->
+            <div class="flex items-center justify-center gap-2 mt-3">
+              <span class="text-xs opacity-70">AI condition</span>
+              <select class="select select-bordered select-xs" bind:value={selectedCondition}>
+                {#each conditionList as c}
+                  <option value={c}>{c}</option>
+                {/each}
+              </select>
+            </div>
           </div>
         {:else if screen === "spectate"}
           <!-- 👁 AI観戦: AI同士の対戦を観る -->

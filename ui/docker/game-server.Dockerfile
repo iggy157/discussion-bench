@@ -1,15 +1,16 @@
-# ゲームサーバ（Go）。build context = 作業ルート(aiwolf-nlp-demo/)
+# Werewolf game server (Go) for the UI / UI用の人狼ゲームサーバ(Go)
+# Build context = repo root (inlg/). Uses THIS repo's server/aiwolf so the human game
+# runs on the exact same server the experiments use.
 FROM golang:1.24 AS build
 WORKDIR /src
-COPY repos/aiwolf-nlp-server/ ./
+COPY server/aiwolf/ ./
 RUN CGO_ENABLED=0 go build -o /out/server .
 
 FROM alpine:3.20
 WORKDIR /app
-# main.go が起動時に ./config/.env を任意ロードするため空ファイルを用意（無くても致命的ではない）
 RUN mkdir -p config log cache && touch config/.env
 COPY --from=build /out/server /app/server
 EXPOSE 8080
 ENTRYPOINT ["/app/server"]
-# configs/ は compose で /app/configs にマウントする
-CMD ["-c", "/app/configs/server.yml"]
+# config is mounted at /app/config by compose; default to the 5-player werewolf config.
+CMD ["-c", "/app/config/default_5.yml"]

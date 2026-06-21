@@ -14,14 +14,19 @@
 |---|---|
 | demoのUI層を取り込み（viewer / lobby / Caddy / configs） | ✅ |
 | ロビーのAI起動を本リポジトリの `launcher` に差し替え（人狼・条件対応） | ✅ コードレベル検証済み |
+| ロビーをHiddenBenchにも対応（domain切替・4人固定・HB URL） | ✅ コードレベル検証済み |
 | ソロ/マルチ・卓マッチング・離脱時takeover（demo由来） | ✅ そのまま流用 |
 | 人間も同じ `server/aiwolf` + 同じ設定で対戦 | ✅ 設計どおり |
 | `/api/conditions` で条件一覧を返す | ✅ |
-| フロントに条件セレクタUI | ⬜ 未（次フェーズ） |
-| 上部ナビ（AIWolf / HiddenBench 切替） | ⬜ 未 |
-| HiddenBenchページ | ⬜ 未 |
-| lobby Dockerイメージに本リポジトリのagent同梱 | ⬜ 未（今はローカル実行向け） |
-| 実ブラウザでの通し動作確認 | ⬜ 未（要・実機） |
+| 人狼ページに条件セレクタUI | ✅ 実装（要ブラウザ検証） |
+| 上部ナビ（AIWolf / HiddenBench 切替、`+layout.svelte`） | ✅ 実装（要ブラウザ検証） |
+| HiddenBenchページ（`/hidden-bench`、条件選択＋議論UI） | ✅ 実装（要ブラウザ検証） |
+| docker compose 一発起動（game-server=server/aiwolf、lobby=本agent、caddy=viewer、HBサーバ） | ✅ 構成済み（要ビルド検証） |
+| lobby Dockerイメージに本リポジトリのagent同梱 | ✅ Dockerfile済み |
+| 実ブラウザ／SvelteKitビルドでの通し動作確認 | ⬜ 未（要・実機） |
+
+> Python側（ロビーの起動・設定生成）は `py_compile` ＋ `build_config` の実呼び出しで検証済みです。
+> フロント（SvelteKit）は当環境に pnpm/Node22 が無くビルド検証できていないため、**実機での確認が必要**です。
 
 ## 仕組み（差し替えのポイント）
 
@@ -35,7 +40,24 @@
 - LLMのモデル・プロバイダは**エージェント設定（`agent/aiwolf/config`）側**が決めます（実験と同一設定で人間も対戦するため、
   demoの `LLM_PROVIDER/LLM_MODEL` は適用しません）。
 
-## ローカルで動かす（暫定）
+## docker compose で起動（推奨）
+
+```bash
+# リポジトリ直下の .env を用意（APIキー・CONDITION・LANG_CODE）
+cp ../.env.example ../.env   # まだなら
+
+cd .   # inlg/ui
+docker compose up --build
+# ブラウザで:
+#   http://localhost/demo          … 人狼（AIWolf）
+#   http://localhost/hidden-bench   … HiddenBench
+# 上部ナビで両者を切替。AI席は画面の condition セレクタで選んだ条件で起動。
+```
+
+compose は game-server（=`server/aiwolf`）・hidden-bench-server（=`server/hidden-bench`）・
+lobby（本リポジトリの `agent`＋`launcher` 同梱）・caddy（viewer配信＋WSリバプロ）を立ち上げます。
+
+## ローカルで動かす（compose を使わない暫定）
 
 ```bash
 # 1) 人狼サーバを起動（別ターミナル）

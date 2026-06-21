@@ -95,6 +95,12 @@ def _derive9(url: str) -> str:
 GAME_WS_INTERNAL_URL_9 = _env("GAME_WS_INTERNAL_URL_9", "") or _derive9(GAME_WS_INTERNAL_URL)
 GAME_WS_PUBLIC_URL_9 = _env("GAME_WS_PUBLIC_URL_9", "") or _derive9(GAME_WS_PUBLIC_URL)
 
+# HiddenBench サーバ用URL（AI接続=内部、人間=公開）。固定4人・言語/サイズ変種なし。
+HB_WS_INTERNAL_URL = _env("HB_WS_INTERNAL_URL", "ws://127.0.0.1:8090/ws")
+HB_WS_PUBLIC_URL = _env("HB_WS_PUBLIC_URL", "ws://localhost:8090/ws")
+# HiddenBench の正準エージェント数（固定）。
+HB_AGENT_COUNT = 4
+
 # 対応する村サイズ（=サーバの agent_count）。最小/既定は 5。
 VALID_SIZES = {5, 9}
 
@@ -149,6 +155,16 @@ def with_room(url: str, room: str) -> str:
     from urllib.parse import quote
     sep = "&" if "?" in url else "?"
     return f"{url}{sep}room={quote(room, safe='')}"
+
+
+def public_ws_for(session: "Session") -> str:
+    """その卓に人間(ブラウザ)が接続する公開WebSocket URL（ドメイン別）。
+
+    werewolf は room 付きの公開URL、HiddenBench は固定卓の公開URL。
+    """
+    if session.domain == "hiddenbench":
+        return HB_WS_PUBLIC_URL
+    return with_room(public_url_for(session.size, session.language), session.room)
 
 # LLM 設定（.env 由来）。LLM_PROVIDER で openai|google|vllm を切替（HANDOFF §8）
 LLM_PROVIDER = _env("LLM_PROVIDER", "openai")
@@ -234,6 +250,7 @@ class Session:
     # --- Room（ソロ/マルチ）---
     mode: str = "solo"      # solo | multi
     condition: str = DEFAULT_CONDITION  # AI席に使う実験条件（baseline / script_fewshot ...）
+    domain: str = "aiwolf"  # aiwolf | hiddenbench（どちらのゲームか）
     code: str = ""          # マルチの合言葉（共有して同卓に入る）。ソロは空。
     # agent_prompts: この卓のサンプルAIに使うユーザ自作の「リクエスト別プロンプト」（任意）。
     # {request: text} の辞書。provider がトークンを実行時 Jinja に解決して上書き。空なら既定。
@@ -311,12 +328,13 @@ class Lobby:
 
     async def create_session(
         self, external_slots: int, size: int = 5, language: str = DEFAULT_LANGUAGE,
-        condition: str = DEFAULT_CONDITION,
+        condition: str = DEFAULT_CONDITION, domain: str = "aiwolf",
     ) -> Session:
-        # size = 村の人数（5 or 9）。external_slots = 外部接続数（人間 + 持ち込みエージェント）。
+        # size = 人数（werewolf:5/9、HiddenBench:4固定）。external_slots = 外部接続数（人間 + 持ち込み）。
         # 残り（size - external_slots）をサンプルAIで埋める。
-        # language = ゲーム言語。未対応なら provider が既定言語にフォールバックする。
-        if size not in VALID_SIZES:
+        if domain == "hiddenbench":
+            size = HB_AGENT_COUNT
+        elif size not in VALID_SIZES:
             size = 5
         external_slots = max(1, min(external_slots, size))
         language = PROMPT_PROVIDER.resolve_language(language)
@@ -336,16 +354,20 @@ class Lobby:
                 external_slots=external_slots,
                 language=language,
                 condition=condition,
+                domain=domain,
             )
             self.sessions[sid] = session
             self.queue.append(sid)
             return session
 
     async def join(
-        self, size: int = 5, language: str = DEFAULT_LANGUAGE, condition: str = DEFAULT_CONDITION
+        self, size: int = 5, language: str = DEFAULT_LANGUAGE, condition: str = DEFAULT_CONDITION,
+        domain: str = "aiwolf",
     ) -> Session:
-        # /demo の人間1枠（外部=人間1人、残りをAIが埋める）。後方互換用。
-        return await self.create_session(external_slots=1, size=size, language=language, condition=condition)
+        # 人間1枠（外部=人間1人、残りをAIが埋める）。
+        return await self.create_session(
+            external_slots=1, size=size, language=language, condition=condition, domain=domain
+        )
 
     # --- Room（ソロ/マルチ）---
     async def create_room(
@@ -358,11 +380,13 @@ class Lobby:
         agent_prompts: dict | None = None,
         my_ai_count: int = -1,
         condition: str = DEFAULT_CONDITION,
+        domain: str = "aiwolf",
     ) -> Session:
         """卓を作る。ソロは即開始（AI spawn）、マルチは待機（コード発行・ホスト参加）。
-        agent_prompts があれば、この卓のサンプルAIにユーザ自作のリクエスト別プロンプトを使う。
-        my_ai_count>=0 なら、AI席のうち my_ai_count 体だけ自作プロンプト・残りは既定（観戦の構成用）。"""
-        if size not in VALID_SIZES:
+        domain は aiwolf | hiddenbench。HiddenBench は4人固定。"""
+        if domain == "hiddenbench":
+            size = HB_AGENT_COUNT
+        elif size not in VALID_SIZES:
             size = 5
         language = PROMPT_PROVIDER.resolve_language(language)
         mode = "multi" if mode == "multi" else "solo"
@@ -383,6 +407,7 @@ class Lobby:
                 language=language,
                 mode=mode,
                 condition=condition,
+                domain=domain,
                 # solo: サンプルAIに自作プロンプトを使う(①)。multi: サンプルAIは既定とし、自作は
                 # host 参加者に持たせて「離脱時の takeover」に使う(②)。
                 agent_prompts=agent_prompts if mode == "solo" else {},
@@ -498,12 +523,18 @@ class Lobby:
         import subprocess
 
         GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-        # 各グループは ?room=<session.room> で同じ卓に集まる。グループごとに別チーム名。
-        ai_url = with_room(internal_url_for(session.size, session.language), session.room)
+        # AI が接続する内部URL。werewolf は ?room=<id> で卓を分離。HiddenBench は固定卓（room無し）。
+        if session.domain == "hiddenbench":
+            ai_url = HB_WS_INTERNAL_URL
+        else:
+            ai_url = with_room(internal_url_for(session.size, session.language), session.room)
         session.process = None
         for i, (prompts, count) in enumerate(specs):
             team = session.team if i == 0 else self._new_team(f"{session.display_name}-g{i}")
-            cfg = self._build_agent_config(team, count, ai_url, session.language, prompts, condition=session.condition)
+            cfg = self._build_agent_config(
+                team, count, ai_url, session.language, prompts,
+                condition=session.condition, domain=session.domain,
+            )
             cfg_path = GENERATED_DIR / (f"{session.id}.yml" if i == 0 else f"{session.id}-g{i}.yml")
             with cfg_path.open("w", encoding="utf-8") as f:
                 yaml.safe_dump(cfg, f, allow_unicode=True, sort_keys=False)
@@ -603,11 +634,13 @@ class Lobby:
         language: str = DEFAULT_LANGUAGE,
         custom_prompts: dict | None = None,  # noqa: ARG002 (kept for signature compat; conditions are used instead)
         condition: str | None = None,
+        domain: str = "aiwolf",
     ) -> dict[str, Any]:
         """Build OUR shared agent's merged config for one AI group, via the launcher.
 
         我々の共有エージェント設定を launcher.build_config で生成する。これにより AI 席は
         実験と同一のエージェント設定で動き、UI から選んだ condition（台本あり/なし等）が反映される。
+        domain は aiwolf | hiddenbench。
         """
         import sys as _sys
 
@@ -617,7 +650,7 @@ class Lobby:
 
         cfg: dict[str, Any] = build_config(
             agent_dir=AGENT_LLM_DIR,  # = inlg/agent
-            domain="aiwolf",
+            domain=domain,
             lang=_map_lang(language),
             condition=condition or DEFAULT_CONDITION,
             server_url=internal_url,
@@ -774,9 +807,10 @@ class JoinResponse(BaseModel):
 
 
 class JoinRequest(BaseModel):
-    size: int = 5  # 村の人数（5 or 9）
+    size: int = 5  # 村の人数（5 or 9。HiddenBenchは4固定）
     language: str = DEFAULT_LANGUAGE  # ゲーム言語（AIの発話/プロンプト言語）
     condition: str = DEFAULT_CONDITION  # AI席の実験条件（baseline / script_fewshot ...）
+    domain: str = "aiwolf"  # aiwolf | hiddenbench
 
 
 class StatusResponse(BaseModel):
@@ -868,7 +902,8 @@ async def join(req: JoinRequest | None = None) -> JoinResponse:
     size = req.size if req else 5
     language = req.language if req else DEFAULT_LANGUAGE
     condition = req.condition if req else DEFAULT_CONDITION
-    session = await lobby.join(size=size, language=language, condition=condition)
+    domain = req.domain if req else "aiwolf"
+    session = await lobby.join(size=size, language=language, condition=condition, domain=domain)
     # すぐ空きがあれば spawn を試みる
     await lobby._schedule()  # noqa: SLF001
     return JoinResponse(
@@ -879,7 +914,7 @@ async def join(req: JoinRequest | None = None) -> JoinResponse:
         status=session.status,
         position=lobby.position_of(session.id),
         # ws_url に ?room= を付与。フロントはこの URL に接続するだけで正しい卓に入る。
-        ws_url=with_room(public_url_for(session.size, session.language), session.room),
+        ws_url=public_ws_for(session),
         ai_count=session.ai_count,
         size=session.size,
         language=session.language,
@@ -921,7 +956,7 @@ async def create_byo(req: ByoRequest) -> ByoResponse:
     await lobby._schedule()  # noqa: SLF001
 
     # 持ち込みエージェントも人間も ?room=<session.room> を付けて同一卓(room)に入る。
-    pub_room = with_room(public_url_for(session.size, session.language), session.room)
+    pub_room = public_ws_for(session)
     human_url = None
     if human:
         # 既存 /demo の直接接続モード(?url=&team=)を再利用して人間が同卓に入る。
@@ -960,7 +995,7 @@ async def get_session(session_id: str) -> StatusResponse:
         team=session.human_team,
         status=session.status,
         position=lobby.position_of(session.id),
-        ws_url=with_room(public_url_for(session.size, session.language), session.room),
+        ws_url=public_ws_for(session),
         size=session.size,
         language=session.language,
         error=session.error,
@@ -988,6 +1023,7 @@ class CreateRoomRequest(BaseModel):
     agent_prompts: dict[str, str] = {}  # 自作AIのリクエスト別プロンプト（任意。本統合では未使用）。
     my_ai_count: int = -1            # AI席のうち自作AIにする数（観戦の構成用。-1=自作適用なら全AI）
     condition: str = DEFAULT_CONDITION  # AI席の実験条件（baseline / script_fewshot ...）
+    domain: str = "aiwolf"           # aiwolf | hiddenbench
 
 
 class JoinRoomRequest(BaseModel):
@@ -1023,7 +1059,7 @@ def _room_response(session: Session, token: str) -> RoomResponse:
     you = lobby.participant_of(session, token)
     ws = None
     if session.status == "running" and you is not None:
-        ws = with_room(public_url_for(session.size, session.language), session.room)
+        ws = public_ws_for(session)
     parts = [
         ParticipantInfo(display_name=p.display_name, team=p.team, is_host=(p.token == session.host_token))
         for p in session.participants
@@ -1078,7 +1114,7 @@ async def create_room(req: CreateRoomRequest) -> RoomResponse:
     session = await lobby.create_room(
         mode=req.mode, size=req.size, language=req.language, human_slots=req.human_slots,
         token=token, agent_prompts=req.agent_prompts, my_ai_count=req.my_ai_count,
-        condition=req.condition,
+        condition=req.condition, domain=req.domain,
     )
     if session.mode == "solo":
         await lobby._schedule()  # noqa: SLF001  ソロは即開始

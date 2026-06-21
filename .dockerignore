@@ -1,0 +1,13 @@
+# Keep docker build contexts small (context = repo root for the UI images).
+**/.git
+**/.venv
+**/node_modules
+**/build
+**/.svelte-kit
+**/__pycache__
+**/*.pyc
+**/log
+**/.ruff_cache
+**/.pytest_cache
+**/.generated
+ui/viewer/.svelte-kit

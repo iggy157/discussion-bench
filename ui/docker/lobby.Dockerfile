@@ -1,25 +1,42 @@
-# ロビーbackend（FastAPI）＋ agent-llm 同梱。build context = 作業ルート(aiwolf-nlp-demo/)
-# HANDOFF §6: AIエージェントはサービス化せず、ロビーイメージに同梱して subprocess 起動する。
+# Lobby backend (FastAPI) + THIS repo's shared agent + launcher.
+# ロビーbackend(FastAPI) ＋ 本リポジトリの共有エージェント＋ランチャを同梱。
+# Build context = repo root (inlg/). The lobby spawns AI seats by calling our launcher,
+# which builds the shared agent's config (domain=aiwolf + selected condition).
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# --- agent-llm を同梱しインストール（langchain 等の依存も入る）---
-COPY repos/aiwolf-nlp-agent-llm/ /app/agent-llm/
-RUN pip install --no-cache-dir /app/agent-llm
+# --- our shared agent + launcher + central config ---
+COPY agent/ /app/agent/
+COPY launcher/ /app/launcher/
+COPY config/ /app/config/
 
-# --- lobby 依存 ---
-COPY lobby/requirements.txt /app/lobby/requirements.txt
+# --- agent runtime deps (no uv in the image) ---
+RUN pip install --no-cache-dir \
+    "aiwolf-nlp-common==0.7.0" \
+    "langchain-openai>=0.3.9" \
+    "langchain-google-genai>=2.1.0" \
+    "langchain-anthropic>=1.3.0" \
+    "langchain-ollama>=0.3.0" \
+    "jinja2>=3.1.6" \
+    "pyyaml>=6.0.2" \
+    "python-dotenv>=1.1.0" \
+    "python-ulid>=3.0.0" \
+    "websocket-client>=1.7.0"
+
+# --- lobby deps + app + demo configs (server configs / i18n) ---
+COPY ui/lobby/requirements.txt /app/lobby/requirements.txt
 RUN pip install --no-cache-dir -r /app/lobby/requirements.txt
+COPY ui/lobby/ /app/lobby/
+COPY ui/configs/ /app/configs/
 
-# --- アプリ本体・設定テンプレ ---
-COPY lobby/ /app/lobby/
-COPY configs/ /app/configs/
-
-ENV AGENT_LLM_DIR=/app/agent-llm \
+ENV AGENT_LLM_DIR=/app/agent \
+    INLG_LAUNCHER_DIR=/app/launcher \
+    INLG_CONDITIONS=/app/config/conditions.yml \
+    AGENT_LLM_PYTHON=python \
     AGENTS_DIR=/app/configs/agents \
     DEFAULT_LANGUAGE=ja \
-    AGENT_LLM_PYTHON=python \
+    CONDITION=baseline \
     GENERATED_CONFIG_DIR=/app/lobby/.generated
 
 WORKDIR /app/lobby

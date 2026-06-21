@@ -25,6 +25,12 @@
 		reverse_proxy game-server:8080
 	}
 
+	# HiddenBench サーバへの WebSocket（/hb-ws を内部 /ws に書き換えて転送）
+	handle /hb-ws {
+		rewrite * /ws
+		reverse_proxy hidden-bench-server:8090
+	}
+
 	# 言語別サーバへの WebSocket ルート（/ws-<lang>, /ws9-<lang>）。
 	# scripts/gen_i18n.py が caddy/langs.caddy を生成し、caddy イメージへ COPY される。
 	import /etc/caddy/langs.caddy

@@ -1,0 +1,75 @@
+# INLG web UI — werewolf + HiddenBench human play in the browser.
+# INLG Web UI — 人狼とHiddenBenchをブラウザで人間プレイ。
+#
+# Build context is the repo root (..), so images can COPY this repo's server/ agent/
+# launcher/ config/. Run from inlg/ui:
+#   docker compose up --build      # then open http://localhost/demo (werewolf) or /hidden-bench
+#
+# Settings come from the single root .env (../.env): CONDITION / LANG_CODE / API keys.
+
+services:
+  # Werewolf game server (THIS repo's server/aiwolf, same config the experiments use).
+  game-server:
+    build:
+      context: ..
+      dockerfile: ui/docker/game-server.Dockerfile
+    image: inlg-ui-game-server:local
+    command: ["-c", "/app/config/${AIWOLF_SERVER_CONFIG:-default_5.yml}"]
+    volumes:
+      - ../server/aiwolf/config:/app/config:ro
+      - ./log/game:/app/log
+    expose: ["8080"]
+    restart: unless-stopped
+
+  # HiddenBench server (THIS repo's server/hidden-bench).
+  hidden-bench-server:
+    build:
+      context: ..
+      dockerfile: docker/server-hidden-bench.Dockerfile
+    image: inlg-hidden-bench-server:local
+    env_file: [../.env]
+    environment:
+      HB_LANG: ${LANG_CODE:-en}
+      CONDITION: ${CONDITION:-baseline}
+    expose: ["8090"]
+    restart: unless-stopped
+
+  # Lobby: session/queue/AI-spawn. Spawns OUR agent via OUR launcher (condition-aware).
+  lobby:
+    build:
+      context: ..
+      dockerfile: ui/docker/lobby.Dockerfile
+    image: inlg-ui-lobby:local
+    env_file: [../.env]
+    environment:
+      GAME_WS_INTERNAL_URL: ws://game-server:8080/ws
+      GAME_WS_PUBLIC_URL: ${GAME_WS_PUBLIC_URL:-ws://localhost/ws}
+      HB_WS_INTERNAL_URL: ws://hidden-bench-server:8090/ws
+      HB_WS_PUBLIC_URL: ${HB_WS_PUBLIC_URL:-ws://localhost/hb-ws}
+      DEFAULT_LANGUAGE: ${LANG_CODE:-ja}
+      CONDITION: ${CONDITION:-baseline}
+      MAX_CONCURRENT_GAMES: ${MAX_CONCURRENT_GAMES:-4}
+    depends_on: [game-server, hidden-bench-server]
+    expose: ["8002"]
+    restart: unless-stopped
+
+  # Caddy: serves the viewer + reverse-proxies /api, /ws, /hb-ws.
+  caddy:
+    build:
+      context: ..
+      dockerfile: ui/docker/caddy.Dockerfile
+    image: inlg-ui-caddy:local
+    environment:
+      DEMO_SITE_ADDRESS: ${DEMO_SITE_ADDRESS:-:80}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    depends_on: [lobby, game-server]
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

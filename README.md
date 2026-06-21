@@ -41,7 +41,8 @@ The repository **root is the control surface**; everything else is a component.
 | `server/aiwolf/` | Werewolf game server (Go). |
 | `server/hidden-bench/` | HiddenBench server (Python). |
 | `eval/` | Computes metrics from transcripts and writes a report. |
-| `web/` | Browser lobby for a human to take one HiddenBench seat (data collection). |
+| `ui/` | Full browser UI (vendored from aiwolf-nlp-demo): werewolf + HiddenBench human play, solo/multi, with a condition selector. Spawns AI seats via the launcher. |
+| `web/` | Minimal earlier prototype lobby for HiddenBench human play (superseded by `ui/`). |
 | `docs/` | Design and methodology notes (background; not needed to run the system). |
 
 ## Requirements
