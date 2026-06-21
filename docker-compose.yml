@@ -1,0 +1,88 @@
+# INLG unified system — werewolf (AIWolfDial) + HiddenBench in one compose.
+# INLG統合システム — 人狼(AIWolfDial)とHiddenBenchを1つのcomposeで.
+#
+# Lives at the repo root. The single root .env + this file + compose PROFILES select what
+# runs. Both domains are independent server+agent pairs on different ports (8080 werewolf,
+# 8090 HiddenBench), so they run concurrently (aiwolf-nlp-demo pattern).
+#
+# リポジトリ直下。ルートの .env + 本ファイル + profiles で実行内容を選ぶ。両ドメインは
+# 別ポートの独立 server+agent ペアなので同時起動可。
+#
+#   docker compose --profile hiddenbench up --build                    # HiddenBench only
+#   docker compose --profile aiwolf up --build                         # werewolf only
+#   docker compose --profile aiwolf --profile hiddenbench up --build   # BOTH at once
+
+services:
+  # ---------- Werewolf (AIWolfDial) ----------
+  aiwolf-server:
+    profiles: ["aiwolf"]
+    build:
+      context: .
+      dockerfile: docker/server-aiwolf.Dockerfile
+    image: inlg-aiwolf-server:local
+    command: ["-c", "/app/config/${AIWOLF_SERVER_CONFIG:-default_5.yml}"]
+    volumes:
+      - ./server/aiwolf/config:/app/config:ro
+      - ./log/aiwolf:/app/log
+    ports:
+      - "${AIWOLF_PORT:-8080}:8080"
+    restart: unless-stopped
+
+  aiwolf-agents:
+    profiles: ["aiwolf"]
+    build:
+      context: .
+      dockerfile: docker/agent.Dockerfile
+    image: inlg-agent:local
+    depends_on: [aiwolf-server]
+    env_file: [.env]
+    environment:
+      DOMAIN: aiwolf
+      LANG_CODE: ${LANG_CODE:-jp}
+      CONDITION: ${CONDITION:-baseline}
+      SERVER_URL: ws://aiwolf-server:8080/ws
+      TEAM: ${AIWOLF_TEAM:-inlg-wolf}
+      NUM: ${AIWOLF_NUM:-5}
+    volumes:
+      - ./log/aiwolf-agents:/app/agent/log
+    restart: "no"
+
+  # ---------- HiddenBench (collaborative reasoning) ----------
+  hidden-bench-server:
+    profiles: ["hiddenbench"]
+    build:
+      context: .
+      dockerfile: docker/server-hidden-bench.Dockerfile
+    image: inlg-hidden-bench-server:local
+    command: ["python", "src/server.py", "-c", "config/hiddenbench.yml"]
+    env_file: [.env]
+    environment:
+      # The root .env steers the server (see server load_config env overrides).
+      HB_LANG: ${LANG_CODE:-en}
+      CONDITION: ${CONDITION:-baseline}
+      HB_TASK_LIMIT: ${HB_TASK_LIMIT:-20}
+      HB_TOTAL_ROUNDS: ${HB_TOTAL_ROUNDS:-15}
+    volumes:
+      - ./log/hidden-bench:/app/log
+    ports:
+      - "${HB_PORT:-8090}:8090"
+    restart: unless-stopped
+
+  hidden-bench-agents:
+    profiles: ["hiddenbench"]
+    build:
+      context: .
+      dockerfile: docker/agent.Dockerfile
+    image: inlg-agent:local
+    depends_on: [hidden-bench-server]
+    env_file: [.env]
+    environment:
+      DOMAIN: hiddenbench
+      LANG_CODE: ${LANG_CODE:-en}
+      CONDITION: ${CONDITION:-baseline}
+      SERVER_URL: ws://hidden-bench-server:8090/ws
+      TEAM: ${HB_TEAM:-inlg-hb}
+      NUM: 4
+    volumes:
+      - ./log/hidden-bench-agents:/app/agent/log
+    restart: "no"

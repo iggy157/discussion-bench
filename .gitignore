@@ -32,8 +32,9 @@ bin/
 log/
 */log/
 **/log/
-log/results/
-inlg-web/log/human/
+server/hidden-bench/log/
+web/log/
+# merged agent configs the launcher writes to /tmp are outside the repo
 
 # --- OS / editor ---
 .DS_Store
