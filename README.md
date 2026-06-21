@@ -1,85 +1,122 @@
-# INLG 2026 — Scripts + Analysis for Multi-Party Discourse
+<!-- Language: **English** | [日本語](README.ja.md) -->
 
-One self-contained system for the INLG study: giving an LLM agent **full LLM-generated
-discussion scripts + analysis** (topic-independent examples) to fix multi-party discourse
-failures, evaluated across **two domains** — werewolf (AIWolfDial) and **HiddenBench**
-(hidden-profile collaborative reasoning) — with **one shared agent**.
+# Multi-Agent LLM Discussion Platform
 
-INLG研究の自己完結システム。**LLM生成の完全議論台本＋分析**を話題非依存の手本として与え、
-多人数談話の失敗を改善する。**人狼(AIWolfDial)** と **HiddenBench** の2ドメインを、
-**1つの共有エージェント**で戦い同一評価する。
+A platform for running and evaluating **multi-agent LLM discussions** in two environments:
 
-## One system, controlled from the root / ルートで一括制御される1システム
+- **Werewolf** — a social-deduction dialogue game (the AIWolfDial protocol, 5 players).
+- **HiddenBench** — a hidden-profile collaborative-reasoning task (4 agents each hold part
+  of the information and must discuss to reach the correct answer).
 
-The repo root **is** the system. Everything is steered from one place:
+A single configurable LLM agent plays both. You control everything from the repository
+root (`.env` + `config/`), run one or both environments with Docker or locally, and score
+the resulting transcripts with the bundled metrics toolkit. A small web lobby lets a human
+take one seat in a HiddenBench game (e.g. to collect human discussion data).
 
-| At the root | What it controls |
-|-------------|------------------|
-| `.env` | the single env everyone reads (secrets + `LANG_CODE`/`CONDITION`/ports) |
-| `config/inlg.yml` | human-readable control map of the whole system |
-| `config/conditions.yml` | the 6-condition (3×2) registry |
-| `docker-compose.yml` | both domains, concurrent via profiles |
-| `Makefile` / `run_local.sh` | run with docker / locally |
-| `launcher/` | picks domain·condition·lang → builds the agent config → runs |
+## What it does
 
-## Layout / 構成
+- Runs a full game/task in either environment and writes per-game transcripts and results.
+- Uses one agent codebase for both environments; the LLM provider (OpenAI / Google /
+  Anthropic / Ollama) and prompts are set in config.
+- Optionally injects example material into the agent's prompt (full transcripts,
+  single-utterance examples, or analysis notes) selected by a named **condition**; the
+  default condition (`baseline`) injects nothing.
+- Computes failure-mode metrics from transcripts (information surfacing, early convergence,
+  lexical diversity, conformity) and emits a bilingual report.
 
-```
-inlg/
-├── .env(.example)            # ★ single central env
-├── config/                   # ★ central control: inlg.yml + conditions.yml
-├── docker-compose.yml        # ★ both domains, profile-gated
-├── docker/                   #   Dockerfiles (agent, server-aiwolf, server-hidden-bench)
-├── launcher/                 #   domain/condition/lang -> agent config -> run
-├── Makefile  run_local.sh
-├── agent/                    # ★ ONE shared agent (drives both domains)
-│   ├── src/                  #   shared brain (agent.py, hiddenbench.py, starter, utils)
-│   ├── prompts/  data/       #   shared blocks + data
-│   ├── aiwolf/               #   werewolf domain pack: config/ + exemplars/
-│   └── hidden-bench/         #   HiddenBench domain pack: config/ + exemplars/
-├── server/
-│   ├── aiwolf/               #   werewolf (AIWolfDial) game server (Go, vendored)
-│   └── hidden-bench/         #   HiddenBench server (Python, faithful T=15)
-├── eval/                     # transcript failure-mode metrics -> bilingual report
-├── web/                      # human-in-the-loop HiddenBench lobby (data collection)
-└── docs/                     # INLG_SYSTEM / METHODOLOGY / VERIFICATION / ORCHESTRATION / EXEMPLARS
-```
+## Directory layout
 
-`agent/aiwolf/` and `agent/hidden-bench/` hold only the **domain-specific** config/exemplars;
-the shared brain lives once in `agent/src/` (this preserves the "one shared agent"
-fairness property — see docs/INLG_METHODOLOGY.md P2). `server/aiwolf/` and the agent are
-**vendored snapshots**; `aiwolf-nlp-common` is installed from PyPI (`==0.7.0`), not vendored.
+The repository **root is the control surface**; everything else is a component.
 
-## Read first / まず読む
-- [docs/INLG_SYSTEM.md](docs/INLG_SYSTEM.md) — the map / 全体図
-- [docs/INLG_METHODOLOGY.md](docs/INLG_METHODOLOGY.md) — defensible 6-condition design + citations
-- [docs/INLG_VERIFICATION.md](docs/INLG_VERIFICATION.md) — why the Go server can't host HiddenBench
+| Path | Role |
+|------|------|
+| `.env` / `.env.example` | The single settings file: language, condition, ports, and LLM API keys. Read by Docker Compose, the local runner, and the agent. |
+| `config/inlg.yml` | Human-readable map of the run settings (which environments, language, per-environment parameters). |
+| `config/conditions.yml` | Presets for the example-injection **conditions** (what gets fed into the agent prompt). |
+| `docker-compose.yml` | Defines both environments as Compose **profiles** (`aiwolf`, `hiddenbench`); run one or both. |
+| `docker/` | Dockerfiles: the agent image and the two server images. |
+| `launcher/` | Given (environment, language, condition), assembles the agent config and starts the agent processes. |
+| `Makefile`, `run_local.sh` | Entry points for Docker / local runs. |
+| `agent/` | The LLM agent that plays both environments. `src/` is the engine; `aiwolf/` and `hidden-bench/` hold each environment's config and example slots; `prompts/` and `data/` are shared. |
+| `server/aiwolf/` | Werewolf game server (Go). |
+| `server/hidden-bench/` | HiddenBench server (Python). |
+| `eval/` | Computes metrics from transcripts and writes a report. |
+| `web/` | Browser lobby for a human to take one HiddenBench seat (data collection). |
+| `docs/` | Design and methodology notes (background; not needed to run the system). |
 
-## Quick start / クイックスタート
+## Requirements
+
+- Docker + Docker Compose **or**, for local runs, [`uv`](https://docs.astral.sh/uv/),
+  Python 3.11+, and Go 1.24+ (only for the werewolf server).
+- An LLM provider API key (OpenAI / Google / Anthropic) **or** a local Ollama instance.
+
+## Configure
 
 ```bash
-cp .env.example .env          # set OPENAI_API_KEY / CLAUDE_API_KEY, LANG_CODE, CONDITION
-
-# Docker — both domains at once / 両ドメイン同時
-docker compose --profile aiwolf --profile hiddenbench up --build
-#   or: make both | make hiddenbench | make aiwolf
-
-# Local (no docker) / ローカル
-cd agent && uv sync && cd ..      # build the agent venv
-make local-hb                     # HiddenBench server + 4 agents
-
-# Evaluate / 評価
-make eval                         # -> server/hidden-bench/log/results/eval/report.md
-
-# Human data collection / 人間データ収集
-cd web && uv sync
-HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src app:app --port 8000
+cp .env.example .env
+# then edit .env:
+#   LANG_CODE=en|jp           language for both environments
+#   CONDITION=baseline        example-injection preset (see config/conditions.yml)
+#   OPENAI_API_KEY=...         (and/or GOOGLE_API_KEY / CLAUDE_API_KEY)
 ```
 
-## Status / 現状
-- All components built and smoke-tested (server↔agent integration, faithful transcript,
-  scoring, eval report). / 構築・スモークテスト済み。
-- **Exemplars are intentionally empty** (`agent/<pack>/exemplars/`). Add scripts /
-  utterance-fewshot / analysis later; non-baseline conditions fall back to baseline until
-  populated. / 手本は意図的に空。後から追加。
-- Running real agents needs LLM provider API keys (or local Ollama/Gemma).
+The LLM provider and model are set in the agent's environment config
+(`agent/aiwolf/config/…` and `agent/hidden-bench/config/…`); OpenAI is the default.
+
+## Run with Docker
+
+```bash
+docker compose --profile hiddenbench up --build              # HiddenBench only
+docker compose --profile aiwolf up --build                   # Werewolf only
+docker compose --profile aiwolf --profile hiddenbench up --build   # both at once
+
+# equivalent Make targets:
+make hiddenbench   |   make aiwolf   |   make both   |   make down   |   make logs
+```
+
+The two environments use different ports (8080 werewolf, 8090 HiddenBench), so they run
+side by side.
+
+## Run locally (no Docker)
+
+```bash
+cd agent && uv sync && cd ..      # build the agent's virtualenv once
+make local-hb                     # HiddenBench server + 4 agents
+make local-aiwolf                 # werewolf server (Go) + 5 agents
+# or directly:  ./run_local.sh hiddenbench
+```
+
+## Evaluate
+
+```bash
+make eval        # reads server/hidden-bench/log/results/, writes .../eval/report.md + metrics.json
+```
+
+The report aggregates metrics by condition, so running several conditions produces one
+comparison table.
+
+## Human participation (HiddenBench)
+
+```bash
+cd web && uv sync
+HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src app:app --port 8000
+# start the HiddenBench server + 3 agents, then open http://localhost:8000 to take the 4th seat
+```
+
+Each human session is saved under `web/log/human/` for later analysis.
+
+## How a run works
+
+1. A server (werewolf or HiddenBench) starts and waits for the required number of agents.
+2. The launcher builds the agent config for the chosen environment/language/condition and
+   starts the agent processes, which connect to the server over WebSocket.
+3. The server drives the game/task; the agent answers each request via its configured LLM.
+4. The server writes per-game results; `eval/` turns transcripts into metrics.
+
+## Notes
+
+- `server/aiwolf/` and `agent/` are vendored snapshots. The shared packet library
+  `aiwolf-nlp-common` is installed from PyPI (`==0.7.0`), not vendored.
+- The example-injection slots (`agent/<env>/exemplars/`) ship **empty**. Until you add
+  files, any non-`baseline` condition automatically behaves like `baseline`.
+- `.env`, virtualenvs, and `log/` are git-ignored. Never commit real API keys.
