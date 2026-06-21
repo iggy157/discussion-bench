@@ -1,82 +1,86 @@
-# INLG System — one system, two domains, six conditions
+# システム全体像
 
-This document is the map of the system that implements the INLG study (LLM-generated full
-discussion **scripts + analysis** as topic-independent examples to fix multi-party
-discourse failures), evaluated across **two domains** with **one shared agent**.
+このドキュメントは、本システムが「何を・どういう作りで実現しているか」を上から順に追える地図です。
+個々の使い方は [README](../README.ja.md) に、研究上の設計判断は
+[INLG_METHODOLOGY.md](INLG_METHODOLOGY.md) と [INLG_VERIFICATION.md](INLG_VERIFICATION.md) に
+それぞれ譲り、ここでは全体のかたちを掴むことに集中します。
 
-本書はINLG研究（話題非依存の手本＝完全議論台本＋分析で多人数談話失敗を改善）を実装する
-システム全体図です。**2ドメイン**を**1つの共有エージェント**で戦い、同一評価します。
+## 一言でいうと
 
-設計判断の根拠は [INLG_VERIFICATION.md](INLG_VERIFICATION.md)、手法の防御設計は
-[INLG_METHODOLOGY.md](INLG_METHODOLOGY.md) を参照。
+複数のLLMエージェントに議論をさせ、その様子を評価するためのプラットフォームです。議論の場は
+2種類用意してあります。ひとつは社会的推理の対話ゲームである**人狼**（AIWolfDialプロトコル、5人）、
+もうひとつは手がかりを分担して持ち寄り正解を導く**HiddenBench**（協調推論、4人）です。重要なのは、
+この2つをまったく同じ1つのエージェントがプレイするという点です。操作はすべてリポジトリ直下に
+集約されており、片方だけでも両方同時でも起動できます。
 
-## Design principle / 設計原則
+## なぜこういう作りなのか
 
-> **(P1)** Each domain runs its community's **canonical** harness (faithfulness-first).
-> **(P2)** The **intervention layer** (script/utterance/analysis injection, LLM, decoding,
-> token budget, #exemplars) is held **identical** across domains.
-> **(P3)** Failure-mode **transcript metrics** are computed by the **same** procedure in
-> both domains.
-> Fairness comes from P2/P3 — NOT from forcing the two games to share mechanics.
+人狼とHiddenBenchは、議論のルールも進め方もまるで違うゲームです。素朴に考えると環境ごとに別々の
+エージェントを用意したくなりますが、それでは「同じ条件で比べた」と言えなくなります。そこで本システムは、
+**エージェントの中身（プロンプトの組み立て・手本の注入・LLM呼び出し）は2環境で完全に共有し、
+ゲームの進行ルールだけを環境ごとに分ける**という方針を取っています。
 
-## Components / 構成要素
+言い換えると、公平性は「2つのゲームの仕組みを無理やり揃えること」ではなく、「介入する部分（エージェント側）と
+評価する部分（トランスクリプトの指標）を揃えること」で担保しています。各ゲームは、それぞれのコミュニティで
+標準とされる進め方に忠実に従います。この考え方の詳細は方法論ドキュメントにまとめてあります。
 
-The repo root is the control surface (`.env`, `config/inlg.yml`, `config/conditions.yml`,
-`docker-compose.yml`, `Makefile`, `launcher/`). Components hang off it:
+## 構成要素
 
-| Path | Role |
+リポジトリ直下が操作の起点（制御面）で、`.env`・`config/`・`docker-compose.yml`・`Makefile`・
+`launcher/` がここに置かれています。その下に、役割ごとの部品がぶら下がります。
+
+| パス | 役割 |
 |------|------|
-| [../agent/](../agent/) | The **one shared agent**. `src/` is the shared brain (incl. `src/agent/hiddenbench.py`); `aiwolf/` and `hidden-bench/` are domain packs (config + exemplar slots). Drives both domains. |
-| [../server/aiwolf/](../server/aiwolf/) | Werewolf (AIWolfDial) game server (Go). Vendored, **unmodified**. |
-| [../server/hidden-bench/](../server/hidden-bench/) | **New.** Faithful HiddenBench server (Python). 4 agents, fixed T=15 sequential, pre/post elicitation, scoring. Speaks the aiwolf-nlp-common wire protocol so the same agent drives it. |
-| [../eval/](../eval/) | **New.** Transcript failure-mode metrics (surfacing, convergence, diversity, conformity) → bilingual report. Self-defined/adapted metrics flagged. |
-| [../web/](../web/) | **New.** Minimal web lobby: a human plays one HiddenBench seat (human-data collection), via the same faithful protocol. |
-| [../launcher/](../launcher/) | **New.** Picks domain·condition·lang → builds the agent config (overlays the condition's scenario from `config/conditions.yml`) → runs the agents. |
-| [../docker-compose.yml](../docker-compose.yml) | **New.** Both domains, concurrent via profiles (`aiwolf`, `hiddenbench`). |
+| [../agent/](../agent/) | 両環境をプレイする**共有エージェント**。`src/` が頭脳本体（HiddenBench対応の `src/agent/hiddenbench.py` を含む）、`aiwolf/`・`hidden-bench/` が環境ごとの設定と手本スロット。 |
+| [../server/aiwolf/](../server/aiwolf/) | 人狼（AIWolfDial）ゲームサーバ（Go）。外部リポジトリを**無改造**で取り込み。 |
+| [../server/hidden-bench/](../server/hidden-bench/) | HiddenBenchサーバ（Python）。4エージェント・T=15ラウンド固定・事前/事後回答・採点までを忠実に実装。 |
+| [../eval/](../eval/) | トランスクリプトから失敗様態の指標を計算し、日英レポートを出力。 |
+| [../web/](../web/) | 人間がHiddenBenchの1席を担当するためのWebロビー（データ収集用）。 |
+| [../launcher/](../launcher/) | 環境・条件・言語を受け取り、エージェント設定を組み立てて起動する。 |
+| [../docker-compose.yml](../docker-compose.yml) | 2環境を profiles（`aiwolf` / `hiddenbench`）として定義。片方でも両方でも起動できる。 |
 
-## How the agent drives both domains / 1エージェントで両ドメイン
+## 1つのエージェントが両環境を動かせる理由
 
-The HiddenBench server reuses only request types that exist in aiwolf-nlp-common 0.7.0
-(NAME / INITIALIZE / TALK / FINISH) — **no library change**. HiddenBench per-turn context
-(phase / clues / options / round) rides in `info.profile` as JSON. The agent's
-`HiddenBenchAgent` parses it and routes the standard TALK to phase-specific prompts
-(`hb_pre` / `hb_discussion` / `hb_post`). Sequential turn order is enforced by the server
-eliciting agents strictly in order with the growing transcript — faithful to HiddenBench
-§4.2. The script/analysis injection (`_feed_scenario_chunk`) is the SAME code path as
-werewolf (P2).
+鍵になるのは、HiddenBenchサーバが**新しい通信規約を一切持ち込んでいない**点です。共有パケット
+ライブラリ `aiwolf-nlp-common`（0.7.0）に元からある NAME / INITIALIZE / TALK / FINISH の4種類だけで
+やり取りします。HiddenBench固有の文脈（いまが事前回答か議論か事後回答か、手がかり、選択肢、ラウンド番号）は、
+パケットの `info.profile` フィールドにJSONとして同梱して運びます。
 
-HiddenBenchサーバは aiwolf-nlp-common 0.7.0 既存のリクエスト型のみ使用（ライブラリ無改変）。
-フェーズ等は `info.profile` のJSONで運ぶ。逐次ターン順はサーバが順番に発話を引き出すことで担保。
+エージェント側の `HiddenBenchAgent` はこのJSONを読み取り、標準のTALKリクエストを場面ごとのプロンプト
+（`hb_pre` / `hb_discussion` / `hb_post`）に振り分けます。逐次のターン順は、サーバが1体ずつ順番に発話を
+引き出し、それまでの全発言を渡していくことで自然に守られます（HiddenBench論文 §4.2 に忠実）。そして
+手本（台本・分析）の注入は、人狼のときと**まったく同じコード経路**（`_feed_scenario_chunk()`）を通ります。
+これが「同じエージェントで両環境」を成立させている仕組みです。
 
-## Quick start / クイックスタート (run from repo root / リポジトリ直下で実行)
+## 動かし方（リポジトリ直下で実行）
 
 ```bash
-cp .env.example .env          # set OPENAI_API_KEY etc., LANG_CODE, CONDITION
+cp .env.example .env          # OPENAI_API_KEY 等・LANG_CODE・CONDITION を設定
 
-# Docker — both domains at once / 両ドメイン同時
+# Docker — 両環境同時
 docker compose --profile aiwolf --profile hiddenbench up --build
-#   make both | make hiddenbench | make aiwolf
+#   make both | make hiddenbench | make aiwolf でも可
 
-# Local (no docker) / ローカル
+# ローカル（Dockerなし）
 cd agent && uv sync && cd ..
-make local-hb                 # HiddenBench server + 4 agents
+make local-hb                 # HiddenBenchサーバ + 4エージェント
 
-# Evaluate / 評価
+# 評価
 make eval                     # -> server/hidden-bench/log/results/eval/report.md
 
-# Human data collection / 人間データ収集
+# 人間によるデータ収集
 cd web && uv sync && HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src app:app --port 8000
-# start the HiddenBench server + 3 LLM agents, then open http://localhost:8000 for the 4th seat
+# HiddenBenchサーバ + 3エージェントを起動し、http://localhost:8000 を開いて4席目に入る
 ```
 
-## Status / 現状
+## いまの状態
 
-- HiddenBench server, agent adapter, metrics, launcher, compose, web lobby: **built and
-  smoke-tested** (server↔real-client integration, faithful 4×T transcript, scoring, eval
-  report all verified).
-- **Exemplars are intentionally empty** (`agent/<pack>/exemplars/…`).
-  Add scripts / utterance-fewshot / analysis later; non-baseline conditions auto-fall back
-  to baseline until their exemplar directory is populated.
-- Running real LLM agents needs provider API keys (or a local Ollama/Gemma).
-- Open methodology decisions (werewolf protocol variant, Likert vs ranking, Gemma sizes)
-  are listed in [INLG_METHODOLOGY.md](INLG_METHODOLOGY.md) §7.
+サーバ・エージェントのHiddenBench対応・指標計算・ランチャ・compose・Webロビーは、いずれも構築済みで
+スモークテストも通っています（サーバと実クライアントの結合、忠実なトランスクリプト生成、採点、評価レポート
+までを確認済み）。
+
+一方で、手本スロット（`agent/<環境>/exemplars/`）は**意図的に空**のままにしてあります。台本・発話例・分析を
+あとから置く前提で、それまでは `baseline` 以外の条件を選んでも自動的に `baseline` と同じ挙動になります。実際に
+LLMエージェントを動かすにはプロバイダのAPIキー（またはローカルのOllama/Gemma）が必要です。実験設計として
+残っている検討事項（人狼の本番プロトコル、主観評価の尺度、Gemmaのサイズ）は方法論ドキュメントの末尾に
+まとめてあります。
