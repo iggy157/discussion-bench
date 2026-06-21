@@ -1,0 +1,70 @@
+# 手本注入の condition プリセットを1ファイルにまとめた定義。
+# （英語コメント版: conditions.yml。ランチャが読むのは conditions.yml なので、
+#  こちらは日本語の参照用コピー。値は両者で同一に保つこと。）
+#
+# ランチャ（../launcher/launch_agents.py）がこの定義を読み、選んだ（環境・言語・条件）に対して
+# `scenario` ブロックをエージェント設定に重ね、`condition` ラベルを付ける。既定の `baseline` は
+# 何も注入しない。
+#
+# パステンプレートの {domain_pack}/exemplars/{lang} は agent/ からの相対で解決される。
+# {domain_pack} は `aiwolf` または `hidden-bench`。
+#
+# `inject` には、その条件が注入する手本の種類を並べる。注入の仕組みは両環境で共通。
+
+conditions:
+  # (1) baseline: 指示文のみ。手本も分析も注入しない。
+  baseline:
+    label: baseline
+    inject: []
+    scenario:
+      enabled: false
+
+  # (2) analysis_only: 分析テキストのみ（台本・発話例なし）。
+  analysis_only:
+    label: analysis_only
+    inject: [analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: "{domain_pack}/exemplars/{lang}/analysis"
+
+  # (3) utterance_fewshot: 単一発話の例のみ（分析なし）。
+  utterance_fewshot:
+    label: utterance_fewshot
+    inject: [utterances]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances"
+
+  # (4) utterance_fewshot_analysis: 発話例 + 分析（(6)とトークン量を揃える）。
+  utterance_fewshot_analysis:
+    label: utterance_fewshot_analysis
+    inject: [utterances, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances"
+
+  # (5) script_fewshot: 完全な議論トランスクリプト（分析なし。(3)とトークン量を揃える）。
+  script_fewshot:
+    label: script_fewshot
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts"
+
+  # (6) script_fewshot_analysis: 完全トランスクリプト + 分析（最有力と見込む条件）。
+  script_fewshot_analysis:
+    label: script_fewshot_analysis
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      ack_mode: static
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts"

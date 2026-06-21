@@ -1,50 +1,47 @@
-# HiddenBench server config / HiddenBenchサーバ設定
+# HiddenBench server config.
+# (Japanese-commented copy: hiddenbench.ja.yml)
 #
 # Faithful reproduction of Li, Naito & Shirado (arXiv:2505.11556):
 #   agent_count: 4, total_rounds: 15 (fixed, no early stopping).
-# 論文 (2505.11556) に忠実: 4エージェント・15ラウンド固定・早期終了なし.
+#
+# The root .env can override lang/condition/task_limit/total_rounds via
+# HB_LANG / CONDITION / HB_TASK_LIMIT / HB_TOTAL_ROUNDS.
 
-# WebSocket listen address / WebSocket待受
+# WebSocket listen address
 host: 0.0.0.0
 port: 8090
 
-# Agents per game (HiddenBench canonical = 4) / 1ゲームのエージェント数 (正準=4)
+# Agents per game (canonical = 4)
 agent_count: 4
 
-# Fixed number of sequential discussion rounds (paper T=15) / 逐次議論ラウンド数 (論文 T=15)
+# Fixed number of sequential discussion rounds (paper T=15)
 total_rounds: 15
 
-# Language of task content delivery / タスク内容の言語
+# Language of task content delivery
 #   en -> data/benchmark.json (upstream English set)
 #   ja -> data/benchmark.ja.json if present, else falls back to English
 lang: en
 
-# Experiment condition label recorded in results (one of the 3x2 cells) /
-# 結果に記録する実験条件ラベル (3x2のいずれか)
-#   baseline | analysis_only | utterance_fewshot | utterance_fewshot_analysis |
-#   script_fewshot | script_fewshot_analysis
+# Condition label recorded in results (one of the presets in config/conditions.yml)
 condition: baseline
 
-# Which tasks to run (held-out exemplar leakage control is the experimenter's duty:
-# evaluation ids must be disjoint from exemplar ids — see INLG_METHODOLOGY.md §3.2 L1).
-# 評価タスクの指定 (手本に使うタスクIDと重複させないこと).
+# Which tasks to run. Keep evaluation ids disjoint from any exemplar task ids.
 #   task_ids: [1, 2, 3]   # explicit ids, OR
 #   task_limit: 20        # first N tasks
 task_ids:
 task_limit: 20
 
-# Repeat each task this many times (HiddenBench paper uses 10 sessions/task) /
-# 各タスクの反復回数 (論文は10セッション/タスク)
+# Repeat each task this many times (the paper uses 10 sessions/task)
 repeats_per_task: 1
 
-# Round-robin distribution + per-agent shuffle seed / 配分・シャッフル種
+# Round-robin distribution + per-agent shuffle seed
 seed: 42
 
-# Timeouts (ms) / タイムアウト
+# Timeouts (ms)
 action_timeout_ms: 60000
 response_timeout_ms: 120000
 
-# Where task data lives, relative to project root / タスクデータの場所 (プロジェクト相対)
+# Task data location (relative to project root)
 data_dir: data
-# Where per-game result JSON is written (consumed by inlg-eval) / 結果JSON出力先
+# Per-game result JSON output (consumed by eval/)
 output_dir: log/results

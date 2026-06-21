@@ -1,0 +1,42 @@
+# 中央コントロールファイル — システム全体を一望するための読み物。
+# （英語コメント版: inlg.yml）
+#
+# 実行内容をここに一覧としてまとめている。実際の操作はリポジトリ直下の `.env`
+# （秘密情報 + LANG_CODE / CONDITION / ポート）で行い、docker compose と run_local.sh が
+# それを読む。このファイルと `.env` は内容を揃えておくこと（こちらが可読の正本）。
+
+system:
+  name: "マルチエージェントLLM議論プラットフォーム"
+  # 各部品の置き場所。
+  components:
+    agent:   agent/                 # 共有エージェント。環境別packは agent/{aiwolf,hidden-bench}/ 配下
+    servers:
+      aiwolf:       server/aiwolf/       # Go製の人狼(AIWolfDial)サーバ
+      hidden_bench: server/hidden-bench/ # Python製のHiddenBenchサーバ
+    eval:    eval/                  # トランスクリプトの失敗様態指標
+    web:     web/                   # 人間参加用ロビー
+    launcher: launcher/             # 環境/条件/言語 -> エージェント設定 -> 起動
+    conditions: config/conditions.yml  # 手本注入の condition プリセット
+
+run:
+  # .env で選んでいる内容のミラー（可読性・ドキュメント用）。
+  lang: en                # jp | en
+  condition: baseline     # プリセットのいずれか（config/conditions.yml 参照）
+  environments:           # 起動する環境。compose では同名の profiles を使う
+    - hiddenbench
+    - aiwolf
+
+environments:
+  aiwolf:
+    server_config: server/aiwolf/config/default_5.yml   # 5人村
+    port: 8080
+    agents: 5
+  hiddenbench:
+    server_config: server/hidden-bench/config/hiddenbench.yml
+    port: 8090
+    agents: 4               # 固定
+    total_rounds: 15
+    task_limit: 20          # 全65タスクのうち何件を回すか
+
+# LLMのプロバイダや復号設定は、環境別のエージェント設定
+# （agent/<環境>/config/config.*.yml）で指定する。

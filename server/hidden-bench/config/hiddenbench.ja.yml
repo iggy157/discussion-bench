@@ -1,0 +1,48 @@
+# HiddenBenchサーバの設定。
+# （英語コメント版: hiddenbench.yml。サーバが読むのは hiddenbench.yml なので、
+#  こちらは日本語の参照用コピー。値は両者で同一に保つこと。）
+#
+# Li, Naito & Shirado (arXiv:2505.11556) を忠実に再現:
+#   agent_count: 4、total_rounds: 15（固定・早期終了なし）。
+#
+# ルートの .env から HB_LANG / CONDITION / HB_TASK_LIMIT / HB_TOTAL_ROUNDS で
+# lang / condition / task_limit / total_rounds を上書きできる。
+
+# WebSocketの待受アドレス
+host: 0.0.0.0
+port: 8090
+
+# 1ゲームのエージェント数（正準は4）
+agent_count: 4
+
+# 逐次議論ラウンド数（論文の T=15）
+total_rounds: 15
+
+# タスク内容を配信する言語
+#   en -> data/benchmark.json（上流の英語データ）
+#   ja -> data/benchmark.ja.json があればそれを、無ければ英語にフォールバック
+lang: en
+
+# 結果に記録する条件ラベル（config/conditions.yml のプリセットのいずれか）
+condition: baseline
+
+# 実行するタスクの指定。評価に使うIDは手本タスクのIDと重複させないこと。
+#   task_ids: [1, 2, 3]   # IDを明示、または
+#   task_limit: 20        # 先頭からN件
+task_ids:
+task_limit: 20
+
+# 各タスクを何回繰り返すか（論文は10セッション/タスク）
+repeats_per_task: 1
+
+# ラウンドロビン配分 + エージェント内シャッフルの種
+seed: 42
+
+# タイムアウト（ミリ秒）
+action_timeout_ms: 60000
+response_timeout_ms: 120000
+
+# タスクデータの場所（プロジェクトルート相対）
+data_dir: data
+# ゲームごとの結果JSONの出力先（eval/ が読む）
+output_dir: log/results

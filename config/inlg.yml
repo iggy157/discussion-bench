@@ -1,46 +1,42 @@
-# INLG — central control file (human-readable map of the whole system).
-# INLG — システム全体の中央コントロールファイル (人間が読む統制マップ).
+# Central control file — a human-readable map of the whole system.
+# (Japanese-commented copy: inlg.ja.yml)
 #
 # This documents the run surface in one place. The OPERATIONAL knob is the root `.env`
 # (secrets + LANG_CODE/CONDITION/ports), which docker compose and run_local.sh consume.
 # Keep this file and `.env` in sync; this file is the readable source of truth.
-#
-# 実際の操作はルート `.env` (秘密情報 + LANG_CODE/CONDITION/ポート) で行う。compose と
-# run_local がそれを読む。本ファイルは可読な真実の所在として `.env` と同期させる。
 
 system:
-  name: "INLG 2026 — scripts + analysis for multi-party discourse"
-  # Where each piece lives / 各部品の所在
+  name: "Multi-agent LLM discussion platform"
+  # Where each piece lives.
   components:
-    agent:   agent/                 # one shared agent; domain packs under agent/{aiwolf,hidden-bench}/
+    agent:   agent/                 # one shared agent; per-environment packs under agent/{aiwolf,hidden-bench}/
     servers:
       aiwolf:       server/aiwolf/       # Go werewolf (AIWolfDial) server
       hidden_bench: server/hidden-bench/ # Python HiddenBench server
     eval:    eval/                  # transcript failure-mode metrics
     web:     web/                   # human-in-the-loop lobby
-    launcher: launcher/             # domain/condition/lang -> agent config -> run
-    conditions: config/conditions.yml  # the 6-condition registry
+    launcher: launcher/             # environment/condition/lang -> agent config -> run
+    conditions: config/conditions.yml  # the example-injection condition presets
 
 run:
   # Mirror of the active selection in .env (for readability / docs).
   lang: en                # jp | en
-  condition: baseline     # one of the six (see config/conditions.yml)
-  domains:                # which to run; compose uses profiles of the same names
+  condition: baseline     # one of the presets (see config/conditions.yml)
+  environments:           # which to run; compose uses profiles of the same names
     - hiddenbench
     - aiwolf
 
-domains:
+environments:
   aiwolf:
     server_config: server/aiwolf/config/default_5.yml   # 5-player werewolf
     port: 8080
     agents: 5
-    # AIWolfDial-canonical: 5 players (seer/werewolf/possessed/2 villagers).
   hiddenbench:
     server_config: server/hidden-bench/config/hiddenbench.yml
     port: 8090
-    agents: 4               # canonical; fixed
-    total_rounds: 15        # faithful T=15, no early stop
-    task_limit: 20          # of 65; keep disjoint from exemplar tasks (leakage control)
+    agents: 4               # fixed
+    total_rounds: 15
+    task_limit: 20          # how many of the 65 tasks to run
 
-# Models / decoding are set per-domain in the agent mode configs
-# (agent/<pack>/config/config.*.yml). Generator=Claude, agents=Gemma, judge=GPT (see docs).
+# LLM provider and decoding are set per-environment in the agent configs
+# (agent/<env>/config/config.*.yml).

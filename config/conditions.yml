@@ -1,19 +1,15 @@
-# The six experimental conditions (3x2) of the INLG study, as a single registry.
-# INLG研究の6条件 (3x2) を1ファイルにまとめた定義.
+# The example-injection condition presets, as a single registry.
+# (Japanese-commented copy: conditions.ja.yml)
 #
-# The launcher (../launcher/launch_agents.py) reads this central registry and, for a chosen
-# (domain, lang, condition), overlays the `scenario` block onto the agent's mode config and
-# stamps the `condition` label. Standalone agent runs default to `baseline` (scenario off).
+# The launcher (../launcher/launch_agents.py) reads this registry and, for a chosen
+# (environment, lang, condition), overlays the `scenario` block onto the agent's config and
+# stamps the `condition` label. The default `baseline` injects nothing.
 #
-# ランチャ (../launcher/launch_agents.py) がこの中央レジストリを読み, 選んだ (ドメイン, 言語,
-# 条件) に対して scenario ブロックを重ね, condition ラベルを刻む. 単体既定は baseline.
-#
-# Path templates use {domain_pack}/exemplars/{lang}; resolved relative to the agent project
+# Path templates use {domain_pack}/exemplars/{lang}, resolved relative to the agent project
 # root (agent/), where {domain_pack} is `aiwolf` or `hidden-bench`.
-# パステンプレートは {domain_pack}/exemplars/{lang}; agent/ 相対で解決. domain_pack は aiwolf | hidden-bench.
 #
-# Each `inject` lists which exemplar kinds the condition feeds. The injection itself is the
-# SAME _feed_scenario_chunk() mechanism as werewolf (cross-domain fairness, methodology P2).
+# `inject` lists which example kinds the condition feeds. They go through the same prompt
+# injection mechanism for both environments.
 
 conditions:
   # (1) baseline: instructions only, no exemplars, no analysis.
