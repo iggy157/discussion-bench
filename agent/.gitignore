@@ -266,4 +266,6 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,windows,python,venv
 
-config/config.yml
+# NOTE: config YAMLs are committed (they carry no secrets; API keys live in the root .env).
+# Only the secret env file is ignored.
+config/.env
