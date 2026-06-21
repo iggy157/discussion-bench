@@ -1,51 +1,56 @@
-# 検証メモ：既存の人狼サーバでHiddenBenchを動かせるか
+<!-- Language: **English** | [日本語](VERIFICATION.ja.md) -->
 
-調査日: 2026-06-21
+# Verification: can the existing werewolf server host HiddenBench?
 
-HiddenBenchのために新しいサーバを一から書くべきか、それとも手元にある人狼サーバ
-（`aiwolf-nlp-server`、とくに「狼0人の純議論設定」である `playground.yml`）を流用できるか——
-実装方針を決めるために、まずこれを確かめました。結論から言えば**流用は不適**で、その理由を以下に残します。
+Investigated 2026-06-21.
 
-## まずHiddenBenchがどういう仕組みか
+Before writing a HiddenBench server from scratch, we checked whether the werewolf server we
+already have (`aiwolf-nlp-server`, in particular its zero-werewolf "pure discussion" config
+`playground.yml`) could be reused. The conclusion: **it is not suitable**, and here is why.
 
-HiddenBenchは「隠れプロファイル」と呼ばれる課題設定です（論文 arXiv:2505.11556、公式実装
-github.com/jonradoff/hiddenbench、データは HuggingFace `YuxuanLi1225/HiddenBench` の `benchmark.json`、
-全65タスク）。1タスクを4体のエージェントで解きます。
+## How HiddenBench actually works
 
-各タスクには、全員が共有する情報（`shared_information`）と、1人に1つずつ配られる秘密の手がかり
-（`hidden_information`）、選択肢（`possible_answers`）、そして正解（`correct_answer`）が定義されています。
-肝は、共有情報だけを見るとダミーの選択肢に誘導されるように作られていることです。全員が自分の秘密の手がかりを
-出し合って初めて正解にたどり着けます。
+HiddenBench is a "hidden profile" task (paper arXiv:2505.11556 by Li, Naito & Shirado;
+reference implementation github.com/jonradoff/hiddenbench; data on HuggingFace
+`YuxuanLi1225/HiddenBench`, `benchmark.json`, 65 tasks). Each task is solved by **4 agents**.
 
-進行は3つの段階に分かれます。まず**事前**として、各エージェントが討論前に「選択肢＋理由」をJSONで個別に
-回答します（事前正答率）。次に**議論**として、T=15ラウンドの逐次発話を行います（1巡目は順番に、以降は全員の
-最新発言と全履歴を見て応答）。最後に**事後**として、討論を踏まえて各自がもう一度回答します（これが主指標の
-事後正答率）。採点は選択肢に対する正答率で、事後−事前の「情報統合ゲイン」なども見ます。
+A task defines information shared with everyone (`shared_information`), one secret clue handed
+to each agent (`hidden_information`), the options (`possible_answers`), and the single correct
+answer (`correct_answer`). The key design: looking only at the shared information leads to a
+decoy option; only by pooling everyone's secret clues can the group reach the correct answer.
 
-## 人狼サーバに当てはめてみると
+Progress has three phases. **Pre**: each agent privately answers `{vote, rationale}` in JSON
+before discussion (pre-accuracy). **Discussion**: T=15 sequential rounds (round 1 in order;
+later rounds each responds after seeing all others' latest messages and the full history).
+**Post**: each agent answers again after discussion (this is the primary post-accuracy).
+Scoring is the proportion choosing the correct option, plus integration gain (post − pre).
 
-`playground.yml` は「狼0・全員村人5・昼の議論フェーズのみ・夜なし」という、ほぼ純粋な議論設定です。
-一見HiddenBench向きに思えますが、Goエンジン自体が人狼専用に作り込まれているため、HiddenBenchの要件を
-1つずつ当てはめると次のように行き詰まります。
+## Mapping it onto the werewolf server
 
-| HiddenBenchの要件 | 人狼サーバ側 | 判定 |
+`playground.yml` is "0 werewolves / 5 villagers / daytime talk only / no night", i.e. almost
+pure discussion. It looks suitable, but the Go engine is built specifically for werewolf, so
+mapping the HiddenBench requirements one by one runs aground:
+
+| HiddenBench requirement | Werewolf server | Verdict |
 |---|---|---|
-| 多巡・全履歴を見る議論 | 昼の議論フェーズで実現可能 | ✅ ここだけは合う |
-| 1人ずつ非対称な手がかりを配る | `info.profile` は人狼ペルソナ1本で、手がかり配布の仕組みがない | ❌ 強引 |
-| 事前/事後の個別回答（選択肢＋理由） | そのためのリクエスト型がない。投票は「エージェント」を選ぶもので選択肢を選べない | ❌ 不可 |
-| 選択肢に対する正誤採点 | 勝敗は村/狼のチーム単位で、「正解選択肢」という概念がない | ❌ 不可 |
-| 終了条件 | `util/game_util.go:28` の判定で狼が0なら即座に村勝利。狼の人口で終わる | ❌ 「N巡したら回答を集める」とは別物 |
+| Multi-round discussion with full history | the daytime talk phase can do this | ✅ this part fits |
+| Per-agent asymmetric clue distribution | `info.profile` is a single werewolf persona; no distribution mechanism | ❌ forced |
+| Pre/post individual answer (option + rationale) | no such request type; a vote targets an *agent*, not an option | ❌ impossible |
+| Scoring against a correct option | win/lose is by team (village/werewolf); no "correct option" concept | ❌ impossible |
+| Termination | `util/game_util.go:28` returns village-win immediately if werewolves=0; werewolf-population driven | ❌ unlike "collect answers after N rounds" |
 
-決め手は下の3行です。HiddenBenchの核心——非対称な手がかり配布・選択肢への事前/事後回答・選択肢の正誤採点——は、
-人狼のプロトコルに対応物がありません。投票で「選択肢B」を選ぶことは原理的にできず、終了条件も狼の人口で
-駆動されるため、議論をN巡してから回答を集めるという流れとはかみ合いません。
+The decisive rows are the bottom three. HiddenBench's core — asymmetric clue distribution,
+pre/post answers over a fixed option set, and option-based scoring — has no counterpart in the
+werewolf protocol. A vote cannot express "option B", and termination is driven by the werewolf
+population, which is unlike "discuss for N rounds, then collect answers".
 
-## 結論
+## Conclusion
 
-したがって、人狼サーバ（`playground.yml` を含む）はHiddenBenchの実験には不適です。かといってGoエンジンを
-大改造するのは、動いている人狼を壊すリスクが大きく、これも避けたいところです。
+Therefore the werewolf server (including `playground.yml`) is unsuitable for HiddenBench.
+Heavily refactoring the Go engine is also undesirable (it risks breaking working werewolf).
 
-採った方針は、**人狼は既存のGoサーバを無改造で使い、HiddenBenchには軽量なPythonサーバを新設する**という
-役割分担です。両者は同じWebSocketの通信規約を話すので、エージェント（頭脳）は両方に流用できます。HiddenBench
-サーバは公式実装の進行ロジックを忠実に再現し、本物の `benchmark.json` を直接読み込みます。そしてDocker Compose
-で2つのサーバを同時に立ち上げ、設定ひとつでどちらを動かすかを選べるようにしました。
+The chosen approach: **keep the werewolf server unmodified for werewolf, and add a small new
+Python server for HiddenBench**. Both speak the same WebSocket protocol, so the agent (the
+brain) is reused for both. The HiddenBench server reproduces the official protocol faithfully
+and reads the real `benchmark.json` directly. Docker Compose runs both servers concurrently,
+selectable by config.

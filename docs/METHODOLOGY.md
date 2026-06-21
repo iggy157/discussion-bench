@@ -1,188 +1,234 @@
-# 方法論：手本で多人数議論を改善する実験の設計
+<!-- Language: **English** | [日本語](METHODOLOGY.ja.md) -->
 
-作成日: 2026-06-21
+# Methodology: improving multi-party discussion with examples
 
-このドキュメントは、本システムの土台にある研究設計をまとめたものです。狙いと全体方針から始め、
-2つのドメインそれぞれの作り、介入（手本の与え方）の操作化、評価方法、規模、と順に具体へ下りていきます。
-論文として最も突かれにくい形を意識して書いています。
+Created 2026-06-21.
 
-## この研究のねらい
+This document is the research design under the system. It goes from the goal and the overall
+policy down to each domain's construction, the operationalization of the intervention (how
+examples are given), the evaluation, and the scale. It is written to be as defensible as
+possible for a paper.
 
-LLM同士の多人数議論には、繰り返し報告されている失敗のパターンがあります。手持ちの情報を出し惜しんで
-分散情報をうまく統合できない、最初の答えに固執して早々に収束してしまう、他者や多数派に流される、といった
-ものです。本研究は、これらを**指示文で直そうとするのではなく、良い議論の「手本」を見せることで直せないか**を
-検証します。具体的には、LLMが生成した「始めから終わりまでの完全な議論台本」と、そこから抽出した「分析（要点・
-どこに着目すべきか）」を、追加学習なし・話題に依存しない手本として与えます。
+## Goal
 
-## 設計の背骨：公平性をどこで担保するか
+LLM-vs-LLM multi-party discussion has repeatedly-reported failure patterns: withholding
+information so distributed knowledge is not pooled, fixating on the first answer and
+converging too early, and going along with others / the majority. This study asks whether
+these can be fixed **not by instructions, but by showing examples of good discussion**.
+Concretely, we give an LLM-generated "complete discussion script (start to finish)" and an
+"analysis (the key points / where to look)" extracted from it, as topic-independent examples
+with no extra training.
 
-検証する場（ドメイン）は2つです。社会的推理ゲームの**人狼**と、分散情報の協調推論である**HiddenBench**。
-この2つはゲームのルールも進め方もまったく違います。ここで素朴に「公平に比べるなら2つのゲームを同じ仕組みに
-揃えよう」と考えると、かえって破綻します。どちらかのドメインが、そのコミュニティで標準とされる進め方から
-外れてしまい、「本当にHiddenBench（あるいは人狼）をやったのか」と問われるからです。
+## Backbone: where fairness is held
 
-そこで本研究は、公平性を次の3点で担保します。
+There are two environments: **werewolf** (a social-deduction game) and **HiddenBench**
+(distributed-information collaborative reasoning). Their rules and flows are entirely
+different. Naively trying to "make the two games identical for a fair comparison" backfires:
+one domain would deviate from its community's standard, inviting "did you really run
+HiddenBench (or werewolf)?".
 
-- **(P1) 各ドメインは、それぞれのコミュニティの正準な進め方に忠実に従う。**
-- **(P2) 介入する部分——手本（台本・発話例・分析）の注入機構、使うLLM、復号設定、トークン予算、例数——を
-  両ドメインで完全に一定に保つ。**
-- **(P3) 失敗様態を測るトランスクリプト指標は、両ドメインで同一の手順で計算する。**
+So fairness is held by three points:
 
-つまり公平性は「ゲーム機構の同一化」ではなく、(P2) と (P3) で担保します。ドメイン機構が異なること自体は
-「2ドメインで検証する」という設計の前提であり、各正準仕様に従う限り批判されにくい、という立場です。
+- **(P1) Each domain follows its community's canonical flow faithfully.**
+- **(P2) The intervention layer — the example (script / utterance / analysis) injection
+  mechanism, the LLM, the decoding settings, the token budget, the number of examples — is
+  held completely identical across both domains.**
+- **(P3) The transcript metrics for failure modes are computed by the same procedure in both
+  domains.**
 
-## なぜ「同一プロトコルに寄せない」のか
+So fairness comes from (P2) and (P3), not from making the game mechanics identical. That the
+mechanics differ is the premise of a two-domain study, and is hard to criticize as long as
+each follows its canonical spec.
 
-調査の結果、2つのドメインの正準プロトコルは本質的に異なることが分かりました。HiddenBenchは、中央の進行役が
-逐次にターンを回す方式で、構造化された事前/事後回答を伴います（自由な群チャットではありません。4エージェント・
-T=15ラウンド・1巡目は順番・以降は全員の最新発言を見て応答・固定ラウンド。出典: Li, Naito & Shirado,
-arXiv:2505.11556 §4.2）。一方の人狼（AIWolfDial）は同期ターン制です（5人村、1日あたり1人4発話・計20発話、
-1発話125字（@メンションありで250字）、1分タイムアウト。出典: AIWolfDial 2024/2025 概要論文）。
+## Why not force a single protocol
 
-この2つを無理に1つの自由群チャットへ寄せると、どちらかの正準仕様から乖離します。そこで本システムは、
-**通信規約（WebSocket）とエージェントの頭脳（プロンプト構築・手本注入・LLM呼び出し・コスト計上）は共有しつつ、
-進行ロジック（ターン順・回答収集・終了条件）は各ドメインの正準仕様に忠実な別アダプタにする**という構成を
-採りました。これが忠実性と再現性を両立させる唯一の現実解です。
+The two domains' canonical protocols are fundamentally different. HiddenBench has a central
+moderator turning sequential turns with structured pre/post answers (not free group chat: 4
+agents, T=15 rounds, round 1 in order, later rounds responding after seeing all others, fixed
+rounds — Li, Naito & Shirado, arXiv:2505.11556 §4.2). Werewolf (AIWolfDial) is synchronized
+turn-based (5 players, 4 talks/agent/day = 20/day, 125 chars/talk (250 with @mention), 1-min
+timeout — AIWolfDial 2024/2025 overview papers).
 
-## ドメイン1：人狼（AIWolfDial準拠）
+Forcing both into one free group chat would deviate from one of the canonical specs. So the
+system **shares the wire protocol (WebSocket) and the agent's brain (prompt building, example
+injection, LLM calls, cost accounting), while the progression logic (turn order, answer
+collection, termination) is a separate adapter faithful to each domain's canonical spec.**
+This is the only realistic way to keep both faithfulness and reproducibility.
 
-ゲーム設定は AIWolfDial 2024/2025 の標準に合わせます。5人村（占い1・人狼1・狂人1・村人2）、同期ターン制トーク、
-1日4発話/人・計20発話、1発話125字（@メンションで250字）、Day0は挨拶のみ、1分タイムアウト。サーバは既存の
-`aiwolf-nlp-server` を無改造で用います（`config/default_5.yml` 系）。13人村は将来の拡張で、その場合はチームプレイの
-評価項目が加わります。
+## Domain 1: werewolf (AIWolfDial)
 
-なお人狼の本番プロトコルが同期ターン制か自由群チャットかは、JSAI 2026 本番の仕様に追従するのが最も防御的です
-（エージェントは両対応）。
+Game setup follows the AIWolfDial 2024/2025 standard: 5 players (1 seer / 1 werewolf / 1
+possessed / 2 villagers), synchronized turn-based talk, 4 talks/agent/day = 20/day, 125
+chars/talk (250 with @mention), Day 0 greetings only, 1-min timeout. The server is the
+existing `aiwolf-nlp-server`, unmodified (the `config/default_5.yml` family). 13-player is a
+future extension, which adds a team-play evaluation item.
 
-タスクの成否そのものは勝率（macro / micro / villager-doubled の標準集計）で見られますが、AIWolfDialの両概要論文が
-「ゲーム数が足りず勝率は不安定」と明記しているため、本研究でも同じ注意書きを添え、勝率は主指標にしません。
-主たる評価は、後述するトランスクリプト指標（両ドメイン共通）に置きます。
+Whether the production werewolf protocol is synchronized-turn or free group chat is most
+defensible to follow whatever the JSAI 2026 production spec uses (the agent supports both).
 
-## ドメイン2：HiddenBench（忠実再現）
+Task success itself can be read as win rate (macro / micro / villager-doubled standard
+aggregations), but both AIWolfDial overview papers explicitly note that win rate is unstable
+due to too few games, so this study adds the same caveat and does not make win rate the
+primary measure. The main evaluation is the transcript metrics below (shared across domains).
 
-HiddenBenchは出典に忠実に再現します。守るべき正準仕様は次のとおりです。
+## Domain 2: HiddenBench (faithful reproduction)
 
-| 項目 | 値 | 出典 |
+HiddenBench is reproduced faithfully. The canonical spec to keep:
+
+| Item | Value | Source |
 |---|---|---|
-| エージェント数 | 4 | 論文 §4.2 |
-| 議論ラウンド | **固定 T=15**（早期終了しない） | 論文 §4.2 |
-| ターン順 | 1巡目は順番、以降は全員の最新発言＋全履歴を見て応答 | 論文 §4.2 |
-| 事前/事後回答 | 各自が個別に `{"vote","rationale"}` をJSONで回答 | 公式実装 `prompts.py` |
-| 採点 | 平均ルール（正解選択割合）／多数決ルール（>50%） | 論文 §3 |
-| 派生指標 | 情報統合ゲイン = 事後−事前、集団推論ギャップ = full−事後 | 論文 |
-| タスク妥当性 | Full Profile精度 ≥80% かつ Hidden Profile精度 ≤20% | 論文 §5.1.2 |
-| データ | HuggingFace `YuxuanLi1225/HiddenBench`（全65タスク） | データカード |
+| Number of agents | 4 | paper §4.2 |
+| Discussion rounds | **fixed T=15** (no early stop) | paper §4.2 |
+| Turn order | round 1 in order; later rounds respond after seeing all others + full history | paper §4.2 |
+| Pre/post answer | each agent privately answers `{"vote","rationale"}` in JSON | official impl `prompts.py` |
+| Scoring | average rule (proportion correct) / majority rule (>50%) | paper §3 |
+| Derived | integration gain = post − pre; collective-reasoning gap = full − post | paper |
+| Task validity | Full-Profile accuracy ≥80% AND Hidden-Profile accuracy ≤20% | paper §5.1.2 |
+| Data | HuggingFace `YuxuanLi1225/HiddenBench` (65 tasks) | data card |
 
-引用にあたっては、パラダイム・指標・妥当性フィルタ・条件文言は**論文（Li et al.）**を、プロンプトの具体文字列や
-早期終了ヒューリスティックは**公式実装リポジトリ（Radoff）**を、それぞれ区別して引きます。とくに公式実装にある
-「合意したら早期終了」は論文には無い実装独自の挙動なので、本研究の主実験では論文準拠の固定T=15（早期終了なし）を
-採り、再現性を最優先します。
+For citation, cite the **paper (Li et al.)** for the paradigm, metrics, validity filter, and
+condition wording, and the **official repo (Radoff)** for concrete prompt strings and the
+early-stop heuristic — distinctly. In particular the repo's "stop early on consensus" is an
+implementation extra not in the paper, so the main experiment uses the paper's fixed T=15 (no
+early stop), prioritizing reproducibility.
 
-実装面では、HiddenBench用に軽量なPythonサーバを新設し、上記の進行を忠実に再現しています。通信は人狼と同じ
-WebSocket規約を流用しますが、進行はHiddenBenchの正準に従います。新しいリクエスト型は増やさず、いまが事前/議論/
-事後のどの場面かといった文脈はパケットの `info.profile` にJSONで載せて運びます。タスクの成否は事後正答率（主）・
-事前正答率・Full Profile精度・統合ゲイン・集団推論ギャップで評価します。
+Implementation-wise, a small new Python server reproduces the above faithfully. It reuses the
+same WebSocket protocol as werewolf but follows HiddenBench's canonical progression. No new
+request types are added; the context (which of pre/discussion/post the turn is) rides in the
+packet's `info.profile` as JSON. Task success is post-accuracy (primary), pre-accuracy,
+Full-Profile accuracy, integration gain, and collective-reasoning gap.
 
-## 介入の操作化：6条件（本研究の心臓部）
+## Operationalizing the intervention: six conditions (the heart of the study)
 
-中心となるのは、手本の与え方（3通り）×分析の有無（2通り）の3×2＝6条件です。
+The core is a 3×2 = six conditions: how the example is given (3) × analysis present (2).
 
-| | 分析なし | 分析あり |
+| | no analysis | with analysis |
 |---|---|---|
-| ベースライン | ① ベースライン | ② 分析のみ |
-| 発話few-shot | ③ 発話few-shot | ④ 発話few-shot＋分析 |
-| 台本few-shot | ⑤ 台本few-shot | ⑥ 台本few-shot＋分析（本命） |
+| baseline | ① baseline | ② analysis-only |
+| utterance few-shot | ③ utterance few-shot | ④ utterance few-shot + analysis |
+| script few-shot | ⑤ script few-shot | ⑥ script few-shot + analysis (expected best) |
 
-ここで使う「手本」は両ドメインで同じ作り方をします。**台本（script）**は、始めから終わりまでの完全な多人数議論
-トランスクリプトです（人狼なら5人村1ゲームの全文、HiddenBenchなら1タスクの討論全文＋事前/事後）。**発話few-shot**は、
-同じ台本群から切り出した単一発話単位の例で、議論全体の流れは含みません。**分析（analysis）**は、台本から抽出した
-「良い議論はこう進む／ここを見るべき」という要点記述で、命令ではなく観察として与えます。
+The "example" is built the same way in both domains. A **script** is a complete multi-party
+discussion transcript start to finish (for werewolf, a full 5-player game; for HiddenBench, a
+full task discussion + pre/post). **Utterance few-shot** is single-utterance examples sliced
+from the same scripts, without the whole-discussion flow. **Analysis** is key-point notes
+extracted from a script ("a good discussion proceeds like this / look here"), given as
+observation, not instruction.
 
-### 漏洩と話題依存を断つ（査読で最も重要）
+### Cutting leakage and topic-dependence (most important for review)
 
-手本がそのまま答えのヒントになっては実験が成立しません。3つの統制を機械的にかけます。
+If the example directly hints at the answer, the experiment is void. Three controls are
+applied mechanically:
 
-- **(L1) 評価と別インスタンスから作る。** 手本に使う台本・発話例・分析は、評価に使うゲーム/タスクとは別のものから
-  生成します。HiddenBenchなら65タスク中20タスクを評価に使い、手本は残りのタスク側から作る（タスクIDの重複ゼロを
-  機械的に保証）。人狼も評価とは別シードのゲームから作ります。
-- **(L2) 話題に依存させない。** 分析は「議論の進め方・着目点」に限定し、特定タスクの正解選択肢や固有事実は含めません
-  （含めると正解が漏れます）。生成後に分析テキストを点検し、正解語やタスク固有名を除去します。
-- **(L3) 生成・議論・審査を別系列のモデルに分ける。** 台本・分析の生成はClaudeに固定し、議論エージェントはGemma
-  （別系列）にして自己模倣の交絡を排します。さらに審査役はGPT（また別系列）にして、LLM審査の自己選好バイアスを
-  抑えます。
+- **(L1) Build from a disjoint instance.** Scripts/utterances/analysis come from games/tasks
+  different from the evaluation set. For HiddenBench, evaluate 20 of the 65 tasks and build
+  examples from the rest (task-id disjointness guaranteed mechanically). Werewolf uses
+  different seeds from evaluation.
+- **(L2) No topic-dependence.** Analysis is limited to "how a discussion proceeds / where to
+  look"; it must not include a task's correct option or specific facts (that would leak the
+  answer). After generation, inspect the analysis text and remove answer terms and
+  task-specific names.
+- **(L3) Separate model families for generation / discussion / judging.** Script & analysis
+  generation is fixed to **Claude**; the discussion agent is **Gemma** (a different family) to
+  remove self-imitation confounds; the judge is **GPT** (yet another family) to suppress
+  LLM-judge self-preference bias.
 
-### トークン量を揃える
+### Match token counts
 
-「発話単位の例か、議論全体か」だけを純粋に比べるため、③発話few-shot と ⑤台本few-shot は入力トークン数を一致
-させます。同様に ④発話few-shot＋分析 と ⑥台本few-shot＋分析 も一致させます。一致は文字数ではなく**議論エージェント
-（Gemma）の実トークナイザ**で測り、各セル×各ドメインの実トークン量を論文に表で明示します。①ベースラインと②分析のみは
-自然に少トークンになりますが、これは効果が情報量ではなく要点の質に由来することの傍証になるので、そのまま表に
-示します。注入の経路は6条件すべてで同一（本体はHumanMessage、分析はAIMessageまたは静的な承諾文）で、条件によって
-注入機構・履歴位置・キャッシュ方式を変えません。
+To purely compare "single-utterance example vs whole discussion", ③ utterance few-shot and ⑤
+script few-shot are matched on input token count, and likewise ④ utterance+analysis and ⑥
+script+analysis. Matching is measured not in characters but with the **discussion agent's
+(Gemma's) actual tokenizer**, and the per-cell × per-domain token counts are reported in a
+table. ① baseline and ② analysis-only are naturally low-token — that is itself evidence the
+effect comes from the quality of the key points, not information volume, so it is shown as-is.
+The injection path is identical for all six conditions (the body is a HumanMessage, the
+analysis is an AIMessage or a static acknowledgment); the mechanism, history position, and
+caching are not varied by condition.
 
-### 近縁手法 PRICoT との違い
+### Difference from the related method PRICoT
 
-PRICoT（Yamazaki et al., INLG2025, `2025.inlg-main.35`）も「成功/失敗の事後分析を抽出して後段に注入する」点で
-近縁です。敬意を払いつつ、本研究の差分を4点で明記します。PRICoTは(1)正解ラベルを使った教師あり分類が前提で、
-(2)再利用可能な汎化原則を蒸留して別問題へ転移し、(3)ベクトルDBで事例ごとに検索注入し、(4)オフライン構築→
-オンライン検索の二段構成です。本研究はいずれとも異なり、正解ラベルに依存せず、「良い議論の進め方」という手本を
-ゲーム開始時に一括提示する単段の文脈内手本です。
+PRICoT (Yamazaki et al., INLG2025, `2025.inlg-main.35`) is related in that it also extracts
+post-hoc analysis of successes/failures and injects it downstream. Respecting it, we note four
+differences. PRICoT (1) requires gold labels for supervised success/failure classification,
+(2) distills reusable, generalizable principles and transfers them to other problems, (3)
+retrieves and injects per-instance from a vector DB, and (4) is a two-stage offline-build →
+online-retrieve pipeline. This study differs on all four: it does not depend on gold labels,
+and presents a "how a good discussion proceeds" example all at once at game start — a single
+in-context example.
 
-## 評価方法（両ドメイン同一手順が公平性の背骨）
+## Evaluation (same procedure across domains is the fairness backbone)
 
-### 主観評価
+### Subjective evaluation
 
-本研究は**自己対戦**（全席が同一エージェント）なので、AIWolfDialのA〜Fルーブリックは採りません。あれは
-エージェント間の**相対評価（順位付け）**を前提とした枠組みで、他者対戦でないと意味をなさないためです。
+This study is **self-play** (all seats are the same agent), so AIWolfDial's A–F rubric is not
+used: it is a framework premised on **relative ranking between agents**, which is meaningless
+without cross-play.
 
-代わりに、**議論ログ全体**に対して次の3項目を絶対評価します：**自然さ／噛み合い・非矛盾／話題展開**。
-採点はLLM-judge（GPTを既定）が5段階Likertで行い、生成器Claude・議論エージェントGemmaとは別系列にして
-自己選好バイアスを抑えます（系列分離は L3 のとおり）。判定モデルは `eval/config/judge.yml` で一元管理し、
-APIキーはルートの `.env` から読みます。実装は `eval/src/judge.py`、一括実行は `make judge`。
+Instead, the **whole discussion log** is scored absolutely on three items: **naturalness /
+coherence (non-contradiction) / topic development**. An LLM-judge (GPT by default) rates them
+on a 5-point Likert scale, kept in a separate family from the Claude generator and Gemma
+discussion agent to suppress self-preference bias (family separation per L3). The judge model
+is centrally managed in `eval/config/judge.yml`, with the API key read from the root `.env`.
+Implementation: `eval/src/judge.py`; one-shot run: `make judge`.
 
-### 客観評価
+### Objective evaluation
 
-失敗様態ごとに指標を置きますが、ここで一つ重要な注意があります。調査の結果、**いくつかの「指標」は元論文に式が
-定義されていません**。論文の名前だけ借りて式をでっち上げると査読で崩れるので、自作した式は正直に「自作」と明記し、
-測度の根拠となる適切な原典を別に引きます。
+There is one important caveat per failure mode. After checking primary sources, **some
+"metrics" have no formula in their source paper**. Inventing a formula under a borrowed name
+collapses under review, so any self-defined formula is honestly flagged "self-defined", and a
+proper original source for the underlying measure is cited separately.
 
-| 失敗様態 | 採用する指標 | 出典の扱い |
+| Failure mode | Metric used | Source handling |
 |---|---|---|
-| 情報の出し惜しみ | **情報表面化率** ＝（未共有事実のうちトランスクリプトで1回以上言及された種類数）÷（未共有事実総数）。ルール照合で検出。結果指標としてHiddenBench事後正答率も併記。 | 一次資料で確認: **HiddenBenchは表面化率を定義していない**（精度系のみ）。実体は Lu, Yuan & McLeod 2012 の「information coverage」、祖は Stasser & Titus 1985。→ 帰属はLu・Stasserにし、HiddenBenchに帰属させない。 |
-| 早期収束 | **収束ラウンド** ＝ 全員が同一選択肢に一致した最小ラウンド。**重要事実表面化前の合意率** ＝ 合意成立が全重要事実の出揃いより前だった割合。 | 収束ラウンドは公式repoの `consensus_round` に一致（論文は固定T=15・早期終了なし）。「表面化前合意」は**自作**と明記。終端合意は Smit et al. ICML2024、ラウンド分解は Wu et al. 2511.07784。 |
-| 思考停滞・多様性 | **distinct-1/2**（分母＝総トークン数、Li et al.準拠）、**語彙的自己反復** ＝ 1−Self-BLEU（自分の過去発話に対して）。 | distinct-nは **Li et al. NAACL2016**（DMADではない）。Self-BLEUの原典は **Zhu et al. 2018 (Texygen)**、`100−Self-BLEU`枠は Liang et al. 2024。自分の履歴に対する適用は**自作変種**。表層n-gram重なりなので「**語彙的**」であって意味的ではない。**DMAD/DoTには帰属させない**。 |
-| 反射的同調 | **同調率/独立率**。各ラウンドで立場をポーリング（**ルールベース**：選択肢の最後の言及）し、多数派に対し少数派のときの反転/維持を計算。 | BenchForm (Weng et al. ICLR2025) の CR/IR を**適応**。BenchFormは台本confederate＋Raw基準線＋**ルールベース抽出**で、**IRはTrust∩Doubtの連言（≠1−CR）**。自由議論には基準線が無いため我々のIRは構成上1−CR——別物であることを明記。遷移分類は Talk Isn't Always Cheap。 |
+| Withholding information | **Information surfacing rate** = (# distinct unshared facts mentioned ≥1× in the transcript) ÷ (total unshared facts). Rule-based detection. Post-accuracy reported as the outcome indicator. | Verified against primary sources: **HiddenBench does not define a surfacing rate** (only the accuracy family). The real construct is Lu, Yuan & McLeod 2012 "information coverage", rooted in Stasser & Titus 1985. → attribute to Lu/Stasser, not HiddenBench. |
+| Early convergence | **Convergence round** = first round all agents share one option. **Pre-surfacing agreement rate** = fraction where consensus is reached before all critical facts have surfaced. | Convergence round matches the official repo's `consensus_round` (the paper fixes T=15, no early stop). "Pre-surfacing agreement" is **self-defined**. Terminal agreement: Smit et al. ICML2024; round resolution: Wu et al. 2511.07784. |
+| Stagnation / diversity | **distinct-1/2** (denominator = total tokens, per Li et al.), **lexical self-repetition** = 1 − Self-BLEU (vs the agent's own prior utterances). | distinct-n is **Li et al. NAACL2016** (not DMAD). Self-BLEU originates with **Zhu et al. 2018 (Texygen)**; the `100−Self-BLEU` framing is Liang et al. 2024. Applying it vs one's own history is a **self-defined variant**. It is surface n-gram overlap, so **lexical**, not semantic. **Do not attribute to DMAD/DoT.** |
+| Reflexive conformity | **Conformity / independence rate**. Per round, poll stances (**rule-based**: last-mentioned option) and compute flip/hold when an agent is in the minority vs the majority-of-others. | An **adaptation** of BenchForm's (Weng et al. ICLR2025) CR/IR. BenchForm uses scripted confederates + a Raw baseline + **rule-based extraction**, and its **IR is conjunctive over Trust∩Doubt (≠ 1−CR)**. Free discussion has no baseline, so our IR is 1−CR by construction — a different thing, stated as such. Transition taxonomy: Talk Isn't Always Cheap. |
 
-両ドメインへの当てはめは正直に線を引きます。distinct-n・語彙的自己反復・同調率・収束ラウンドは自然にドメイン汎用
-なので、両ドメインで同一に計算します（P3）。一方、情報表面化はHiddenBench固有の構成なので、人狼では類似構成
-（占いCO・占い結果・役職主張といった私的情報の開示率）を「ドメイン適応版」として報告し、HiddenBench版と同列には
-主張しません。
+The cross-domain application is drawn honestly. distinct-n, lexical self-repetition, conformity,
+and convergence round are naturally domain-general, so they are computed identically in both
+(P3). Information surfacing is HiddenBench-native, so for werewolf an analogous construct
+(disclosure rate of private info: seer CO, divination results, role claims) is reported as a
+"domain-adapted version", not claimed on par with the HiddenBench version.
 
-## モデルと規模
+## Models and scale
 
-議論エージェントには、規模への頑健性を安く・再現性高く見るためにGemmaの上位/下位2サイズを使います（生成器の
-Claudeとは別系列なので自己模倣の交絡がありません）。台本・分析の生成はClaude固定、審査役はGPT固定です。
+The discussion agent uses two Gemma sizes (upper/lower) to check scale robustness cheaply and
+reproducibly (a different family from the Claude generator, so no self-imitation confound).
+Script/analysis generation is fixed to Claude, the judge fixed to GPT.
 
-規模は、6条件 × 2ドメイン × 2モデルサイズ × 20ゲーム ＝ **240ゲーム**程度を見込みます。HiddenBenchの20タスクは
-65タスク中の異なる20を選んで偏りを避け、手本は残りのタスク側から作ります（L1）。人狼の20ゲームも別シードです。
-温度やmax_tokensなどの復号設定は全条件・全ドメインで固定して明記します（HiddenBench論文は温度を明示していませんが、
-公式実装の既定は0.7なので、本研究では固定値を宣言します）。HiddenBenchの協調〜対立5条件は、主実験では中立的な1条件に
-固定して交絡を避け、5条件の掃引は付録のロバストネス確認に回します（任意）。
+Scale is roughly 6 conditions × 2 domains × 2 model sizes × 20 games = **~240 games**.
+HiddenBench's 20 tasks are a distinct 20 of the 65 to avoid bias, with examples built from the
+rest (L1); werewolf's 20 games use different seeds. Decoding settings (temperature, max_tokens)
+are fixed and stated across all conditions and domains (the HiddenBench paper does not state
+temperature, but the official repo default is 0.7, so this study declares a fixed value). The
+HiddenBench cooperation–conflict 5 conditions are fixed to one neutral condition in the main
+experiment to avoid confounds; sweeping all 5 is left to an appendix robustness check
+(optional).
 
-## 今後決めること
+## Open decisions
 
-- 人狼の本番プロトコル（同期ターン制／自由群チャット）。JSAI 2026 本番の仕様に追従するのを推奨。
-- 主観LLM-judgeの審査モデル（既定GPT。`eval/config/judge.yml` で管理）。
-- Gemmaの具体的な2サイズ。
-- HiddenBenchの協調〜対立5条件を本実験に含めるか（主実験は1条件固定、付録で掃引を推奨）。
+- Werewolf production protocol (synchronized-turn / free group chat). Recommended to follow
+  the JSAI 2026 production spec.
+- Subjective LLM-judge model (GPT by default; managed in `eval/config/judge.yml`).
+- The two specific Gemma sizes.
+- Whether to include HiddenBench's cooperation–conflict 5 conditions (recommended: fix one in
+  the main experiment, sweep in an appendix).
 
-## 主要引用（版・出典を区別）
+## Key citations (distinguishing version / source)
 
-- HiddenBench: Li, Y., Naito, A., & Shirado, H. (2025). arXiv:2505.11556（パラダイム・指標・妥当性・条件）。
-  実装参照: `github.com/jonradoff/hiddenbench`（プロンプト文字列・早期終了は別実装と明記）。データ: HF `YuxuanLi1225/HiddenBench`。
-- AIWolfDial: 2024 `aclanthology.org/2024.aiwolfdial-1.pdf` / 2025 `2025.aiwolfdial-1.pdf`（プロトコル定数。A〜Fルーブリックは相対評価のため自己対戦の本研究では不採用）。
-- 隠れプロファイルの古典 / 情報coverage: Stasser & Titus 1985 (JPSP, DOI:10.1037/0022-3514.48.6.1467); Lu, Yuan & McLeod 2012 (PSPR 16(1))。
-- 多様性: distinct-n = Li et al. 2016 (NAACL, arXiv:1510.03055, 分母=総トークン); Self-BLEU = Zhu et al. 2018 (Texygen, SIGIR, arXiv:1802.01886); `100−Self-BLEU`枠 = Liang et al. 2024 (EMNLP, arXiv:2305.19118)。**DMAD = Liu et al. ICLR2025 は distinct-n/Self-BLEU/意味的多様性の出典にしない**（DMADの多様性は推論戦略の多様性）。
-- 同調: Weng et al. 2025 (ICLR, arXiv:2501.13381, CR/IR; IR≠1−CR); Wynn et al. 2025 (arXiv:2509.05396, 遷移の分類)。
-- 収束: Smit et al. 2024 (ICML, arXiv:2311.17371); Wu et al. 2025 (arXiv:2511.07784)。
-- 近縁手法: PRICoT, Yamazaki et al. INLG2025 `2025.inlg-main.35`（4点で差別化）。
+- HiddenBench: Li, Y., Naito, A., & Shirado, H. (2025). arXiv:2505.11556 (paradigm, metrics,
+  validity, conditions). Impl reference: `github.com/jonradoff/hiddenbench` (prompt strings /
+  early stop are a separate impl). Data: HF `YuxuanLi1225/HiddenBench`.
+- AIWolfDial: 2024 `aclanthology.org/2024.aiwolfdial-1.pdf` / 2025 `2025.aiwolfdial-1.pdf`
+  (protocol constants; the A–F rubric is relative, so not used in this self-play study).
+- Hidden-profile classics / information coverage: Stasser & Titus 1985 (JPSP,
+  DOI:10.1037/0022-3514.48.6.1467); Lu, Yuan & McLeod 2012 (PSPR 16(1)).
+- Diversity: distinct-n = Li et al. 2016 (NAACL, arXiv:1510.03055, denom = total tokens);
+  Self-BLEU = Zhu et al. 2018 (Texygen, SIGIR, arXiv:1802.01886); `100−Self-BLEU` framing =
+  Liang et al. 2024 (EMNLP, arXiv:2305.19118). **DMAD = Liu et al. ICLR2025 is not a source for
+  distinct-n / Self-BLEU / semantic diversity** (DMAD's diversity is reasoning-strategy diversity).
+- Conformity: Weng et al. 2025 (ICLR, arXiv:2501.13381, CR/IR; IR ≠ 1−CR); Wynn et al. 2025
+  (arXiv:2509.05396, transition taxonomy).
+- Convergence: Smit et al. 2024 (ICML, arXiv:2311.17371); Wu et al. 2025 (arXiv:2511.07784).
+- Related method: PRICoT, Yamazaki et al. INLG2025 `2025.inlg-main.35` (differentiated on 4 points).
