@@ -37,7 +37,8 @@
 | [../server/aiwolf/](../server/aiwolf/) | 人狼（AIWolfDial）ゲームサーバ（Go）。外部リポジトリを**無改造**で取り込み。 |
 | [../server/hidden-bench/](../server/hidden-bench/) | HiddenBenchサーバ（Python）。4エージェント・T=15ラウンド固定・事前/事後回答・採点までを忠実に実装。 |
 | [../eval/](../eval/) | トランスクリプトから失敗様態の指標を計算し、日英レポートを出力。 |
-| [../web/](../web/) | 人間がHiddenBenchの1席を担当するためのWebロビー（データ収集用）。 |
+| [../ui/](../ui/) | ブラウザUI（aiwolf-nlp-demo 由来）。人狼・HiddenBench の人間プレイ。AI席は launcher 経由で起動。 |
+| [../archive/](../archive/) | 廃止済み・参考用コンポーネント（例: 旧 `web/` ロビー。`ui/` に置換）。orchestration からは未参照。 |
 | [../launcher/](../launcher/) | 環境・条件・言語を受け取り、エージェント設定を組み立てて起動する。 |
 | [../docker-compose.yml](../docker-compose.yml) | 2環境を profiles（`aiwolf` / `hiddenbench`）として定義。片方でも両方でも起動できる。 |
 
@@ -68,11 +69,11 @@ cd agent && uv sync && cd ..
 make local-hb                 # HiddenBenchサーバ + 4エージェント
 
 # 評価
-make eval                     # -> server/hidden-bench/log/results/eval/report.md
+make eval                     # -> log/hidden-bench/results/eval/report.md
 
-# 人間によるデータ収集
-cd web && uv sync && HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src app:app --port 8000
-# HiddenBenchサーバ + 3エージェントを起動し、http://localhost:8000 を開いて4席目に入る
+# 人間によるデータ収集（ブラウザUI）
+cd ui && make up
+# その後 http://localhost/hidden-bench を開いて人間が1席を担当（人狼は /demo）
 ```
 
 ## 各コンポーネントを単体で動かす
@@ -89,16 +90,16 @@ cd web && uv sync && HB_URL=ws://127.0.0.1:8090/ws uv run uvicorn --app-dir src 
 - **UI**（`ui`）：`cd ui && docker compose up --build` → `/demo` と `/hidden-bench`。composeを使わない
   ローカル開発では `server/aiwolf`（`go run .`）・ロビー（`uvicorn main:app`）・ビューア（`pnpm dev`）を個別に起動。
   SvelteKitフロントは本リポジトリではブラウザ未検証。
-- **web**（`web`）：旧・最小のHiddenBenchロビー。`ui/` に置き換え済み（参照用に残置）。
+- **archive**（`archive/web`）：旧・最小のHiddenBenchロビー。`ui/` に置き換え済みで `archive/` に退避（参照用。orchestration からは未参照）。
 
 ## いまの状態
 
-サーバ・エージェントのHiddenBench対応・指標計算・ランチャ・compose・Webロビーは、いずれも構築済みで
+サーバ・エージェントのHiddenBench対応・指標計算・ランチャ・compose・ブラウザUIは、いずれも構築済みで
 スモークテストも通っています（サーバと実クライアントの結合、忠実なトランスクリプト生成、採点、評価レポート
 までを確認済み）。
 
 一方で、手本スロット（`agent/<環境>/exemplars/`）は**意図的に空**のままにしてあります。台本・発話例・分析を
 あとから置く前提で、それまでは `baseline` 以外の条件を選んでも自動的に `baseline` と同じ挙動になります。実際に
-LLMエージェントを動かすにはプロバイダのAPIキー（またはローカルのOllama/Gemma）が必要です。実験設計として
+LLMエージェントを動かすにはプロバイダのAPIキー（またはローカルの vLLM / Ollama 配信の Gemma）が必要です。実験設計として
 残っている検討事項（人狼の本番プロトコル、主観評価の尺度、Gemmaのサイズ）は方法論ドキュメントの末尾に
 まとめてあります。

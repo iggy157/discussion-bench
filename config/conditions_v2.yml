@@ -1,0 +1,88 @@
+# Revised condition registry (v2): example-type {none, utterance, situation, script} x analysis {no, yes}.
+# 8条件の要因計画。+analysis は全条件で「共通analysis」(analysis_common = 例非依存・本数非依存の1本) を参照。
+# 旧 conditions.yml（6条件・台本由来の3本analysis）は保持。台本本数スイープでどちらを使うか保留のため。
+#
+# 設計上のポイント:
+#   - analysis は全 +analysis 条件で完全同一（analysis_common/）。analysis を綺麗な交差因子にする。
+#   - utterance は従来どおり台本とトークン一致（既存 utterances/ を流用）。
+#   - situation は新ファミリ（中立な場面ラベル→話題非依存の発話例）。トークンは台本と無理に揃えず共変量で報告。
+
+conditions:
+  baseline:
+    label: baseline
+    inject: []
+    scenario:
+      enabled: false
+
+  analysis_only:
+    label: analysis_only
+    inject: [analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: request
+      reply: analysis
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_common"
+
+  utterance_fewshot:
+    label: utterance_fewshot
+    inject: [utterances]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances"
+
+  utterance_fewshot_analysis:
+    label: utterance_fewshot_analysis
+    inject: [utterances, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_common"
+
+  situation_fewshot:
+    label: situation_fewshot
+    inject: [situations]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/situations"
+
+  situation_fewshot_analysis:
+    label: situation_fewshot_analysis
+    inject: [situations, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/situations"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_common"
+
+  script_fewshot:
+    label: script_fewshot
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts"
+
+  script_fewshot_analysis:
+    label: script_fewshot_analysis
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_common"

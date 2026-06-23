@@ -1,0 +1,46 @@
+[project]
+name = "discussion-bench-generator"
+version = "0.1.0"
+description = "Exemplar generator: produces script/utterance/analysis slots via Claude (the fixed generator family, METHODOLOGY L3)."
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.69.0",
+    "openai>=1.50.0",
+    "google-genai>=1.0.0",
+    "jinja2>=3.1.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6.0",
+    "pyright>=1.1.380",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203",   # one-blank-line-before-class (conflicts with D211)
+    "D213",   # multi-line-summary-second-line (conflicts with D212)
+    "D413",   # blank line after last docstring section (not required by Google style)
+    "COM812", # trailing comma (formatter handles)
+    "T201",   # print() is intentional CLI/dry-run output
+    "RUF001", # ambiguous fullwidth chars — intentional in bilingual JP docstrings/strings
+    "TC001",  # type-only import into TYPE_CHECKING block — unneeded churn here
+    "TC003",  # stdlib type-only import into TYPE_CHECKING block — unneeded churn here
+    "PLR0913", # >5 args — the pipeline helpers are keyword-only and readable
+    "S105",   # "token_match" flagged as hardcoded password (false positive)
+    "S311",   # non-crypto random is fine for deterministic shuffling
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/prompts.py" = ["E501"]
+"src/tokens.py" = ["PLR2004"]  # Unicode block boundaries read clearer inline
+
+[tool.pyright]
+typeCheckingMode = "strict"
+include = ["src"]

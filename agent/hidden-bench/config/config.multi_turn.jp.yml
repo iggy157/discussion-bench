@@ -18,11 +18,19 @@ scenario:
 
 llm:
   # 議論エージェント: 規模頑健性検証のため Gemma 等の単一モデルを推奨 (生成器Claude/審査GPTと系列分離).
-  # ここでは可搬性のため openai 既定. vertexai/ollama/google へ差し替え可.
-  type: openai
+  # provider: vllm | openai | google | vertexai | ollama | anthropic.
+  # 既定は vLLM 配信の Gemma（model id と endpoint は下の vllm: セクション）。別バックエンドにする
+  # ときは provider を対応するセクション名に変更する。
+  provider: vllm
   sleep_time: 0
   # HiddenBenchは単一モデル (talk/actionの分離は不要).
   separate_langchain: false
+
+# 議論エージェントの既定: vLLM (OpenAI互換API) で配信する Gemma 上位モデル。
+vllm:
+  model: google/gemma-2-27b-it        # vLLM の --served-model-name と一致させる
+  base_url: http://localhost:8000/v1  # vLLM エンドポイント
+  temperature: 0.7
 
 openai:
   model: gpt-4o-mini

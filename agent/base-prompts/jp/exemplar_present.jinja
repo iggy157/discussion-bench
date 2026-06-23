@@ -1,0 +1,24 @@
+{#-
+  exemplar_present.jinja
+  手本 (完全台本 or 発話例) を提示する HumanMessage 本文。ドメイン中立 (人狼 / HiddenBench 共通)。
+  応答 (了解 or 分析) は後続の AIMessage で与えるため、ここでは「了解して返答せよ」とは書かない。
+  Expects:
+    scenario_bodies (list[str]), scenario_count (int)
+    exemplar_kind ('scripts' | 'utterances')
+-#}
+{% set _kind = exemplar_kind | default('scripts') -%}
+{% if _kind == 'utterances' -%}
+以下は、良い議論で見られた個々の発話の例です（{{ scenario_count }}件分のまとまり、議論全体の流れは含みません）。あなたが議論で発言するときの言い回し・テンポ・論点の出し方の参考にしてください。
+{%- else -%}
+以下は、良い議論の完全な記録（最初から最後まで）です（{{ scenario_count }}本）。あなたがこれから参加する議論の進め方・流れ・発言の質感の参考にしてください。
+{%- endif %}
+
+--- ここから ---
+
+{% for body in scenario_bodies %}
+{{ body }}
+
+---
+
+{% endfor %}
+--- ここまで ---

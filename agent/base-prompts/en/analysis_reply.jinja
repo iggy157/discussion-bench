@@ -1,0 +1,14 @@
+{#-
+  analysis_reply.jinja (English)
+  AIMessage body that delivers the analysis as the agent's own reflection (first person), so
+  it reads naturally as the reply to the exemplars/request in the preceding HumanMessage.
+  Domain-neutral. Expects: analysis_bodies (list[str]), analysis_count (int)
+-#}
+Understood. Here are the key points I'll keep in mind for a good discussion.
+
+{% for body in analysis_bodies %}
+{{ body }}
+{% if not loop.last %}
+---
+{% endif %}
+{% endfor %}

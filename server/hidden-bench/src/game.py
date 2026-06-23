@@ -137,7 +137,11 @@ async def run_game(
             response_timeout_ms=response_timeout_ms,
         )
 
-    # ---- INITIALIZE: deliver clues; agents acknowledge (reply discarded) ----
+    # ---- INITIALIZE: deliver clues; ONE-WAY (no reply). ----
+    # The agent treats INITIALIZE like werewolf does: it primes its own history (an internal
+    # LLM "Understood" turn in multi-turn mode) but sends NOTHING back over the wire
+    # (action() returns None for INITIALIZE). So the server must NOT await a reply here —
+    # doing so deadlocks (agent waits for the next packet while the server waits for a reply).
     for conn in conns:
         pkt = initialize_packet(
             game_id=game_id,
@@ -148,7 +152,10 @@ async def run_game(
             action_timeout_ms=action_timeout_ms,
             response_timeout_ms=response_timeout_ms,
         )
-        await conn.send_recv(pkt)
+        if conn.send is not None:
+            await conn.send(pkt)
+        else:  # pragma: no cover - mock conns without a send-only path
+            await conn.send_recv(pkt)
 
     # ---- PRE-DISCUSSION: individual decision (Y^pre) ----
     pre_decisions: dict[str, Decision] = {}

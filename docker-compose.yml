@@ -21,9 +21,11 @@ services:
       dockerfile: docker/server-aiwolf.Dockerfile
     image: discussion-bench-aiwolf-server:local
     command: ["-c", "/app/config/${AIWOLF_SERVER_CONFIG:-default_5.yml}"]
+    environment:
+      LOG_ROOT: /logs          # unified log tree -> host ./log/aiwolf/{json,game,realtime}
     volumes:
       - ./server/aiwolf/config:/app/config:ro
-      - ./log/aiwolf:/app/log
+      - ./log:/logs
     ports:
       - "${AIWOLF_PORT:-8080}:8080"
     restart: unless-stopped
@@ -43,8 +45,9 @@ services:
       SERVER_URL: ws://aiwolf-server:8080/ws
       TEAM: ${AIWOLF_TEAM:-discussion-bench-wolf}
       NUM: ${AIWOLF_NUM:-5}
+      LOG_ROOT: /logs          # launcher -> host ./log/aiwolf/agents
     volumes:
-      - ./log/aiwolf-agents:/app/agent/log
+      - ./log:/logs
     restart: "no"
 
   # ---------- HiddenBench (collaborative reasoning) ----------
@@ -62,8 +65,9 @@ services:
       CONDITION: ${CONDITION:-baseline}
       HB_TASK_LIMIT: ${HB_TASK_LIMIT:-20}
       HB_TOTAL_ROUNDS: ${HB_TOTAL_ROUNDS:-15}
+      LOG_ROOT: /logs          # -> host ./log/hidden-bench/results
     volumes:
-      - ./log/hidden-bench:/app/log
+      - ./log:/logs
     ports:
       - "${HB_PORT:-8090}:8090"
     restart: unless-stopped
@@ -83,6 +87,7 @@ services:
       SERVER_URL: ws://hidden-bench-server:8090/ws
       TEAM: ${HB_TEAM:-discussion-bench-hb}
       NUM: 4
+      LOG_ROOT: /logs          # launcher -> host ./log/hidden-bench/agents
     volumes:
-      - ./log/hidden-bench-agents:/app/agent/log
+      - ./log:/logs
     restart: "no"

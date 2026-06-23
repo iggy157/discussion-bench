@@ -3,12 +3,17 @@
 # discussion transcript on three subjective items (whole-log evaluation, faithful to the
 # self-play setting where per-agent relative scoring would be meaningless).
 
-# Provider: openai (and OpenAI-compatible endpoints via base_url) | mock (for testing, no API)
+# Provider (any model works; GPT is the default judge family per METHODOLOGY L3):
+#   openai   OpenAI GPT, or any OpenAI-compatible endpoint via base_url   (default)
+#   vllm     vLLM-served model (OpenAI-compatible; default base_url :8000/v1)
+#   ollama   Ollama-served model (OpenAI-compatible; default base_url :11434/v1)
+#   anthropic / google   Claude / Gemini-Gemma
+#   mock     offline testing, no API
 provider: openai
 model: gpt-4o
 temperature: 0.0
-# base_url:            # optional: OpenAI-compatible endpoint (vLLM / local / ollama-openai)
-api_key_env: OPENAI_API_KEY   # which env var holds the API key (read from the root .env)
+# base_url:            # optional: OpenAI-compatible endpoint override (vLLM / Ollama / local)
+api_key_env: OPENAI_API_KEY   # env var holding the key: OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY
 
 # Rubric language for the judge prompt (en | ja). The judge reads the transcript as-is.
 lang: en

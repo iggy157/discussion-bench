@@ -33,8 +33,28 @@ log/
 */log/
 **/log/
 server/hidden-bench/log/
-web/log/
 # merged agent configs the launcher writes to /tmp are outside the repo
+
+# --- Experiment results & run logs (data; regenerated per run; do NOT bloat the repo) ---
+results/
+serving/matrix_logs/
+serving/profile_logs/
+serving/*.log
+serving/*.out
+serving/MATRIX_DONE
+serving/PROFILE_DONE
+# per-worker / test aiwolf server configs the orchestrator generates on the fly
+server/aiwolf/config/aiwolf_w*.yml
+server/aiwolf/config/aiwolf_test_one.yml
+# compiled aiwolf Go binary — rebuild with `go build -o aiwolf-server .` on each host
+server/aiwolf/aiwolf-server
+
+# --- Generated / regenerable artifacts / 生成・再生成可能な成果物 ---
+# Human-readable mirror of the scenario prewarm cache (regenerate with
+# agent/scripts/render_scenario_cache.py). The FUNCTIONAL cache under
+# agent/data/scenario_cache/ is intentionally tracked so runs work without a prewarm step.
+# scenario_cache の人間可読ミラー（再生成可）。機能用 scenario_cache/ は prewarm 不要で動かすため意図的に追跡。
+agent/data/scenario_cache_readable/
 
 # --- OS / editor ---
 .DS_Store

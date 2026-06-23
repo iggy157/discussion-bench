@@ -8,7 +8,7 @@
 # Each prompt includes the 5 blocks (identity / event / history / instruction / constraints).
 
 llm:
-  type: google
+  provider: google
   # You may also specify model / temperature / pricing_mode / base_url directly under llm:
   # to override the matching <provider>: section (optional).
   # model: gemini-2.5-pro
@@ -17,12 +17,12 @@ llm:
   # llm.talk / llm.action accept model / temperature / pricing_mode / base_url too.
   # Fields set here override the matching <provider>: section; omitted fields fall back to it.
   # This lets you use "same provider, different models" (e.g. talk=openai+gpt-4o,
-  # action=openai+gpt-4o-mini). When `type` is omitted, it defaults to llm.type.
+  # action=openai+gpt-4o-mini). When `provider` is omitted, it defaults to llm.provider.
   talk:
-    type: openai
+    provider: openai
     model: gpt-4o
   action:
-    type: openai
+    provider: openai
     model: gpt-4o-mini
 
 openai:

@@ -18,11 +18,19 @@ scenario:
 
 llm:
   # Discussion agent: a single model (e.g. Gemma) is recommended for scale-robustness and
-  # cross-family separation from the Claude generator / GPT judge. openai by default for
-  # portability; swap to vertexai/ollama/google as needed.
-  type: openai
+  # cross-family separation from the Claude generator / GPT judge.
+  # Provider: vllm | openai | google | vertexai | ollama | anthropic.
+  # Default is vLLM-served Gemma (model id + endpoint in the vllm: section below). To use
+  # another backend, change provider to the matching section.
+  provider: vllm
   sleep_time: 0
   separate_langchain: false
+
+# Discussion-agent default: Gemma (upper) served by vLLM (OpenAI-compatible API).
+vllm:
+  model: google/gemma-2-27b-it        # must match the vLLM --served-model-name
+  base_url: http://localhost:8000/v1  # vLLM endpoint
+  temperature: 0.7
 
 openai:
   model: gpt-4o-mini

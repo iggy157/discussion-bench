@@ -38,7 +38,7 @@ The repository root is the control surface (`.env`, `config/`, `docker-compose.y
 | [../server/hidden-bench/](../server/hidden-bench/) | HiddenBench server (Python). 4 agents, fixed T=15 sequential, pre/post elicitation, scoring. |
 | [../eval/](../eval/) | Computes failure-mode metrics from transcripts + a subjective LLM-judge → bilingual report. |
 | [../ui/](../ui/) | Browser UI (vendored aiwolf-nlp-demo): werewolf + HiddenBench human play, solo/multi, with a condition selector. |
-| [../web/](../web/) | Earlier minimal HiddenBench lobby (superseded by `ui/`). |
+| [../archive/](../archive/) | Deprecated, reference-only components (e.g. the original `web/` lobby, superseded by `ui/`). Not wired into orchestration. |
 | [../launcher/](../launcher/) | Picks environment·condition·lang → builds the agent config → runs the agents. |
 | [../docker-compose.yml](../docker-compose.yml) | Both environments, concurrent via profiles (`aiwolf`, `hiddenbench`). |
 
@@ -67,7 +67,7 @@ cd agent && uv sync && cd ..
 make local-hb                 # HiddenBench server + 4 agents
 
 # Evaluate
-make eval                     # objective only  -> server/hidden-bench/log/results/eval/report.md
+make eval                     # objective only  -> log/hidden-bench/results/eval/report.md
 make judge                    # objective + subjective LLM-judge
 
 # Browser UI
@@ -90,13 +90,14 @@ component READMEs):
 - **UI** (`ui`): `cd ui && docker compose up --build` → `/demo` and `/hidden-bench`. For local
   dev without compose: run `server/aiwolf` (`go run .`), the lobby (`uvicorn main:app`), and the
   viewer (`pnpm dev`) separately. The SvelteKit frontend is not browser-verified in this repo.
-- **web** (`web`): the earlier minimal HiddenBench lobby, superseded by `ui/`; kept for reference.
+- **archive** (`archive/web`): the earlier minimal HiddenBench lobby, superseded by `ui/`;
+  retired to `archive/` for reference and not wired into orchestration.
 
 ## Status
 
-Servers, the agent's HiddenBench support, the metrics, launcher, compose, and the web lobby
+Servers, the agent's HiddenBench support, the metrics, launcher, compose, and the browser UI
 are built and smoke-tested (server↔real-client integration, faithful transcript, scoring,
 evaluation report). The example slots (`agent/<env>/exemplars/`) are **intentionally empty** —
 add scripts / utterance-fewshot / analysis later; until then non-`baseline` conditions behave
-like `baseline`. Running real agents needs LLM provider API keys (or a local Ollama/Gemma).
+like `baseline`. Running real agents needs LLM provider API keys (or a local vLLM / Ollama serving Gemma).
 The SvelteKit UI is not browser-tested in this environment — run it with `docker compose`.

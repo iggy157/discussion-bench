@@ -42,3 +42,18 @@ directory is absent, the inline config is used as a fallback.
   `agent/aiwolf/prompts/<lang>/single_turn/` if you want to externalize it too.
 - The shared base parts (`base-prompts/<lang>/`) are cross-system by design (one definition
   of "history", "constraints", etc.); only the per-request compositions are split by system.
+
+## Same convention across components
+
+Every component that has prompts uses the **same per-language split** — `prompts/<lang>/`
+(`en` | `jp`) — so the bilingual mechanism is uniform:
+
+| Component | Prompt files |
+|-----------|--------------|
+| agent | `agent/base-prompts/<lang>/*.jinja`, `agent/<pack>/prompts/<lang>/<mode>/*.jinja` |
+| generator | `generator/prompts/<lang>/*.jinja` (system / script / analysis) |
+| eval (judge) | `eval/prompts/<lang>/judge.txt` (`ja` accepted as an alias for `jp`) |
+
+Each language file is **authored natively** — the Japanese versions are written in idiomatic
+Japanese, not translated word-for-word from English (and vice-versa). There is no single
+"write in &lt;language&gt;" prompt with a language flag; pick the language directory instead.

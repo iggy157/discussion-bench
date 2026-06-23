@@ -75,6 +75,10 @@ def _merge_mode(main_config: dict[str, Any], main_path: Path) -> dict[str, Any]:
     child = _load_yaml(child_path)
     merged = {**main_config, **child}
     merged["mode"] = mode
+    # The merged config is already flat. Drop `configs` so the agent's own load_config does NOT
+    # try to re-resolve the (relative) child path against the merged file's location (/tmp),
+    # which would fail with FileNotFoundError.
+    merged.pop("configs", None)
     return merged
 
 
@@ -113,6 +117,21 @@ def _apply_condition(
             sample_dir,
         )
         scenario = {"enabled": False}
+    # analysis_dir (conditions ④/⑥): a SECOND injection on top of the primary examples.
+    # Format the template and, if missing/empty, drop just the analysis (keep the primary feed)
+    # so the +analysis condition degrades to its no-analysis sibling rather than breaking.
+    analysis_dir = scenario.get("analysis_dir")
+    if scenario.get("enabled") and analysis_dir:
+        analysis_dir = analysis_dir.format(domain=domain, domain_pack=_domain_pack(domain), lang=lang)
+        if _exemplar_dir_has_files(agent_dir, analysis_dir):
+            scenario["analysis_dir"] = analysis_dir
+        else:
+            logger.warning(
+                "condition '%s' wants analysis in %s but it is empty -> dropping analysis (primary examples kept)",
+                condition,
+                analysis_dir,
+            )
+            scenario.pop("analysis_dir", None)
     # Merge onto any existing scenario defaults (condition wins).
     merged["scenario"] = {**(merged.get("scenario") or {}), **scenario}
     return merged
@@ -143,6 +162,22 @@ def build_config(
     merged["agent"]["num"] = num
     # Ensure domain is explicit for the agent dispatch.
     merged["domain"] = domain
+    # Optional per-launch LLM endpoint override (parallel runs route workers to different vLLM
+    # servers). Sets base_url on the active provider section; the model/decoding are unchanged,
+    # so per-game quality is identical regardless of which endpoint serves it.
+    base_url_override = os.environ.get("LLM_BASE_URL")
+    if base_url_override:
+        llm_cfg = merged.get("llm") or {}
+        prov = str(llm_cfg.get("provider") or llm_cfg.get("type") or "vllm")
+        merged.setdefault(prov, {})
+        merged[prov]["base_url"] = base_url_override
+    # Centralize agent logs under one tree: <LOG_ROOT>/<pack>[/<LOG_SCOPE>]/agents. LOG_ROOT is
+    # set by the orchestrator (run_local / compose / ui) and defaults to the repo-root log/, so
+    # local and Docker share one location; LOG_SCOPE="web" (UI) splits web games into a subfolder.
+    log_root = os.environ.get("LOG_ROOT") or str(agent_dir.parent / "log")
+    scope = os.environ.get("LOG_SCOPE", "")
+    merged.setdefault("log", {})
+    merged["log"]["output_dir"] = str(Path(log_root) / _domain_pack(domain) / scope / "agents")
     # Overlay per-system prompt files (agent/<pack>/prompts/<lang>/<mode>/*.jinja) so the
     # written config is complete; the agent also loads these at runtime (main.py).
     merged = _apply_file_prompts(merged, agent_dir, domain, lang)
@@ -183,9 +218,17 @@ def main() -> None:
         sys.exit(2)
     # The 6-condition registry lives at the repo-root central config (agent_dir is discussion-bench/agent).
     # 6条件レジストリはリポジトリ直下の中央config (agent_dir は discussion-bench/agent).
-    conditions_path = agent_dir.parent / "config" / "conditions.yml"
-    if not conditions_path.is_file():
-        conditions_path = agent_dir / "config" / "conditions" / "conditions.yml"  # legacy fallback
+    # CONDITIONS_FILE env lets a run select an alternate registry (e.g. conditions_v2.yml) without
+    # editing the default. Absolute path, or relative to the repo root (agent_dir.parent).
+    conditions_env = os.environ.get("CONDITIONS_FILE")
+    if conditions_env:
+        conditions_path = Path(conditions_env)
+        if not conditions_path.is_absolute():
+            conditions_path = agent_dir.parent / conditions_env
+    else:
+        conditions_path = agent_dir.parent / "config" / "conditions.yml"
+        if not conditions_path.is_file():
+            conditions_path = agent_dir / "config" / "conditions" / "conditions.yml"  # legacy fallback
 
     merged = build_config(
         agent_dir=agent_dir,

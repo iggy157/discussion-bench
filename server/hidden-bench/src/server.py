@@ -17,11 +17,13 @@ import argparse
 import asyncio
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
 import websockets
 import yaml
+
 from game import AgentConn, run_game
 from task import load_tasks, resolve_benchmark_path, select_tasks
 
@@ -45,13 +47,39 @@ def load_config(path: Path) -> dict[str, Any]:
     _env_override(config, "condition", "CONDITION", str)
     _env_override(config, "task_limit", "HB_TASK_LIMIT", int)
     _env_override(config, "total_rounds", "HB_TOTAL_ROUNDS", int)
+    _env_override(config, "port", "HB_PORT", int)  # per-worker port for parallel runs
+    # Per-action wait limits. The densest tasks (long per-agent info) generate slowly at high
+    # rounds; under load a single talk can exceed the default 120s reply window and the server
+    # drops the game. Raising these only lets slow generations finish (model/decoding unchanged,
+    # so per-game quality is identical) — important for long-context production runs.
+    _env_override(config, "response_timeout_ms", "HB_RESP_TIMEOUT_MS", int)
+    _env_override(config, "action_timeout_ms", "HB_ACTION_TIMEOUT_MS", int)
+    # HB_TASK_IDS: comma-separated explicit task ids (e.g. "1,2,3"). Takes precedence over
+    # task_limit. Lets an orchestrator run one specific task per server launch.
+    task_ids_env = os.environ.get("HB_TASK_IDS")
+    if task_ids_env:
+        config["task_ids"] = [int(x) for x in task_ids_env.split(",") if x.strip()]
+    _apply_log_root(config)
     return config
+
+
+def _apply_log_root(config: dict[str, Any]) -> None:
+    """Centralize results under one tree when LOG_ROOT is set by the orchestrator.
+
+    LOG_ROOT が設定されていれば結果の出力先を一元化する。
+    Layout: ``<LOG_ROOT>/hidden-bench[/<LOG_SCOPE>]/results`` — LOG_SCOPE is empty for
+    local/docker and ``web`` for the browser-UI stack, so local and Docker share one location
+    while web games go into a sub-folder.
+    """
+    log_root = os.environ.get("LOG_ROOT")
+    if not log_root:
+        return
+    scope = os.environ.get("LOG_SCOPE", "")
+    config["output_dir"] = str(Path(log_root) / "hidden-bench" / scope / "results")
 
 
 def _env_override(config: dict[str, Any], key: str, env: str, cast: Any) -> None:
     """Override config[key] from os.environ[env] if set / 環境変数があれば上書き."""
-    import os
-
     val = os.environ.get(env)
     if val is not None and val != "":
         config[key] = cast(val)
@@ -204,7 +232,7 @@ class _suppress:
     async def __aenter__(self) -> None:
         return None
 
-    async def __aexit__(self, *exc: Any) -> bool:
+    async def __aexit__(self, *exc: object) -> bool:
         return True
 
 

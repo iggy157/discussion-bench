@@ -1,0 +1,14 @@
+{#-
+  analysis_reply.jinja
+  分析を AIMessage として積む本文。エージェント自身が要点を述べる一人称の体裁にする
+  （human_message の手本/要求に対する「応答」として自然に読めるように）。ドメイン中立。
+  Expects: analysis_bodies (list[str]), analysis_count (int)
+-#}
+承知しました。良い議論のために着目すべき要点を整理します。
+
+{% for body in analysis_bodies %}
+{{ body }}
+{% if not loop.last %}
+---
+{% endif %}
+{% endfor %}

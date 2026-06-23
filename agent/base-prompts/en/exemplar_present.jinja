@@ -1,0 +1,25 @@
+{#-
+  exemplar_present.jinja (English)
+  HumanMessage body that presents the exemplars (full scripts OR single-utterance examples).
+  Domain-neutral (werewolf / HiddenBench). The reply (ack or analysis) is supplied by the
+  following AIMessage, so this does NOT ask the model to acknowledge.
+  Expects:
+    scenario_bodies (list[str]), scenario_count (int)
+    exemplar_kind ('scripts' | 'utterances')
+-#}
+{% set _kind = exemplar_kind | default('scripts') -%}
+{% if _kind == 'utterances' -%}
+Below are individual utterance examples observed in good discussions ({{ scenario_count }} set(s); the whole-discussion flow is NOT included). Use them as a reference for phrasing, pacing, and how to raise points when you speak.
+{%- else -%}
+Below are complete records of good discussions, start to finish ({{ scenario_count }} transcript(s)). Use them as a reference for how a discussion you are about to join should proceed — its flow and the texture of the utterances.
+{%- endif %}
+
+--- begin ---
+
+{% for body in scenario_bodies %}
+{{ body }}
+
+---
+
+{% endfor %}
+--- end ---

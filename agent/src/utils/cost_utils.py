@@ -20,14 +20,15 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # config の provider キー (llm.type) から models.csv の provider 名へのマッピング.
-# vertexai は Google 価格表を参照する. ollama はローカル実行で無課金扱い.
+# vertexai は Google 価格表を参照する. ollama / vllm はローカル実行で無課金扱い.
 _PROVIDER_ALIAS: dict[str, str] = {
     "openai": "OpenAI",
     "google": "Google",
     "vertexai": "Google",
     "anthropic": "Anthropic",
 }
-_FREE_PROVIDERS: set[str] = {"ollama"}
+# Local, self-hosted backends — billed as free (no public price table). / ローカル実行は無課金.
+_FREE_PROVIDERS: set[str] = {"ollama", "vllm"}
 
 _MILLION = 1_000_000
 

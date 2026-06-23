@@ -1,0 +1,28 @@
+{
+  "note": "Approximate token counts (generator's heuristic). The paper's per-cell table should be re-measured with the discussion agent's (Gemma's) tokenizer.",
+  "domain": "aiwolf",
+  "lang": "jp",
+  "records": [
+    {
+      "index": 1,
+      "script_tokens": 1924,
+      "utterances_tokens": 1653,
+      "analysis_tokens": 447,
+      "utterance_to_script_ratio": 0.859
+    },
+    {
+      "index": 2,
+      "script_tokens": 1927,
+      "utterances_tokens": 1688,
+      "analysis_tokens": 389,
+      "utterance_to_script_ratio": 0.876
+    },
+    {
+      "index": 3,
+      "script_tokens": 1823,
+      "utterances_tokens": 1554,
+      "analysis_tokens": 408,
+      "utterance_to_script_ratio": 0.852
+    }
+  ]
+}

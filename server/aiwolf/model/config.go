@@ -3,6 +3,7 @@ package model
 import (
 	"log/slog"
 	"os"
+	"path/filepath"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -161,5 +162,23 @@ func LoadFromPath(path string) (*Config, error) {
 		slog.Error("設定ファイルのパースに失敗しました", "error", err)
 		return nil, err
 	}
+	applyLogRootOverride(&config)
 	return &config, nil
+}
+
+// applyLogRootOverride centralizes log output under a single tree when LOG_ROOT is set by the
+// orchestrator (run_local.sh / docker compose / ui). Layout: <LOG_ROOT>/aiwolf[/<LOG_SCOPE>]/...
+// where LOG_SCOPE is empty for local/docker runs and "web" for the browser-UI stack. This makes
+// local and Docker write to the same place, with web games split into a sub-folder.
+// LOG_ROOT が設定されていれば、出力先を <LOG_ROOT>/aiwolf[/<LOG_SCOPE>]/ 配下に一元化する。
+func applyLogRootOverride(config *Config) {
+	logRoot := os.Getenv("LOG_ROOT")
+	if logRoot == "" {
+		return
+	}
+	base := filepath.Join(logRoot, "aiwolf", os.Getenv("LOG_SCOPE")) // empty scope is dropped by Join
+	config.JSONLogger.OutputDir = filepath.Join(base, "json")
+	config.GameLogger.OutputDir = filepath.Join(base, "game")
+	config.RealtimeBroadcaster.OutputDir = filepath.Join(base, "realtime")
+	config.Matching.OutputPath = filepath.Join(base, "match_optimizer.json")
 }

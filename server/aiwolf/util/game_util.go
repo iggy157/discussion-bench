@@ -3,6 +3,7 @@ package util
 import (
 	"maps"
 	"math/rand/v2"
+	"sort"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -67,18 +68,44 @@ func CreateAgents(conns []model.Connection, roles map[model.Role]int) []*model.A
 }
 
 func CreateAgentsWithProfiles(conns []model.Connection, roles map[model.Role]int, profiles []model.Profile, encoding map[string]string) []*model.Agent {
-	rolesCopy := make(map[model.Role]int)
-	maps.Copy(rolesCopy, roles)
-	agents := make([]*model.Agent, 0)
+	// Deterministic role list (name-sorted base order) shuffled with the seedable Rng, so that
+	// under a fixed AIWOLF_SEED seat i always gets the same role across runs (condition pairing).
+	// Go map iteration order is randomized, so assignRole() over a map cannot be made reproducible;
+	// expanding to a sorted slice + seeded shuffle can.
+	roleList := expandRolesSorted(roles)
+	Rng.Shuffle(len(roleList), func(i, j int) { roleList[i], roleList[j] = roleList[j], roleList[i] })
 
-	rand.Shuffle(len(profiles), func(i, j int) { profiles[i], profiles[j] = profiles[j], profiles[i] })
+	profilesCopy := append([]model.Profile{}, profiles...)
+	Rng.Shuffle(len(profilesCopy), func(i, j int) {
+		profilesCopy[i], profilesCopy[j] = profilesCopy[j], profilesCopy[i]
+	})
 
+	agents := make([]*model.Agent, 0, len(conns))
 	for i, conn := range conns {
-		role := assignRole(rolesCopy)
-		agent := model.NewAgentWithProfile(i+1, role, conn, profiles[i], encoding)
-		agents = append(agents, agent)
+		role := model.R_VILLAGER
+		if i < len(roleList) {
+			role = roleList[i]
+		}
+		agents = append(agents, model.NewAgentWithProfile(i+1, role, conn, profilesCopy[i%len(profilesCopy)], encoding))
 	}
 	return agents
+}
+
+// expandRolesSorted expands a role->count map into a slice in a deterministic (name-sorted)
+// base order, so that a subsequent seeded shuffle yields reproducible role assignments.
+func expandRolesSorted(roles map[model.Role]int) []model.Role {
+	keys := make([]model.Role, 0, len(roles))
+	for r := range roles {
+		keys = append(keys, r)
+	}
+	sort.Slice(keys, func(i, j int) bool { return keys[i].Name < keys[j].Name })
+	out := make([]model.Role, 0)
+	for _, r := range keys {
+		for n := 0; n < roles[r]; n++ {
+			out = append(out, r)
+		}
+	}
+	return out
 }
 
 func CreateAgentsWithRole(roleMapConns map[model.Role][]model.Connection) []*model.Agent {

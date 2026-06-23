@@ -45,6 +45,13 @@ class HiddenBenchAgent(Agent):
         super().__init__(config, name, game_id, role)
         # Per-turn context parsed from info.profile / info.profileから解析するターン文脈.
         self.hb_context: dict[str, Any] | None = None
+        # Multi-turn context control: how many transcript turns this agent has already been
+        # shown (in prior discussion prompts). Each discussion prompt embeds only the NEW
+        # turns since then; the rest is already in the LLM history. This keeps the per-turn
+        # input linear in transcript length rather than quadratic (the unbounded-growth bug
+        # that made every HiddenBench game time out at ~round 11).
+        self._hb_seen = 0
+        self._hb_history_start = 0
 
     def set_packet(self, packet: Packet) -> None:
         """Set packet, then parse the HiddenBench context from info.profile.
@@ -70,7 +77,15 @@ class HiddenBenchAgent(Agent):
         """
         phase = self._phase()
         prompt_key = f"hb_{phase}" if phase in {"pre", "discussion", "post"} else "hb_discussion"
+        # For discussion AND post, embed only turns the agent has not seen yet (the prior ones
+        # are already in its LLM history). Re-embedding the full transcript at post on top of the
+        # accumulated history pushed the context to the model limit and timed out the last agent;
+        # the delta keeps it bounded. pre has no transcript.
+        if phase in {"discussion", "post"}:
+            self._hb_history_start = self._hb_seen
         response = self._send_message_to_llm(Request.TALK, prompt_key_override=prompt_key)
+        if phase == "discussion":
+            self._hb_seen = len(self.talk_history)
         self.sent_talk_count = len(self.talk_history)
         if phase in {"pre", "post"}:
             # Answer phases must return the raw JSON decision untouched (the server parses it).

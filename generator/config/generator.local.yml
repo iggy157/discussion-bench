@@ -1,0 +1,25 @@
+# LOCAL TEST generator config: generate exemplars via the local vLLM-served gemma.
+# (Temporary; for the full local validation run. Not the principled L3 setup — Claude is.)
+provider: vllm
+model: gemma-4-31b
+temperature: 0.7
+max_tokens: 4096
+api_key_env: OPENAI_API_KEY          # unused for local vllm (placeholder key)
+base_url: http://localhost:8000/v1
+
+lang: jp
+domains: [hiddenbench, aiwolf]
+
+# Small scale for a validation run ("数本").
+num_scripts:
+  hiddenbench: 3
+  aiwolf: 3
+
+hiddenbench:
+  benchmark: ../server/hidden-bench/data/benchmark.json
+  eval_task_limit: 20          # generate from tasks AFTER the first 20 (L1 disjoint from eval)
+  total_rounds: 15
+  num_agents: 4
+
+token_match: approximate
+agent_dir: ../agent

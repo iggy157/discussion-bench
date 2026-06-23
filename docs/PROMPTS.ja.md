@@ -42,3 +42,18 @@ agent/
   `agent/aiwolf/prompts/<lang>/single_turn/` を追加）。
 - 共有の土台部品（`base-prompts/<lang>/`）はシステム横断で1つだけ定義（"history" や
   "constraints" など）。システム別に分かれるのはリクエスト種別ごとの組み立てだけです。
+
+## コンポーネント共通の規約
+
+プロンプトを持つコンポーネントは、すべて**同じ言語別分割** — `prompts/<lang>/`（`en` / `jp`）— を
+使い、日英対応の仕組みを統一しています。
+
+| コンポーネント | プロンプトファイル |
+|-----------|--------------|
+| agent | `agent/base-prompts/<lang>/*.jinja`、`agent/<pack>/prompts/<lang>/<mode>/*.jinja` |
+| generator | `generator/prompts/<lang>/*.jinja`（system / 台本 / 分析） |
+| eval（judge） | `eval/prompts/<lang>/judge.txt`（`ja` は `jp` の別名として受理） |
+
+各言語ファイルは**その言語でネイティブに書き起こし**ています。日本語版は英語からの逐語訳ではなく、
+自然な日本語で書いています（逆も同様）。「この言語で書け」という1つのプロンプト＋言語フラグ、という
+やり方はとっていません。言語ディレクトリで選びます。

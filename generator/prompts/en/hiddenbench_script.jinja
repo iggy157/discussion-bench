@@ -1,0 +1,68 @@
+Write a COMPLETE HiddenBench collaborative-reasoning discussion transcript in English, start
+to finish, for the task below.
+
+This transcript is a reference example of a GOOD discussion. Its purpose is to demonstrate, by
+example only, how a strong {{ num_agents }}-agent discussion overcomes four well-known failure
+modes of LLM group reasoning. Do NOT name or explain these failure modes anywhere in the
+transcript — show them being handled, never describe them:
+
+1. Information withholding — this is a HIDDEN-PROFILE task: each agent starts knowing the
+   shared information plus ONLY ONE of the hidden facts. The agents must SURFACE their hidden
+   facts to each other during the discussion. Every hidden fact below must be voiced by some
+   agent over the course of the discussion.
+2. Early convergence — the agents do NOT lock onto the first proposed answer. They withhold
+   committing until the hidden facts have been pooled, and they actively check the minority
+   view before agreeing.
+3. Reflexive conformity — an agent in the minority gives reasons and is heard; agreement comes
+   from the evidence on the table, not from following the majority.
+4. Low lexical diversity — vary phrasing, sentence length, and rhythm across turns; keep each
+   agent's voice distinct. Avoid repeating the same stock phrases.
+
+Faithful protocol (HiddenBench, Li/Naito/Shirado 2025):
+- {{ num_agents }} agents, named "Agent 1" .. "Agent {{ num_agents }}".
+- A private pre-answer from each agent (before discussion), then {{ total_rounds }} discussion
+  rounds, then a private post-answer from each agent.
+- In each round, every agent speaks once, in order.
+- Distribute the hidden facts so that each agent initially holds exactly one of them; reflect
+  that in how each agent's contributions are sourced ("the part I was given is ...").
+- The correct answer for THIS task is given below — the discussion should plausibly arrive at
+  it through pooling the hidden facts. The pre-answers should be mixed/under-informed (this is
+  a hidden profile), and the post-answers should reflect what each agent concluded.
+
+Task:
+- Description: {{ task.description }}
+- Shared information (every agent knows these):
+{% for fact in task.shared_information %}  - {{ fact }}
+{% endfor %}- Hidden information (distribute ONE per agent; all must be surfaced in discussion):
+{% for fact in task.hidden_information %}  - {{ fact }}
+{% endfor %}- Possible answers: {{ task.possible_answers | join(", ") }}
+- Correct answer (the discussion should reach this): {{ task.correct_answer }}
+
+Use exactly this Markdown structure:
+
+# HiddenBench Discussion {{ task.name }}
+
+## Task
+<one or two sentences restating the decision the team must make>
+
+## Pre-answers
+- **Agent 1**: {"vote": "<option>", "rationale": "<short, based on this agent's own info only>"}
+... (one per agent)
+
+## Round 1
+- **Agent 1**: <utterance>
+... (one per agent, in order)
+
+## Round 2
+... (continue through Round {{ total_rounds }})
+
+## Post-answers
+- **Agent 1**: {"vote": "<option>", "rationale": "<short>"}
+... (one per agent)
+
+Rules for the output:
+- Use the bullet format ``- **Agent N**: <text>`` for every line.
+- Pre-answers and post-answers must be valid one-line JSON objects with "vote" and "rationale".
+- Do not add any text outside the structure above. No analysis, no notes, no commentary.
+
+<!-- [[MOCK_KIND=hiddenbench_script]] -->

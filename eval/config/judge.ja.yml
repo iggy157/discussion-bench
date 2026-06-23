@@ -2,15 +2,20 @@
 # 判定モデルをここで一元管理する。judge は議論ログ「全体」を3項目で採点する
 # （自己対戦では席ごとの相対評価が無意味なため、ログ全体の絶対評価にする）。
 
-# provider: openai（base_url でOpenAI互換も）| mock（API不要のテスト用）
+# provider（どのモデルでも可。既定の judge 系列は GPT＝方法論L3）:
+#   openai   OpenAI GPT、または base_url で任意の OpenAI 互換   （既定）
+#   vllm     vLLM 配信モデル（OpenAI互換・既定 base_url :8000/v1）
+#   ollama   Ollama 配信モデル（OpenAI互換・既定 base_url :11434/v1）
+#   anthropic / google   Claude / Gemini・Gemma
+#   mock     API不要のテスト用
 provider: openai
 model: gpt-4o
 temperature: 0.0
-# base_url:            # 任意: OpenAI互換エンドポイント（vLLM / ローカル / ollama-openai）
-api_key_env: OPENAI_API_KEY   # APIキーを保持する環境変数名（ルートの .env から読む）
+# base_url:            # 任意: OpenAI互換エンドポイントの上書き（vLLM / Ollama / ローカル）
+api_key_env: OPENAI_API_KEY   # キーの環境変数名: OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_API_KEY
 
 # 採点プロンプトの言語（en | ja）。トランスクリプトはそのまま読ませる。
-lang: ja
+lang: jp
 # Likert尺度の最大値（採点は 1..scale の整数）。
 scale: 5
 # 1ゲームを何回採点して平均するか（分散低減。1=単発）。

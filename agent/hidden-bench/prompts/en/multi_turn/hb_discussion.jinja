@@ -1,10 +1,12 @@
 {% set history_source = talk_history -%}
-{% set history_start = 0 -%}
+{% set history_start = hb_history_start | default(0) -%}
 {% if talk_history|length == 0 -%}
 You are the first to speak. Based on the information you have, share your initial thoughts with the group in one or two sentences, focusing on the facts most relevant to the decision.
+{%- elif history_source[history_start:]|length == 0 -%}
+No new messages from the other participants yet. It's your turn to speak. Based on your information, contribute to the discussion in one or two sentences.
 {%- else -%}
-Previous messages from the group discussion:
+New messages since your last turn:
 {{ block('history') }}
-It's your turn to speak. Based on your information and what others have shared, contribute to the discussion in one or two sentences (you may share new information, respond to others, or express agreement/disagreement).
+It's your turn to speak. Based on your information and the discussion so far, contribute in one or two sentences (you may share new information, respond to others, or express agreement/disagreement).
 {%- endif %}
 Respond with just your discussion message (not in JSON format).

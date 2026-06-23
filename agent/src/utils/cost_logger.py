@@ -42,9 +42,15 @@ def resolve_game_log_dir(config: dict[str, Any], game_id: str) -> Path:
     Returns:
         Path: Resolved (and created) directory / 解決済みディレクトリ
     """
-    ulid = ULID.from_str(game_id)
     tz = datetime.now(UTC).astimezone().tzinfo
-    folder = datetime.fromtimestamp(ulid.timestamp, tz=tz).strftime("%Y%m%d%H%M%S%f")[:-3]
+    # aiwolf game ids are ULIDs (timestamp-bearing); other servers (e.g. HiddenBench) use
+    # arbitrary ids — fall back to the current time so the cost dir still gets a sane name.
+    try:
+        ulid = ULID.from_str(game_id)
+        cost_ts = datetime.fromtimestamp(ulid.timestamp, tz=tz)
+    except (ValueError, TypeError):
+        cost_ts = datetime.now(tz=tz)
+    folder = cost_ts.strftime("%Y%m%d%H%M%S%f")[:-3]
     output_dir = Path(str(config["log"]["output_dir"])) / folder
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir

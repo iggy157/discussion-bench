@@ -1,0 +1,111 @@
+Write a COMPLETE 5-player AIWolfDial werewolf game transcript in English, start to finish.
+
+This transcript is a reference example of a GOOD discussion. Its purpose is to demonstrate, by
+example only, how a strong multi-party discussion overcomes four well-known failure modes of
+LLM group play. Do NOT name or explain these failure modes anywhere in the transcript — show
+them being handled, never describe them:
+
+1. Information withholding — players DISCLOSE their private information: the seer makes a
+   clear CO and shares the divination result with reasoning; role claims and counter-claims
+   are put on the table rather than hidden.
+2. Early convergence — players do NOT jump to lynch the first suspect. Multiple hypotheses
+   (e.g. which of two seer claims is real) are compared on their merits before the vote.
+3. Reflexive conformity — minority and dissenting opinions are voiced and persist; a player
+   in the minority gives reasons rather than silently following the majority.
+4. Low lexical diversity — vary phrasing, sentence length, and rhythm across turns; each
+   character keeps a consistent, distinct voice. Avoid repeating the same stock phrases.
+
+Game setup (AIWolfDial 2024/2025 standard, fixed):
+- 5 players, roles: 1 SEER, 1 WEREWOLF, 1 POSSESSED, 2 VILLAGER. (One werewolf, so there is
+  NO whisper phase, NO bodyguard, NO medium.)
+- Synchronized turn-based talk. **Each day's talk runs up to Turns 0-3 (four turns)**; in each
+  turn every LIVING player speaks once, in player-id order (Day 0 also runs up to Turns 0-3).
+  Each player may speak up to 4 times per day.
+- Instead of speaking, a player may say "Over" (done talking for the day) or "Skip" (skip the
+  turn). A good discussion uses its turns for substantive points, but a player with nothing to
+  add may Over rather than pad. Assume the turns are generally used; do not insert filler (a few
+  early Overs are fine if natural).
+- Keep each utterance natural and concise (around 125 characters; up to ~250 with an @mention).
+- **Day 0** has no information from a prior night yet, so it centres on self-introductions,
+  first impressions, and how to proceed (a seer CO / sharing a divination result usually does
+  NOT happen yet). From Day 1 on, every speaker closes the final turn with a clear ``@<name>``
+  vote declaration.
+- You may freely decide the content (greetings, strategy, how the talk unfolds); do not force
+  any fixed catchphrases.
+
+Progression protocol (strictly matching the server implementation; reflect it as structure):
+- **Day 0**: Talk (up to Turns 0-3) -> Night is **divine only** (the seer divines one player).
+  **Day 0 has NO attack, NO vote, NO execution, NO guard** (no one dies the first night, so Day
+  1 begins with all 5 players alive).
+- **Day 1 onward**: Talk (living players, up to Turns 0-3) -> Vote (one vote each) -> Execution
+  (most-voted; break ties arbitrarily) -> Night (divine -> attack). **Attacks only happen from
+  Night 1 onward**; the attacked player dies the next day and no longer appears.
+- Keep it consistent: a divination result matches the target's true role (werewolf -> "werewolf",
+  otherwise "human"). Executed/attacked players do not speak or vote afterwards. The village wins
+  if the werewolf is executed; the werewolves win once they equal/outnumber the villagers. Run to
+  a conclusion (usually 1-2 days for 5 players). Invent natural English names; do not reuse names.
+
+Use exactly this Markdown structure (this is game #{{ seed }}; vary the scenario from other games):
+
+# Sample game aiwolf_{{ seed }} (5 players)
+
+## Roles
+| ID | Name | Role |
+|----|------|------|
+| 1 | <name> | VILLAGER |
+| 2 | <name> | WEREWOLF |
+| 3 | <name> | SEER |
+| 4 | <name> | POSSESSED |
+| 5 | <name> | VILLAGER |
+
+## Day 0
+
+### Talk
+#### Turn 0
+- **<name>**: <utterance>
+(one bullet per living player, in id order)
+#### Turn 1
+- **<name>**: <utterance>
+#### Turn 2
+- **<name>**: <utterance>
+#### Turn 3
+- **<name>**: <utterance>
+
+### Night
+- divine: <seer name> -> <target> (human/werewolf)
+(Day 0 has no attack -- divine only)
+
+## Day 1
+
+### Talk
+#### Turn 0
+- **<name>**: <utterance>
+#### Turn 1
+- **<name>**: <utterance>
+#### Turn 2
+- **<name>**: <utterance>
+#### Turn 3
+- **<name>**: ... @<name>   (vote declaration on the final turn)
+
+### Vote
+- <name> -> <name>
+(one bullet per living player)
+- execution: <name> (role)
+
+### Night
+- divine: <seer> -> <target> (human/werewolf)
+- attack: <werewolf> -> <target> (dead)
+
+(continue with ## Day 2 if the game has not concluded; same shape as Day 1)
+
+## Result
+- winner: village / werewolves
+- <one or two sentences on the ending>
+
+Rules for the output:
+- Use the speaker bullet format ``- **<name>**: <text>`` for every TALK utterance.
+- Write vote / divine / attack / execution / result lines as ``- <label>: ...`` (NO bold name).
+- Do not add any text outside the structure above. No analysis, no "Day 1 summary", no notes.
+- The role table may be in any sensible role order, but keep the IDs 1-5.
+
+<!-- [[MOCK_KIND=aiwolf_script]] -->

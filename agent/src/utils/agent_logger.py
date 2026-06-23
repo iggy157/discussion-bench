@@ -51,15 +51,20 @@ class AgentLogger:
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
         if bool(self.config["log"]["file_output"]):
-            ulid: ULID = ULID.from_str(game_id)
             tz = datetime.now(UTC).astimezone().tzinfo
+            # The aiwolf server's game_id is a ULID (timestamp-bearing). Other servers (e.g.
+            # HiddenBench) use arbitrary ids like "hb-001-r0-0000"; fall back to the current
+            # time so the per-game log dir still gets a sensible timestamped name.
+            try:
+                ulid: ULID = ULID.from_str(game_id)
+                log_ts = datetime.fromtimestamp(ulid.timestamp, tz=tz)
+            except (ValueError, TypeError):
+                log_ts = datetime.now(tz=tz)
             output_dir = (
                 Path(
                     str(self.config["log"]["output_dir"]),
                 )
-                / datetime.fromtimestamp(ulid.timestamp, tz=tz).strftime(
-                    "%Y%m%d%H%M%S%f",
-                )[:-3]
+                / log_ts.strftime("%Y%m%d%H%M%S%f")[:-3]
             )
             output_dir.mkdir(
                 parents=True,

@@ -1,0 +1,49 @@
+# 手本ジェネレータ設定。（英語コメント版: generator.yml。実際に読まれるのは generator.yml）
+# 手本スロット（scripts / utterances / analysis）を Claude（方法論L3の固定生成器系列）で生成する。
+# 生成物は人手レビュー前提の「ドラフト」。
+
+# provider（どのモデルでも可。Claude が方法論L3に基づく既定）:
+#   anthropic            Claude（既定）
+#   openai               OpenAI GPT、または base_url で任意の OpenAI 互換エンドポイント
+#   vllm                 vLLM で配信するモデル（OpenAI互換。既定 base_url :8000/v1）
+#   ollama               Ollama で配信するモデル（OpenAI互換。既定 base_url :11434/v1）
+#   google               Google API 経由の Gemini / Gemma
+#   mock                 API無しの配管テスト
+provider: anthropic
+model: claude-opus-4-8
+# 注意: Opus 4.7/4.8・Fable/Mythos 5 はサンプリングパラメータを拒否する (400)。これらのモデルでは
+# generator が temperature を自動的に省略する（adaptive thinking のみ）。この値は temperature を
+# 受け付けるモデルでのみ使われる。max_tokens は分析用の上限。台本生成はより大きな下限
+# (>=16000・ストリーミング) を使い、全文台本が途中で切れないようにする。
+temperature: 0.7
+max_tokens: 4096
+# APIキーを格納する環境変数名。プロバイダに応じて切り替える: ANTHROPIC_API_KEY / OPENAI_API_KEY /
+# GOOGLE_API_KEY。ローカルの vllm/ollama では省略可（プレースホルダのキーが使われる）。
+api_key_env: ANTHROPIC_API_KEY   # ルートの .env から読む
+# base_url: http://localhost:8000/v1   # OpenAI互換エンドポイントの上書き（vLLM / Ollama / ローカル）
+
+# 生成する言語（en | jp）。言語ごとに1回ずつ実行。
+lang: en
+
+# 生成対象の環境。
+domains: [hiddenbench, aiwolf]
+
+# 環境ごとの台本本数（1本につき 分析1 + 発話例セット1 が付く）。
+num_scripts:
+  hiddenbench: 5
+  aiwolf: 5
+
+# 漏洩対策(L1)：評価セットと重複しないインスタンスからのみ生成する。
+hiddenbench:
+  benchmark: ../server/hidden-bench/data/benchmark.json
+  # 評価は先頭N件（サーバの task_limit と一致）。生成は「残り」から行う。
+  eval_task_limit: 20
+  total_rounds: 15   # 台本の議論長（忠実プロトコルに合わせる）
+  num_agents: 4
+
+# トークン一致（③発話few-shot ↔ ⑤台本few-shot）：発話例セットは台本のトークン量に近似一致するよう
+# 生成する（プロンプト制御・近似計測。論文には「近似で一致」と明記、または後で Gemma で再チェック）。
+token_match: approximate   # approximate | off
+
+# 出力先：agent/<domain_pack>/exemplars/<lang>/{scripts,utterances,analysis}/
+agent_dir: ../agent

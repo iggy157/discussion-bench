@@ -2,11 +2,13 @@
 name = "discussion-bench-eval"
 version = "0.1.0"
 description = "Transcript failure-mode metrics (surfacing, convergence, diversity, conformity) for the discussion-bench study"
-readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "pyyaml>=6.0.2",        # judge config
-    "openai>=1.0",          # subjective LLM-judge (provider: openai); not needed for provider: mock
+    # LLM-judge backends (any provider; lazily imported, only needed for the selected provider).
+    "openai>=1.50.0",       # provider: openai / vllm / ollama (OpenAI-compatible)
+    "anthropic>=0.69.0",    # provider: anthropic (Claude)
+    "google-genai>=1.0.0",  # provider: google (Gemini / Gemma)
 ]
 
 [tool.ruff]
@@ -14,7 +16,13 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D203", "D213", "COM812", "ANN401", "BLE001", "C901", "PLR0912", "PLR0913", "TRY003", "EM101", "EM102"]
+ignore = [
+    "D203", "D213", "COM812", "ANN401", "BLE001", "C901", "PLR0912", "PLR0913", "TRY003", "EM101", "EM102",
+    "RUF001", "RUF002", "RUF003",  # ambiguous fullwidth chars — intentional in bilingual JP text
+    "PLC0415",                       # in-function imports are intentional (lazy optional LLM-provider deps)
+    "D413",                          # blank line after last docstring section (not required by Google style)
+    "T201",                          # print() is intentional CLI report output
+]
 
 [tool.ruff.lint.per-file-ignores]
 "src/*" = ["INP001"]

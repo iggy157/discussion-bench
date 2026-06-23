@@ -57,42 +57,48 @@ scenario:
   # 指定があれば prewarm のときだけそのモデルで要約を生成する.
   # cache key も (provider, model) を prewarm 側で計算するため, 実ゲーム時の
   # llm.<role> とは無関係にキャッシュヒットが保証される.
-  # 役割キー (talk / action / default) ごとに独立指定可能. type と model の
+  # 役割キー (talk / action / default) ごとに独立指定可能. provider と model の
   # 両方が揃った role だけが override 対象, 欠けていれば llm.<role> へフォールバック.
   # 用途例: runtime は gpt-5.2, prewarm は gpt-4o-mini で安く済ませる.
   prewarm:
     talk:
-      type: openai
+      provider: openai
       model: gpt-5.4
     action:
-      type: openai
+      provider: openai
       model: gpt-5.4
 
 llm:
-  type: openai
-  # llm 直下でも model / temperature / pricing_mode / base_url を書けば
-  # 下のプロバイダセクション (openai:, google: 等) の値を上書きする (任意).
-  # 例: separate_langchain=false のまま google の別モデルを使いたい場合
-  # model: gemini-2.5-pro
+  # provider: vllm | openai | google | vertexai | ollama | anthropic.
+  # 既定は vLLM 配信の Gemma（model id と endpoint は下の vllm: セクション）。別バックエンドにする
+  # ときは provider を対応するセクション名に変更する。
+  provider: vllm
   sleep_time: 0
   # trueにするとリクエスト種別ごとにLangChainとllm_message_historyを分離する.
   # 共通系 (initialize, daily_initialize, daily_finish) は両方に送信する.
   # 発話系 (talk, whisper) は llm.talk のモデルに送信する.
   # アクション系 (vote, divine, guard, attack) は llm.action のモデルに送信する.
-  # falseにするとllm.typeの単一モデル/履歴で従来通り動作する.
-  separate_langchain: true
-  # talk / action には type の他に model / temperature / pricing_mode / base_url を直接書ける.
+  # falseにするとllm.providerの単一モデル/履歴で動作する（単一Gemma議論エージェントの推奨設定）.
+  # 既定では false. 下の talk/action ブロックは separate_langchain: true のときだけ使われる（参考用）.
+  separate_langchain: false
+  # talk / action には provider の他に model / temperature / pricing_mode / base_url を直接書ける.
   # 指定した項目は下の <provider>: セクションより優先される. 省略した項目は <provider>: から継承.
   # 同じ会社の異なるモデルを talk と action で使い分けたい場合はここに model を書く.
-  # type を省略した場合は llm.type をデフォルトとして使う.
+  # provider を省略した場合は llm.provider をデフォルトとして使う.
   talk:
-    # type: anthropic
+    # provider: anthropic
     # model: claude-sonnet-4-6
-    type: openai
+    provider: openai
     model: gpt-5.2
   action:
-    type: openai
+    provider: openai
     model: gpt-5.4-mini         # openai + gpt-4o-mini (action は軽量モデル)
+
+# 議論エージェントの既定: vLLM (OpenAI互換API) で配信する Gemma 上位モデル。
+vllm:
+  model: google/gemma-2-27b-it        # vLLM の --served-model-name と一致させる
+  base_url: http://localhost:8000/v1  # vLLM エンドポイント
+  temperature: 0.7
 
 openai:
   model: gpt-4o-mini

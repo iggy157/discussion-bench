@@ -8,8 +8,14 @@
 # Path templates use {domain_pack}/exemplars/{lang}, resolved relative to the agent project
 # root (agent/), where {domain_pack} is `aiwolf` or `hidden-bench`.
 #
-# `inject` lists which example kinds the condition feeds. They go through the same prompt
-# injection mechanism for both environments.
+# Role-distinct message structure (the intended design):
+#   human:  'examples' -> HumanMessage presents the exemplars from sample_dir
+#                         (utterances or scripts).
+#           'request'  -> HumanMessage asks for the key points (no exemplars given).
+#   reply:  'analysis' -> AIMessage is the analysis loaded from analysis_dir
+#                         (the agent's own reflection / key points).
+#           'ack'      -> AIMessage is a brief acknowledgement only.
+# So: examples go in as the HumanMessage, the analysis (when present) is the AIMessage.
 
 conditions:
   # (1) baseline: instructions only, no exemplars, no analysis.
@@ -19,52 +25,59 @@ conditions:
     scenario:
       enabled: false
 
-  # (2) analysis_only: analysis text only (no script / no utterance examples).
+  # (2) analysis_only: HumanMessage asks for the key points, AIMessage = the analysis.
   analysis_only:
     label: analysis_only
     inject: [analysis]
     scenario:
       enabled: true
       delivery: full
-      ack_mode: static
-      sample_dir: "{domain_pack}/exemplars/{lang}/analysis"
+      human: request
+      reply: analysis
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis"
 
-  # (3) utterance_fewshot: single-utterance examples, no analysis.
+  # (3) utterance_fewshot: HumanMessage = single-utterance examples, AIMessage = brief ack.
   utterance_fewshot:
     label: utterance_fewshot
     inject: [utterances]
     scenario:
       enabled: true
       delivery: full
-      ack_mode: static
+      human: examples
+      reply: ack
       sample_dir: "{domain_pack}/exemplars/{lang}/utterances"
 
-  # (4) utterance_fewshot_analysis: utterance examples + analysis (token-matched vs 6).
+  # (4) utterance_fewshot_analysis: HumanMessage = utterances, AIMessage = analysis.
   utterance_fewshot_analysis:
     label: utterance_fewshot_analysis
     inject: [utterances, analysis]
     scenario:
       enabled: true
       delivery: full
-      ack_mode: static
+      human: examples
+      reply: analysis
       sample_dir: "{domain_pack}/exemplars/{lang}/utterances"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis"
 
-  # (5) script_fewshot: full discussion transcripts, no analysis (token-matched vs 3).
+  # (5) script_fewshot: HumanMessage = full transcripts, AIMessage = brief ack.
   script_fewshot:
     label: script_fewshot
     inject: [scripts]
     scenario:
       enabled: true
       delivery: full
-      ack_mode: static
+      human: examples
+      reply: ack
       sample_dir: "{domain_pack}/exemplars/{lang}/scripts"
 
-  # (6) script_fewshot_analysis: full transcripts + analysis (expected strongest).
+  # (6) script_fewshot_analysis: HumanMessage = full transcripts, AIMessage = analysis (expected strongest).
   script_fewshot_analysis:
     label: script_fewshot_analysis
     inject: [scripts, analysis]
     scenario:
       enabled: true
       delivery: full
-      ack_mode: static
+      human: examples
+      reply: analysis
       sample_dir: "{domain_pack}/exemplars/{lang}/scripts"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis"

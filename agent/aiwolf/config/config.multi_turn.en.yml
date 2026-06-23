@@ -61,27 +61,31 @@ scenario:
   on_cache_miss: static
 
 llm:
-  type: google
-  # You may also specify model / temperature / pricing_mode / base_url directly under llm:
-  # to override the matching <provider>: section (optional).
-  # model: gemini-2.5-pro
+  # Provider: vllm | openai | google | vertexai | ollama | anthropic.
+  # Default is vLLM-served Gemma (model id + endpoint in the vllm: section below). To use
+  # another backend, change provider to the matching section.
+  provider: vllm
   sleep_time: 3
   # When true, use separate LangChain instances and llm_message_history per request group.
   # Shared requests (initialize, daily_initialize, daily_finish) are sent to both.
-  # Talk requests (talk, whisper) use llm.talk.
-  # Action requests (vote, divine, guard, attack) use llm.action.
-  # When false, a single llm.type model/history is used (legacy behavior).
-  separate_langchain: true
-  # llm.talk / llm.action accept model / temperature / pricing_mode / base_url too.
-  # Fields set here override the matching <provider>: section; omitted fields fall back to it.
-  # This lets you use "same provider, different models" (e.g. talk=openai+gpt-4o,
-  # action=openai+gpt-4o-mini). When `type` is omitted, it defaults to llm.type.
+  # Talk requests (talk, whisper) use llm.talk; action requests use llm.action.
+  # When false (default here), a single llm.provider model/history is used — the recommended
+  # setup for a single Gemma discussion agent.
+  separate_langchain: false
+  # The talk/action blocks below are used ONLY when separate_langchain: true. They are an
+  # example of "same provider, different models"; left here for reference (ignored by default).
   talk:
-    type: openai
+    provider: openai
     model: gpt-4o              # openai + gpt-4o (stronger model for utterances)
   action:
-    type: openai
+    provider: openai
     model: gpt-4o-mini         # openai + gpt-4o-mini (lightweight model for decisions)
+
+# Discussion-agent default: Gemma (upper) served by vLLM (OpenAI-compatible API).
+vllm:
+  model: google/gemma-2-27b-it        # must match the vLLM --served-model-name
+  base_url: http://localhost:8000/v1  # vLLM endpoint
+  temperature: 0.7
 
 openai:
   model: gpt-4o-mini

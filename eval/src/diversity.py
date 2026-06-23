@@ -52,8 +52,7 @@ def _modified_ngram_precision(cand: list[str], refs: list[list[str]], n: int) ->
     for ref in refs:
         rc = Counter(ngrams(ref, n))
         for g, c in rc.items():
-            if c > max_ref[g]:
-                max_ref[g] = c
+            max_ref[g] = max(max_ref[g], c)
     clipped = sum(min(c, max_ref[g]) for g, c in cand_ng.items())
     total = sum(cand_ng.values())
     return clipped / total if total else 0.0
@@ -84,8 +83,7 @@ def self_repetition_diversity(utterances_by_agent: dict[str, list[str]], lang: s
     """
     scores: list[float] = []
     for utts in utterances_by_agent.values():
-        for i in range(1, len(utts)):
-            scores.append(1.0 - self_bleu(utts[i], utts[:i], lang))
+        scores.extend(1.0 - self_bleu(utts[i], utts[:i], lang) for i in range(1, len(utts)))
     if not scores:
         return 1.0
     return sum(scores) / len(scores)

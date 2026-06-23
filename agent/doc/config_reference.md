@@ -74,10 +74,10 @@ scenario:
   on_cache_miss: static        # static | live | error
   prewarm:                     # prewarm 専用モデル指定 (任意)
     talk:
-      type: openai
+      provider: openai
       model: gpt-5.4
     action:
-      type: openai
+      provider: openai
       model: gpt-5.4
   # 上級オプション
   sample_dir: ./data/sample_games_md/sample_games_5  # 既定: agent.num に応じて自動選択
@@ -85,15 +85,15 @@ scenario:
   cache_dir:                   # 既定: ./data/scenario_cache/sample_games_<num>[_freeform]/
 
 llm:
-  type: openai                 # openai | google | vertexai | ollama | anthropic
+  provider: openai             # vllm | openai | google | vertexai | ollama | anthropic  (旧称 type も可)
   sleep_time: 0
   separate_langchain: true     # talk/action で LangChain 分離
   talk:                        # separate_langchain=true 時の talk 系統設定
-    type: openai
+    provider: openai
     model: gpt-5.2
-    # temperature / pricing_mode / base_url も上書き可能
+    # temperature / pricing_mode / base_url / api_key_env も上書き可能
   action:
-    type: openai
+    provider: openai
     model: gpt-4o-mini
 
 # プロバイダ別デフォルト (llm.{talk,action} で上書き可能)
@@ -162,10 +162,14 @@ ANTHROPIC_API_KEY=...
 
 | キー | 用途 |
 |---|---|
-| `type` | プロバイダ (openai / google / ollama / anthropic / vertexai) |
+| `provider` | プロバイダ (vllm / openai / google / ollama / anthropic / vertexai)。旧称 `type` も後方互換で可 |
 | `model` | モデル ID |
 | `temperature` | 温度 |
 | `pricing_mode` | 料金モード (standard / batch 等) |
-| `base_url` | ollama 等のエンドポイント |
+| `base_url` | vLLM / ollama 等のエンドポイント |
+| `api_key_env` | API キーの環境変数名 (省略時はプロバイダ既定: openai→OPENAI_API_KEY / google→GOOGLE_API_KEY / anthropic→ANTHROPIC_API_KEY) |
 
-`api_key` は **書けない** (起動時にエラー)。API キーは `.env` 経由のみ。
+`provider` / `model` / `temperature` / `base_url` / `api_key_env` の設定方法は generator・eval(judge) と
+共通です（agent はこれに加えて「プロバイダ別セクション」「talk/action のロール別」という拡張を持ちます）。
+
+`api_key` (キー本体) は **書けない** (起動時にエラー)。API キーは `.env` 経由のみ。

@@ -15,9 +15,12 @@ services:
       dockerfile: ui/docker/game-server.Dockerfile
     image: discussion-bench-ui-game-server:local
     command: ["-c", "/app/config/${AIWOLF_SERVER_CONFIG:-default_5.yml}"]
+    environment:
+      LOG_ROOT: /logs          # repo-root log/ (../log) -> host log/aiwolf/web/...
+      LOG_SCOPE: web
     volumes:
       - ../server/aiwolf/config:/app/config:ro
-      - ./log/game:/app/log
+      - ../log:/logs
     expose: ["8080"]
     restart: unless-stopped
 
@@ -31,6 +34,10 @@ services:
     environment:
       HB_LANG: ${LANG_CODE:-en}
       CONDITION: ${CONDITION:-baseline}
+      LOG_ROOT: /logs          # -> host log/hidden-bench/web/results
+      LOG_SCOPE: web
+    volumes:
+      - ../log:/logs
     expose: ["8090"]
     restart: unless-stopped
 
@@ -49,6 +56,10 @@ services:
       DEFAULT_LANGUAGE: ${LANG_CODE:-ja}
       CONDITION: ${CONDITION:-baseline}
       MAX_CONCURRENT_GAMES: ${MAX_CONCURRENT_GAMES:-4}
+      LOG_ROOT: /logs          # launcher-spawned AI seats -> host log/<domain>/web/agents
+      LOG_SCOPE: web
+    volumes:
+      - ../log:/logs
     depends_on: [game-server, hidden-bench-server]
     expose: ["8002"]
     restart: unless-stopped

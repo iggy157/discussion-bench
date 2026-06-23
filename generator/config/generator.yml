@@ -1,0 +1,50 @@
+# Exemplar generator config. (Japanese-commented copy: generator.ja.yml)
+# Generates the example slots (scripts / utterances / analysis) via Claude (the fixed
+# generator family, per METHODOLOGY L3). The generated material is a DRAFT for human review.
+
+# Provider (ANY model works; Claude is the principled default per METHODOLOGY L3):
+#   anthropic            Claude (default)
+#   openai               OpenAI GPT, or any OpenAI-compatible endpoint via base_url
+#   vllm                 vLLM-served model (OpenAI-compatible; default base_url :8000/v1)
+#   ollama               Ollama-served model (OpenAI-compatible; default base_url :11434/v1)
+#   google               Gemini / Gemma via the Google API
+#   mock                 offline pipeline test, no API
+provider: anthropic
+model: claude-opus-4-8
+# NOTE: Opus 4.7/4.8 and Fable/Mythos 5 reject sampling params (400). For those models the
+# generator omits temperature automatically (adaptive thinking only); this value is used only
+# for models that still accept it. max_tokens is the analysis cap; script generation uses a
+# higher floor (>=16000, streamed) so full transcripts are not truncated.
+temperature: 0.7
+max_tokens: 4096
+# Env var holding the API key. Switch per provider: ANTHROPIC_API_KEY / OPENAI_API_KEY /
+# GOOGLE_API_KEY. Optional for local vllm/ollama servers (a placeholder key is used).
+api_key_env: ANTHROPIC_API_KEY   # read from the root .env
+# base_url: http://localhost:8000/v1   # OpenAI-compatible endpoint override (vLLM / Ollama / local)
+
+# Which language to generate (en | jp). Run once per language.
+lang: en
+
+# Which environments to generate for.
+domains: [hiddenbench, aiwolf]
+
+# How many scripts per environment (each yields one analysis + one utterance-set).
+num_scripts:
+  hiddenbench: 5
+  aiwolf: 5
+
+# Leakage control (L1): generate ONLY from instances disjoint from the evaluation set.
+hiddenbench:
+  benchmark: ../server/hidden-bench/data/benchmark.json
+  # Evaluation uses the first N tasks (matches server task_limit); generate from the REST.
+  eval_task_limit: 20
+  total_rounds: 15   # script discussion length (mirrors the faithful protocol)
+  num_agents: 4
+
+# Token matching (③ utterance-fewshot ↔ ⑤ script-fewshot): the utterance set is generated to
+# approximately match the script's token count (prompt-controlled; measured approximately —
+# stated as "approximately matched" in the paper, or re-checked with Gemma's tokenizer later).
+token_match: approximate   # approximate | off
+
+# Where to write: agent/<domain_pack>/exemplars/<lang>/{scripts,utterances,analysis}/
+agent_dir: ../agent

@@ -21,6 +21,11 @@ CONDITION="${CONDITION:-baseline}"
 VENV="$ROOT/agent/.venv/bin/python"
 AGENT_DIR="$ROOT/agent"
 
+# Unified log tree at the repo root: servers + agents write under $ROOT/log/<domain>/...,
+# the same place Docker writes to (LOG_SCOPE is left empty -> non-web). The browser UI sets
+# LOG_SCOPE=web to split web games into <domain>/web/.
+export LOG_ROOT="$ROOT/log"
+
 [ -x "$VENV" ] || { echo "agent venv not found at $VENV — run: (cd agent && uv sync)"; exit 1; }
 
 pids=()

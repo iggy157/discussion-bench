@@ -120,12 +120,10 @@ class Agent:
         # Game IDはINITIALIZEパケット受信時にself.infoから取得できる.
         self.game_id_cache: str = game_id
 
-        # Single central .env at the repo root (discussion-bench/.env) is the source of truth; the
-        # legacy per-agent config/.env is loaded only as a fallback. Neither overrides env
-        # vars already set by docker compose / run_local (load_dotenv won't clobber os.environ).
-        # 中央の discussion-bench/.env を優先。旧 config/.env はフォールバック。既存の環境変数は上書きしない。
+        # The single central .env at the repo root (discussion-bench/.env) is the source of
+        # truth. load_dotenv won't clobber env vars already set by docker compose / run_local.
+        # リポジトリ直下の discussion-bench/.env が唯一の設定源。既存の環境変数は上書きしない。
         load_dotenv(Path(__file__).resolve().parents[3].joinpath(".env"))
-        load_dotenv(Path(__file__).parent.joinpath("./../../config/.env"))
 
     def _is_separate_langchain(self) -> bool:
         """Return whether LangChain instances are separated by request type.
@@ -685,6 +683,10 @@ class Agent:
             # info.profile by the HiddenBench adapter. None in werewolf mode.
             # HiddenBenchのターン文脈 (フェーズ/手がかり/選択肢/ラウンド). 人狼モードでは None.
             "hb": getattr(self, "hb_context", None),
+            # HiddenBench multi-turn delta: index into talk_history from which NEW turns begin
+            # (turns before this were already shown in prior prompts and live in the LLM history).
+            # Embedding only the delta keeps the per-turn context linear instead of quadratic.
+            "hb_history_start": getattr(self, "_hb_history_start", 0),
             "domain": str(self.config.get("domain", "aiwolf")),
         }
         env = _get_jinja_env(lang)
@@ -748,14 +750,16 @@ class Agent:
             return
 
         llm_cfg = self.config["llm"]
-        default_type = str(llm_cfg.get("type", ""))
+        # Provider selection key is ``provider`` (consistent with the generator / eval-judge
+        # configs); ``type`` is accepted as a backward-compatible alias.
+        default_type = str(llm_cfg.get("provider") or llm_cfg.get("type", ""))
 
         if self._is_separate_langchain():
             talk_cfg = llm_cfg.get("talk") or {}
             action_cfg = llm_cfg.get("action") or {}
-            # type は省略時 llm.type をデフォルトとして使う.
-            talk_type = str(talk_cfg.get("type") or default_type)
-            action_type = str(action_cfg.get("type") or default_type)
+            # provider は省略時 llm.provider をデフォルトとして使う (type も後方互換で受理).
+            talk_type = str(talk_cfg.get("provider") or talk_cfg.get("type") or default_type)
+            action_type = str(action_cfg.get("provider") or action_cfg.get("type") or default_type)
             talk_overrides = extract_llm_overrides(talk_cfg, role_name="talk")
             action_overrides = extract_llm_overrides(action_cfg, role_name="action")
             self.llm_model_talk, self.llm_meta_talk = self._create_llm_model(
@@ -847,6 +851,16 @@ class Agent:
                         False なら SystemMessage はスキップ (既に履歴にある前提).
         """
         scenario_cfg = self.config.get("scenario") or {}
+        # Role-distinct injection (conditions ②〜⑥): HumanMessage = examples (or an analysis
+        # request), AIMessage = the analysis (or a brief ack). Selected by scenario.reply
+        # ('analysis' | 'ack'). The legacy llm_summary path (werewolf manyshot, cached) is kept
+        # below for backward compatibility (reply defaults to llm_summary when ack_mode says so).
+        ack_mode = str(scenario_cfg.get("ack_mode", "llm_summary"))
+        reply_kind = str(scenario_cfg.get("reply") or ("llm_summary" if ack_mode == "llm_summary" else "ack"))
+        if reply_kind in ("analysis", "ack"):
+            self._feed_exemplar_structured(day=day, is_initial=is_initial)
+            return
+
         project_root = Path(__file__).resolve().parent.parent.parent
         agent_cfg = self.config.get("agent") or {}
         sample_dir = resolve_sample_dir(scenario_cfg, agent_cfg, project_root)
@@ -1043,6 +1057,99 @@ class Agent:
                 self.agent_logger.logger.warning(
                     [log_phase, "ack", label, "static_fallback_on_error", static_ack],
                 )
+
+    def _feed_exemplar_structured(self, *, day: int | None, is_initial: bool) -> None:  # noqa: C901, PLR0912, PLR0915
+        """Inject exemplars with role-distinct messages (the intended design).
+
+        HumanMessage = examples (``human='examples'``: scripts/utterances) or an analysis
+        request (``human='request'``); AIMessage = the analysis (``reply='analysis'``) or a
+        brief acknowledgement (``reply='ack'``). Drives conditions ②〜⑥.
+
+        役割を分離した手本注入。HumanMessage に発話例/台本（または「要点を教えて」）を、
+        AIMessage に分析（または簡潔な了解）を積む。条件②〜⑥を駆動する。
+        """
+        scenario_cfg = self.config.get("scenario") or {}
+        project_root = Path(__file__).resolve().parent.parent.parent
+        agent_cfg = self.config.get("agent") or {}
+        lang = str(self.config.get("lang", "jp"))
+        env = _get_jinja_env(lang)
+
+        human_kind = str(scenario_cfg.get("human", "examples"))
+        reply_kind = str(scenario_cfg.get("reply", "ack"))
+        log_phase = "EXEMPLAR" if day is None else f"EXEMPLAR_DAY{day}"
+        glob_cfg = scenario_cfg.get("glob", "*.md")
+        glob: str | list[str] = list(glob_cfg) if isinstance(glob_cfg, (list, tuple)) else str(glob_cfg)
+
+        # HumanMessage content: example bodies (scripts/utterances) OR an analysis request.
+        bodies: list[str] = []
+        exemplar_kind = "scripts"
+        if human_kind == "examples":
+            sample_dir = resolve_sample_dir(scenario_cfg, agent_cfg, project_root)
+            exemplar_kind = "utterances" if "utterances" in str(sample_dir) else "scripts"
+            if day is None:
+                bodies = load_scenario_bodies(sample_dir, glob)
+            else:
+                bodies = load_scenario_bodies_by_day(sample_dir, glob, day, include_preamble=(day == 0))
+            if not bodies:
+                self.agent_logger.logger.warning("exemplar examples enabled but none found at %s", sample_dir)
+                return
+
+        # AIMessage content: the analysis bodies (reply=analysis) or a brief ack.
+        analysis_bodies: list[str] = []
+        if reply_kind == "analysis":
+            analysis_dir_cfg = scenario_cfg.get("analysis_dir")
+            if analysis_dir_cfg:
+                analysis_dir = Path(str(analysis_dir_cfg))
+                if not analysis_dir.is_absolute():
+                    analysis_dir = (project_root / analysis_dir).resolve()
+                analysis_bodies = load_scenario_bodies(analysis_dir, "*.md")
+            if not analysis_bodies:
+                self.agent_logger.logger.warning("reply=analysis but no analysis bodies found -> falling back to ack")
+                reply_kind = "ack"
+
+        static_ack = str(scenario_cfg.get("ack_static_text", "承知しました。参考にして議論に臨みます。"))
+        system_template = env.get_template("scenario_system.jinja") if is_initial else None
+        agent_num_int = int(agent_cfg["num"]) if agent_cfg.get("num") is not None else None
+        mechanics = derive_mechanics_flags(agent_num_int)
+        narration_split = self._is_narration_split()
+
+        if self._is_separate_langchain():
+            targets: list[tuple[LLMRunnable | None, list[BaseMessage], str, dict[str, str] | None]] = [
+                (self.llm_model_talk, self.llm_message_history_talk, "talk", self.llm_meta_talk),
+                (self.llm_model_action, self.llm_message_history_action, "action", self.llm_meta_action),
+            ]
+        else:
+            targets = [(self.llm_model, self.llm_message_history, "default", self.llm_meta_default)]
+
+        for _model, history, label, _meta in targets:
+            # 1. SystemMessage (initial feed only).
+            if is_initial and system_template is not None:
+                system_text = system_template.render(
+                    target_role=label, mechanics=mechanics, narration_split=narration_split,
+                ).strip()
+                history.append(SystemMessage(content=system_text))
+                self.agent_logger.logger.info([log_phase, "system", label, f"chars={len(system_text)}", system_text])
+
+            # 2. HumanMessage: examples, or an analysis request.
+            if human_kind == "request":
+                human = env.get_template("analysis_request.jinja").render(target_role=label).strip()
+            else:
+                human = env.get_template("exemplar_present.jinja").render(
+                    scenario_bodies=bodies, scenario_count=len(bodies), exemplar_kind=exemplar_kind,
+                ).strip()
+            history.append(HumanMessage(content=human))
+            self.agent_logger.logger.info([log_phase, "human", label, human_kind, f"chars={len(human)}", human])
+
+            # 3. AIMessage: the analysis (agent's own reflection) or a brief ack.
+            if reply_kind == "analysis":
+                ai_text = env.get_template("analysis_reply.jinja").render(
+                    analysis_bodies=analysis_bodies, analysis_count=len(analysis_bodies),
+                ).strip()
+                history.append(AIMessage(content=ai_text))
+                self.agent_logger.logger.info([log_phase, "ai", label, "analysis", f"chars={len(ai_text)}", ai_text])
+            else:
+                history.append(AIMessage(content=static_ack))
+                self.agent_logger.logger.info([log_phase, "ai", label, "ack", static_ack])
 
     def daily_initialize(self) -> None:
         """Perform processing for daily initialization request.

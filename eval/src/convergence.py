@@ -46,10 +46,7 @@ def premature_consensus(
     """
     if conv_round is None:
         return False
-    for fr in fact_surfaced_rounds:
-        if fr is None or fr > conv_round:
-            return True
-    return False
+    return any(fr is None or fr > conv_round for fr in fact_surfaced_rounds)
 
 
 def consensus_agreement_rate(rounds_stances: list[list[str | None]]) -> float:
