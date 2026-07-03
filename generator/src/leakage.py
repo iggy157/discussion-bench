@@ -31,6 +31,32 @@ class HiddenBenchTask:
     correct_answer: str
 
 
+def load_hiddenbench_tasks_by_ids(benchmark_path: Path, ids: list[int]) -> list[HiddenBenchTask]:
+    """Load explicit task ids (a curated, validity-/difficulty-selected script source).
+
+    明示したタスクIDを読み込む（妥当性・難易度で選定した台本ソース用）。L1は呼び出し側が保証
+    （eval_ids と素集合であること）。指定順を保持する。
+    """
+    raw = json.loads(benchmark_path.read_text(encoding="utf-8"))
+    by_id = {int(t["id"]): t for t in raw}
+    missing = [i for i in ids if i not in by_id]
+    if missing:
+        msg = f"benchmark missing requested script ids: {missing}"
+        raise ValueError(msg)
+    return [
+        HiddenBenchTask(
+            id=int(by_id[i]["id"]),
+            name=str(by_id[i]["name"]),
+            description=str(by_id[i]["description"]),
+            shared_information=[str(x) for x in by_id[i].get("shared_information", [])],
+            hidden_information=[str(x) for x in by_id[i].get("hidden_information", [])],
+            possible_answers=[str(x) for x in by_id[i].get("possible_answers", [])],
+            correct_answer=str(by_id[i].get("correct_answer", "")),
+        )
+        for i in ids
+    ]
+
+
 def select_hiddenbench_tasks(
     benchmark_path: Path,
     eval_task_limit: int,

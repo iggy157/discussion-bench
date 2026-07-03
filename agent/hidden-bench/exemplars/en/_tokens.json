@@ -1,0 +1,77 @@
+{
+  "note": "Approximate token counts (generator's heuristic). The paper's per-cell table should be re-measured with the discussion agent's (Gemma's) tokenizer.",
+  "domain": "hiddenbench",
+  "lang": "en",
+  "records": [
+    {
+      "index": 1,
+      "script_tokens": 2211,
+      "utterances_tokens": 1705,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.771
+    },
+    {
+      "index": 2,
+      "script_tokens": 3064,
+      "utterances_tokens": 2456,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.802
+    },
+    {
+      "index": 3,
+      "script_tokens": 2437,
+      "utterances_tokens": 1868,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.767
+    },
+    {
+      "index": 4,
+      "script_tokens": 3041,
+      "utterances_tokens": 2475,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.814
+    },
+    {
+      "index": 5,
+      "script_tokens": 2318,
+      "utterances_tokens": 1758,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.758
+    },
+    {
+      "index": 6,
+      "script_tokens": 2905,
+      "utterances_tokens": 2374,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.817
+    },
+    {
+      "index": 7,
+      "script_tokens": 2759,
+      "utterances_tokens": 2208,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.8
+    },
+    {
+      "index": 8,
+      "script_tokens": 2518,
+      "utterances_tokens": 1944,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.772
+    },
+    {
+      "index": 9,
+      "script_tokens": 2649,
+      "utterances_tokens": 2072,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.782
+    },
+    {
+      "index": 10,
+      "script_tokens": 3097,
+      "utterances_tokens": 2520,
+      "analysis_tokens": 10,
+      "utterance_to_script_ratio": 0.814
+    }
+  ]
+}

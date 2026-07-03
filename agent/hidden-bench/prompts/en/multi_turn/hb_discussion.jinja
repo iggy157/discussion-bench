@@ -1,5 +1,10 @@
 {% set history_source = talk_history -%}
 {% set history_start = hb_history_start | default(0) -%}
+{%- set _r = hb_round if (hb_round is defined and hb_round) else None -%}
+{%- set _T = hb_total_rounds if (hb_total_rounds is defined and hb_total_rounds) else None -%}
+{%- if _r and _T %}
+Discussion progress: round {{ _r }} of {{ _T }} ({{ _T - _r }} round(s) remain after this). Pace the discussion across ALL rounds — do not rush to a final answer and do not repeat a conclusion already reached. Early rounds: surface your own private facts and take in others'. Middle rounds: cross-check and challenge the facts and weigh the competing options. Late rounds: stress-test the leading answer — what single fact would overturn it? re-read the exact task wording; is every participant's information accounted for? Give your concise final answer only in the last round. If you have nothing genuinely new, add a new angle or a verification — never restate a previous message.
+{% endif -%}
 {% if talk_history|length == 0 -%}
 You are the first to speak. Based on the information you have, share your initial thoughts with the group in one or two sentences, focusing on the facts most relevant to the decision.
 {%- elif history_source[history_start:]|length == 0 -%}

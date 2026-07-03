@@ -72,6 +72,15 @@ func CreateAgentsWithProfiles(conns []model.Connection, roles map[model.Role]int
 	// under a fixed AIWOLF_SEED seat i always gets the same role across runs (condition pairing).
 	// Go map iteration order is randomized, so assignRole() over a map cannot be made reproducible;
 	// expanding to a sorted slice + seeded shuffle can.
+	// Stable seat order: sort connections by name so seat i is the SAME agent across runs,
+	// independent of the nondeterministic connection-arrival order. Without this, the seeded role
+	// shuffle below is applied to a race-ordered conns slice, so agent->role differs per run even
+	// under a fixed AIWOLF_SEED (breaks condition pairing).
+	connsSorted := append([]model.Connection{}, conns...)
+	sort.SliceStable(connsSorted, func(i, j int) bool {
+		return connsSorted[i].OriginalName < connsSorted[j].OriginalName
+	})
+
 	roleList := expandRolesSorted(roles)
 	Rng.Shuffle(len(roleList), func(i, j int) { roleList[i], roleList[j] = roleList[j], roleList[i] })
 
@@ -80,8 +89,8 @@ func CreateAgentsWithProfiles(conns []model.Connection, roles map[model.Role]int
 		profilesCopy[i], profilesCopy[j] = profilesCopy[j], profilesCopy[i]
 	})
 
-	agents := make([]*model.Agent, 0, len(conns))
-	for i, conn := range conns {
+	agents := make([]*model.Agent, 0, len(connsSorted))
+	for i, conn := range connsSorted {
 		role := model.R_VILLAGER
 		if i < len(roleList) {
 			role = roleList[i]

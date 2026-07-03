@@ -40,6 +40,7 @@ class HiddenBenchConfig:
     eval_task_limit: int
     total_rounds: int
     num_agents: int
+    script_ids: list[int]  # explicit curated task ids; if non-empty, used instead of the leading slice
 
 
 @dataclass
@@ -142,6 +143,7 @@ def load_config(config_path: Path) -> GeneratorConfig:
         eval_task_limit=int(_require(hb_raw, "eval_task_limit")),
         total_rounds=int(hb_raw.get("total_rounds", 15)),
         num_agents=int(hb_raw.get("num_agents", 4)),
+        script_ids=[int(x) for x in hb_raw.get("script_ids", [])],
     )
 
     return GeneratorConfig(

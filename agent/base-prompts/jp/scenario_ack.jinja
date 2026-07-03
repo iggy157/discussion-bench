@@ -1,0 +1,14 @@
+{#-
+  scenario_ack.jinja (Japanese)
+  reply=ack 条件の AIMessage 本文。お手本を受け取ったことを一人称で短く了解する。
+  お手本の種類 (exemplar_kind) に応じて「何を参考にするか」を言い分ける。ドメイン中立。
+  Expects: exemplar_kind ('scripts' | 'utterances' | 'situations')
+-#}
+{%- set _kind = exemplar_kind | default('scripts') -%}
+{%- if _kind == 'utterances' -%}
+承知しました。お手本を参考に、発話の言い回し・テンポ・論点の出し方を踏まえて臨みます。
+{%- elif _kind == 'situations' -%}
+承知しました。お手本を参考に、状況に応じた言い回しを踏まえて臨みます。
+{%- else -%}
+承知しました。お手本の台本を参考に、議論の進め方や発話のテンポを踏まえて臨みます。
+{%- endif %}

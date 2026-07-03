@@ -1,0 +1,28 @@
+# FULL regeneration: 10 scripts/domain via Opus 4.8 -> writes to the REAL agent/ exemplars
+# (scripts/, utterances/, analysis/). Claude analysis is generated but NOT used (analysis is done
+# separately by gemma/gpt). HB uses the DESIGNATED leakage-safe script_ids from hb_task_split_en.yml
+# so the eval set stays disjoint. aiwolf uses seeds 10000-10009 (disjoint from eval seeds 1-60).
+provider: anthropic
+model: claude-opus-4-8
+temperature: 0.7
+max_tokens: 4096
+api_key_env: ANTHROPIC_API_KEY
+
+lang: en
+domains: [hiddenbench, aiwolf]
+
+num_scripts:
+  hiddenbench: 10
+  aiwolf: 10
+
+hiddenbench:
+  benchmark: /disk/ssd14ta/yharada/aiwolf/inlg/2026/develop/discussion-bench/server/hidden-bench/data/benchmark.json
+  eval_task_limit: 20
+  total_rounds: 15
+  num_agents: 4
+  # designated script-source task ids (disjoint from eval_ids in config/hb_task_split_en.yml)
+  script_ids: [4, 8, 12, 14, 30, 32, 34, 48, 58, 60]
+
+token_match: approximate
+
+agent_dir: /disk/ssd14ta/yharada/aiwolf/inlg/2026/develop/discussion-bench/agent

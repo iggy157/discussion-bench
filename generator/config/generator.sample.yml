@@ -1,0 +1,25 @@
+# SAMPLE generation (cost probe): 3 scripts/domain via Opus 4.8, written to a SEPARATE dir so the
+# real agent/ exemplars are untouched. Inspect quality + measured cost, then decide on the full run.
+provider: anthropic
+model: claude-opus-4-8
+temperature: 0.7
+max_tokens: 4096
+api_key_env: ANTHROPIC_API_KEY
+
+lang: en
+domains: [hiddenbench, aiwolf]
+
+num_scripts:
+  hiddenbench: 3
+  aiwolf: 3
+
+hiddenbench:
+  benchmark: /disk/ssd14ta/yharada/aiwolf/inlg/2026/develop/discussion-bench/server/hidden-bench/data/benchmark.json
+  eval_task_limit: 20
+  total_rounds: 15
+  num_agents: 4
+
+token_match: approximate
+
+# Write to a sample location (ABSOLUTE) so agent/ exemplars are NOT overwritten.
+agent_dir: /disk/ssd14ta/yharada/aiwolf/inlg/2026/develop/discussion-bench/results/script_sample

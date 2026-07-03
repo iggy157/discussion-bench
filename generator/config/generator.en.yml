@@ -1,0 +1,26 @@
+# English exemplar generation (local gemma via vLLM 8000).
+# 台本ソースは select_hb_tasks.py が選んだ10件（config/hb_task_split_en.yml の script_ids）を明示指定。
+# まず HiddenBench の10台本を生成（実際に使うのは3本、残り7本は本数スイープ用に待機）。
+provider: vllm
+model: gemma-4-31b
+temperature: 0.7
+max_tokens: 4096
+api_key_env: OPENAI_API_KEY
+base_url: http://localhost:8000/v1
+
+lang: en
+domains: [hiddenbench]
+
+num_scripts:
+  hiddenbench: 10
+  aiwolf: 0
+
+hiddenbench:
+  benchmark: ../server/hidden-bench/data/benchmark.json
+  eval_task_limit: 20          # legacy fallback only; script_ids below takes precedence
+  total_rounds: 15
+  num_agents: 4
+  script_ids: [4, 8, 12, 14, 30, 32, 34, 48, 58, 60]   # curated (validity/stratified, L1-disjoint from eval)
+
+token_match: approximate
+agent_dir: ../agent

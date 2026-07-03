@@ -1,0 +1,57 @@
+# Script-count sweep WITH script-DERIVED analysis (K=1,3,5,10).
+# Each condition = K scripts + the analysis GENERATED FROM those K scripts (analysis_k{K}/talk.md
+# + action.md, produced by serving/gen_script_analysis.py). This tests the hypothesis that the
+# script's strength only transfers when the analysis is derived from the script itself.
+# Run gen-analysis BEFORE this sweep so analysis_k{K}/ dirs exist.
+# baseline kept as the K=0 reference.
+
+conditions:
+  baseline:
+    label: baseline
+    inject: []
+    scenario:
+      enabled: false
+
+  script_k1_a:
+    label: script_k1_a
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k1"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_k1"
+
+  script_k3_a:
+    label: script_k3_a
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k3"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_k3"
+
+  script_k5_a:
+    label: script_k5_a
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k5"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_k5"
+
+  script_k10_a:
+    label: script_k10_a
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k10"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_k10"

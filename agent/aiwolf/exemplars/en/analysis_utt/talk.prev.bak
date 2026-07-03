@@ -1,0 +1,148 @@
+# Analysis — talk (exemplar, from utterances_k5)
+
+Here’s the memo I’d want in hand before writing TALK moves.
+
+- The transcripts are not about stylish one-liners; they’re about matching the board’s information state to the right conversational job. Good utterances feel like “what does the table need right now?” rather than “what’s my canned personality line?”
+
+- Core causal mapping: board situation determines agenda.
+  - Day0 / no hard info / all players alive:
+    - Agenda is process-setting, not accusation.
+    - Typical content: greetings, preference for early information, when seer should reveal, “I’ll watch tone/logic/patterns,” light first impressions.
+    - Tone is relaxed, provisional, mildly social.
+    - Tempo is broad and low-stakes; players often spread into different but compatible framings instead of converging.
+  - Day1 / no attack yet (or first meaningful morning) / seer result expected:
+    - Agenda sharply shifts to “claim and result disclosure.”
+    - If players pre-agreed on reveal timing, someone invokes that agreement early.
+    - Tone becomes procedural first, then evaluative.
+    - Tempo accelerates because the result is the day’s anchor.
+  - 1 seer CO:
+    - Agenda becomes: hear result, hear reason for target choice, decide whether to trust and build around it or challenge the logic.
+    - If result is white/human on someone: discussion often shifts toward how much to clear that target and whether the claim itself is too convenient.
+    - If result is black/wolf on someone: agenda compresses around whether to trust the seer now vs test consistency.
+    - Tone is still somewhat open because there isn’t a direct claim war yet.
+  - 2+ seer COs:
+    - Agenda becomes the puzzle itself.
+    - Immediate causal frame: exactly one is fake (wolf or possessed), so compare timing, target overlap, reasoning, and who benefits.
+    - If both named same target:
+      - This strongly shapes discussion; people often interpret mirrored targeting as fake-counterclaim behavior, especially from the second claimant.
+      - Agenda becomes less about target alone and more about claim structure.
+    - If opposite results on same target:
+      - Table often reduces game state quickly: one seer real, one fake, target contested.
+      - Discussion calls for direct questioning of both claimants and arguments about whether to execute the target or resolve the seer war.
+    - Tempo is much faster; almost every useful utterance orients around the double-claim.
+  - Black result present:
+    - Agenda narrows. Someone usually pushes “end it at the source” or “take the accused now,” while others argue whether killing the seer claimant/fake first is safer.
+    - Black results justify stronger certainty and shorter, more forceful lines.
+    - But good discussion still asks why that target was chosen and whether the black could be fabricated.
+  - Human/white result only:
+    - Agenda is wider and more interpretive.
+    - People discuss whether the clear is real, buddy-cover, or low-risk fabrication.
+    - This tends to produce more hedged positioning and “I lean X, not locked.”
+  - Day2+ with night attack:
+    - Agenda begins with interpreting the death.
+    - The attack is used as alignment evidence: “who died and why?” often retroactively confirms one side of a claim conflict.
+    - Revealed-role distribution matters hugely:
+      - If a fake seer/possessed was executed yesterday and the other claimant dies overnight, the table often treats the dead claimant as confirmed real.
+      - If the real seer likely died, surviving “cleared” targets or defenders become focal points.
+    - Tone is tighter and more deductive: fewer vibes, more consistency checks.
+  - Fewer players remaining:
+    - Agenda compresses further; less setup, more direct causal accusation.
+    - Players invoke yesterday’s votes, pairings, and who shielded whom.
+    - Final-day style is less exploratory and more “the line points here.”
+
+- Three recurring agenda patterns I noticed:
+  - Process alignment pattern:
+    - Situation: Day0 or very early Day1 before claims.
+    - Several players lightly align on a rule (early reveal, compare reasons, don’t coin-flip).
+    - Important detail: not everyone says the same thing. One agrees plainly, one adds caveat, one notes a risk, one stays neutral.
+    - This creates realistic spread and avoids chorus-writing.
+  - Claim verification pattern:
+    - Situation: one or more seer COs.
+    - Sequence tends to be: claim -> target/result -> reason for target -> reaction to timing -> challenge on consistency -> interim lean.
+    - The strongest causal questions are not abstract; they are specific: why that target, why same target, why claim second, why push this lynch order.
+  - Post-attack reconstruction pattern:
+    - Situation: Day2+ after someone died, especially after a seer conflict.
+    - Players reconstruct prior day causally: who defended fake, who attacked real, who benefited from the kill.
+    - This often yields compressed argument chains suitable for endgame.
+
+- Per-day phase structure matters a lot.
+  - Day0:
+    - Self-introductions.
+    - Agreement on process.
+    - Light personality reads or “I’ll watch X.”
+    - Little to no hard push unless someone is establishing a lively persona.
+  - Day1:
+    - Morning recognition that this is the first real day.
+    - Prompt for seer CO.
+    - Claims/results.
+    - Verification Q&A.
+    - Movement into vote intent and then locked vote.
+  - Day2+:
+    - Start from attack result.
+    - Re-read yesterday through revealed info.
+    - Test consistency of living players’ stories.
+    - Move more quickly to final commitment.
+
+- Turn progression:
+  - Turn 0-3:
+    - Early turns usually establish the day’s agenda explicitly.
+    - Good moves often either:
+      - open the relevant lane (“seer, now”), or
+      - frame the evaluation criteria (“reasoning over volume,” “compare timing/benefit”).
+  - Mid turns:
+    - Best used for targeted questioning, narrowing, or repositioning.
+    - This is where “I was leaning X, but Y changed it” appears.
+  - Final turn:
+    - Reserve it for the actual vote declaration.
+    - It should be concise and decisive, usually with @-mention.
+    - Don’t waste the final utterance on more pondering; the examples strongly show closure behavior.
+
+- Spread of responses is crucial for realism.
+  - Even when one agenda dominates, roles distribute across:
+    - simple agreement,
+    - agreement with caveat,
+    - alternate framing,
+    - observational neutrality,
+    - temporary restraint/skip.
+  - So when the board obviously calls for “seer claim now,” not everyone needs identical pressure. One can invite, one can warn about double-CO complexity, one can simply wait and note.
+
+- Off-mainstream positioning when one player is under attack:
+  - Not every non-target should become attacker #2.
+  - Useful alternative stances:
+    - Admitting fault:
+      - Situation: after a flip or attack proves prior support wrong.
+      - “I backed the wrong claimant, but here’s why that doesn’t settle my alignment.”
+    - Neutral observer:
+      - Situation: when evidence is incomplete or two strong stories clash.
+      - They ask comparative questions instead of joining a pile-on.
+    - Organizer/refocuser:
+      - Situation: thread is scattering or over-fixating.
+      - They re-center the table on the decisive puzzle (“seer war first,” “look at yesterday’s votes”).
+    - Holding back:
+      - Situation: Day0, weak-information spots, or when someone wants one more answer before committing.
+      - This should sound intentional, not absent.
+  - This matters because the discourse is richer than attacker vs attacked; there are social roles in the conversation.
+
+- Utterance construction:
+  - A common strong shape is:
+    - pick up one thing someone else said,
+    - add your own evaluation or causal rule,
+    - end with a small conclusion or forward action.
+  - Example skeletons without memorizing wording:
+    - “Fair point on X. What decides it for me is Y. So I’m leaning/voting Z.”
+    - “I agree with the process, but caveat A. If we get B, then I want C.”
+    - “You’re focusing on X; I think the board actually turns on Y.”
+  - This keeps the talk connected rather than isolated.
+
+- Voice consistency:
+  - Characters often have a stable preference:
+    - procedural/logical,
+    - gut/tone-based,
+    - energetic pressure,
+    - cautious skeptic,
+    - quiet organizer.
+  - Good utterances keep that voice while still adapting to board state.
+  - So consistency is less about catchphrases and more about what evidence type the character trusts and how hard they press.
+
+- Final takeaway:
+  - The best move is usually not “say the most.” It is “advance the day’s current job by one clean step” in a voice that fits the character, with enough reference to prior talk to feel embedded in the living thread.

@@ -1,0 +1,23 @@
+# eval-v2 DISCOURSE subjective rubric (self-defined, NOT reference-based). gemma 31b judge.
+# Targets the scr-vs-situ hypothesis: redundancy / opening & expression diversity / topic flow.
+provider: vllm
+model: gemma-4-31b
+temperature: 0.0
+base_url: http://localhost:8000/v1
+api_key_env: OPENAI_API_KEY
+lang: en
+scale: 5
+repeats: 1
+items:
+  - key: nonredundancy
+    en: "Non-redundancy: does the discussion AVOID repeating the same points/phrases and keep adding new content rather than restating? (5 = very non-redundant, 1 = very repetitive)"
+    ja: "非冗長性: 同じ論点や言い回しの繰り返しを避け、新しい内容を加え続けているか（5=非常に非冗長, 1=非常に冗長）"
+  - key: topic_progression
+    en: "Topic progression: does the discussion develop and move through ideas/angles over time rather than circling or stalling? (5 = strong progression)"
+    ja: "話題前進: 議論が時間とともに論点を展開・前進させているか、堂々巡りでないか（5=強い前進）"
+  - key: expression_diversity
+    en: "Expression diversity: are the ways of speaking and opening turns varied rather than templated/formulaic (e.g., everyone starting with 'I agree')? (5 = very varied)"
+    ja: "表現多様性: 語り出しや言い回しが定型でなく多様か（5=非常に多様）"
+  - key: engagement
+    en: "Engagement: do participants build on and respond to each other's SPECIFIC points rather than talking past each other? (5 = highly engaged)"
+    ja: "相互応答性: 互いの具体的な発言に基づき応答し合っているか（5=高い）"

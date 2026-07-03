@@ -1,0 +1,44 @@
+# Example utterances from a good discussion
+
+The following are individual utterances sliced from a good discussion (the whole-discussion flow is not included).
+
+- Follow the protection. Felix is guarding Derek, so Derek is the one I want gone. @Derek
+- Over.
+- That's a leap. Derek can agree with me and still be clean. You're inventing a team that doesn't exist.
+- Two claims, and Iris swung at me first — that reads like a preemptive strike. I trust Felix more here.
+- Same boat — ordinary villager. I'll be watching who pushes hardest tomorrow without anything to back it.
+- Or I waited to see if the fake would expose herself, and she did. My result stands: Mona is the wolf.
+- Watch the pairing: Derek backed Felix instantly. A wolf and a fake seer covering each other — textbook.
+- I lean the other way — disclose fast. A result nobody hears is worthless. Transparency beats caution here.
+- Wendy. I don't trust smooth talkers, so consider that fair warning. Let's at least keep this honest.
+- Then it's settled as a yardstick. Nothing else from me right now. Over.
+- Good. Let's all remember today's tone; tomorrow's claims should line up with how people behaved now.
+- Derek, pleased to meet you. I'd rather listen before pointing fingers — early noise mostly helps the wolf.
+- Blunder of the day. The genuine seer is me, and the wolf you're ignoring is Mona. @Iris
+- Saving my energy for the real hunt tomorrow. Over.
+- I'll go first. I'm the seer. Last night I divined Derek, and the result came back werewolf. He's the wolf.
+- I'm convinced. Iris gives reasons; Felix only asserts. And Derek clinging to Felix settles it. @Derek
+- Think it through. The real wolf wants a rival seer in play. Felix surfaced the second I named Derek.
+- A quiet night — everyone woke up. If our seer has a result, this is the moment. Who's claiming?
+- Timing cuts both ways, Iris. But Felix, naming Mona — a quiet villager — over Derek feels backwards to me.
+- Felix, hello! Five of us, one wolf tucked in somewhere. I'm itching to dig, but I'll pace myself.
+- Morning. Nobody died, which is strange but fine. Let's hear claims before we swing at anyone.
+- I'll rest my voice for now. Over.
+- I like that test. Consistency is the tell. Liars usually drift between one day and the next.
+- My result is firm and the behaviour confirms it. Derek is the werewolf. Stand with me. @Derek
+- Sensible, though an early claim also paints a target on someone's back. Let the seer judge the timing.
+- Convenient that I'm Felix's target. I'm a villager, so he's either badly mistaken or flatly lying.
+- Nothing more to add today. Over.
+- Hard agree with Iris. Sitting on a divination is how a village quietly bleeds out, one night at a time.
+- My read is simpler: a possessed fakes the seer to save the real wolf. Felix's claim shields Derek, not me.
+- Wonderful. Two seers on day one. So one of you is the wolf or the possessed. Let's not stampede.
+- Noted, Wendy. I'm a plain villager with nothing to hide, so I'll vote on logic rather than gut feeling.
+- Hold on, that's false — because I'm the seer. My divination on Mona returned werewolf. Iris is the fake.
+- Right. Ask who profits. If Iris is real, Derek dies. If Felix is real, I die. So who is being shielded?
+- Fine by me. Just know I'll grill any claim that shows up. A role without reasoning is only noise.
+- Morning, all. Mona here. Nobody's died yet, so let's spend today reading each other and agreeing on a plan.
+- Hi, Iris. It's calm for now, which suits me. I'll keep my cards close today and watch how people talk.
+- Over. See you all in the morning.
+- I profit from nothing — I'm a villager stuck in the crossfire. You're all spinning theories out of air.
+- Plan-wise: if our seer learns anything tonight, please come out early tomorrow. Hidden information loses games.
+- You're all wrong, but fine — Iris opened with a hit on me, so she gets my vote. @Iris

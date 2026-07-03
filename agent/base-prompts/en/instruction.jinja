@@ -8,10 +8,11 @@
 -#}
 {%- set _scenario_enabled = scenario_enabled if scenario_enabled is defined else False -%}
 {% if request_key == 'talk' -%}
+{%- set _self_talk_today = talk_history | selectattr('agent', 'equalto', info.agent) | selectattr('day', 'equalto', info.day) | list | length -%}
 {% if _scenario_enabled -%}
-Day {{ info.day }} talk. Draw on the discussion flow and utterance tempo of the reference scripts, and speak naturally as your character. Do not imitate the format — output your utterance content only.
+Day {{ info.day }} talk.{% if _self_talk_today == 0 %} This is your first utterance today.{% endif %} Draw on the discussion flow and utterance tempo of the reference scripts, and speak naturally as your character. Do not imitate the format — output your utterance content only.
 {%- else -%}
-Day {{ info.day }} talk. Speak naturally as your character. Output your utterance content only — no headings, tables, character labels, voiced others, or stage directions.
+Day {{ info.day }} talk.{% if _self_talk_today == 0 %} This is your first utterance today.{% endif %} Speak naturally as your character. Output your utterance content only — no headings, tables, character labels, voiced others, or stage directions.
 {%- endif %}
 {% elif request_key == 'whisper' -%}
 Day {{ info.day }} whisper. Reply to your fellow werewolf naturally, staying in character.
@@ -24,10 +25,11 @@ Vote request. You are "{{ info.agent }}". Considering the stance and declaration
 {% elif request_key == 'attack' -%}
 Attack request. Output only the name of the agent to attack.
 {% elif request_key == 'initialize' -%}
+{%- set _primer %}Divination and medium results are facts the server returns; the result itself has no "reason", so when judging whether a claimed seer is fake, weigh the choice of divine target, the consistency of that seer's words and conduct, and cross-checks against others' statements (questioning the basis of the result itself is beside the point). A common flow: with a single seer claim (1-CO), generally treat that seer as genuine and move promptly to the execution-vote discussion; with two or more claims (2+ CO), weigh the target-selection reasoning to judge which is genuine, then move to the vote discussion. If you hold an information role (seer/medium), come out (CO) and share your result at an appropriate time so the village can act on it.{% endset -%}
 {% if _scenario_enabled -%}
-Game initialize. Using the reference scripts you studied and the role/profile that follows, respond in English to subsequent requests.
+Game initialize. Using the reference scripts you studied and the role/profile that follows, respond in English to subsequent requests. {{ _primer | trim }}
 {%- else -%}
-Game initialize. Using the role/profile that follows, respond in English to subsequent requests.
+Game initialize. Using the role/profile that follows, respond in English to subsequent requests. {{ _primer | trim }}
 {%- endif %}
 {% elif request_key == 'daily_initialize' -%}
 Day {{ info.day }} has started.

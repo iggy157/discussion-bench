@@ -6,7 +6,7 @@ temperature: 0.0
 base_url: http://localhost:8000/v1
 api_key_env: OPENAI_API_KEY          # unused for local vllm (placeholder key)
 
-lang: ja
+lang: en
 scale: 5
 repeats: 1
 

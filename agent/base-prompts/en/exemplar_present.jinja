@@ -9,7 +9,9 @@
 -#}
 {% set _kind = exemplar_kind | default('scripts') -%}
 {% if _kind == 'utterances' -%}
-Below are individual utterance examples observed in good discussions ({{ scenario_count }} set(s); the whole-discussion flow is NOT included). Use them as a reference for phrasing, pacing, and how to raise points when you speak.
+Below are individual utterance examples observed in good discussions ({{ scenario_count }} set(s)). Use them as a reference for phrasing, pacing, and how to raise points when you speak.
+{%- elif _kind == 'situations' -%}
+Below are situation/scene phrasing examples from good discussions ({{ scenario_count }} set(s)): short lines suited to particular moments. Use them as a reference for how to phrase yourself in each kind of situation when you speak.
 {%- else -%}
 Below are complete records of good discussions, start to finish ({{ scenario_count }} transcript(s)). Use them as a reference for how a discussion you are about to join should proceed — its flow and the texture of the utterances.
 {%- endif %}
@@ -23,3 +25,9 @@ Below are complete records of good discussions, start to finish ({{ scenario_cou
 
 {% endfor %}
 --- end ---
+{% if request_analysis and _kind == 'scripts' %}
+
+Having read the above, please summarize your observations and return them:
+- How the discussion develops — how it progresses round by round.
+- The points that make a script as readable and engaging as these references.
+{%- endif %}

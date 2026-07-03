@@ -1,0 +1,42 @@
+# LISTWISE subjective judge — repurposes the aiwolf 6-criteria team-relative rubric as a
+# per-SEED ranking across conditions (rank the N condition-logs of one matched seed, ties OK).
+# Forces discrimination (the floor/ceiling problem of absolute Likert cannot occur in a ranking).
+#
+# Criteria carry a `domains` tag. All four below are transcript-only -> SHARED aiwolf+hb:
+#   - natural_expression / contextual_dialogue / logical_consistency : the discussion-quality axis.
+#   - speaker_individuality : reframes the rubric's character_consistency as "do speakers read as
+#     distinct human individuals vs one homogeneous voice" — judgeable from transcript alone, so it
+#     applies to HB too (a discussion can be high-quality yet feel like one person talking to itself).
+#   - action_consistency / team_play are intentionally NOT here — recast as OBJECTIVE
+#     (vote-talk consistency / village_coordination) since they need roles+votes and are
+#     exactly the outcome-adjacent dimensions a subjective gemma judge handles unreliably.
+provider: vllm
+model: gemma-4-31b
+temperature: 0.0
+base_url: http://localhost:8000/v1
+api_key_env: OPENAI_API_KEY
+lang: en
+
+# Confound exclusions carried over from the original rubric's baseline_components: the judge
+# must rank on DISCUSSION QUALITY ONLY, never on who won / vote outcome / role strategy success
+# / external correctness signals / sheer verbosity.
+exclusions:
+  - "Do NOT reward or penalize based on which side won the game or the final outcome."
+  - "Do NOT reward or penalize based on whether votes/executions hit the 'correct' target."
+  - "Do NOT reward role-strategy success (good plays) — judge the discussion text itself."
+  - "Do NOT use any external correctness signal; judge only what the transcript shows."
+  - "Do NOT reward sheer volume/length; a longer discussion is not automatically better."
+
+criteria:
+  - key: natural_expression
+    domains: [aiwolf, hb]
+    en: "Natural expression — do the utterances read as natural, fluent, human-like dialogue (not templated/robotic)?"
+  - key: contextual_dialogue
+    domains: [aiwolf, hb]
+    en: "Contextual dialogue — do speakers genuinely respond to and build on what others said, rather than talking past each other or repeating?"
+  - key: logical_consistency
+    domains: [aiwolf, hb]
+    en: "Logical consistency — is the reasoning across the discussion coherent and free of self-contradiction?"
+  - key: speaker_individuality
+    domains: [aiwolf, hb]
+    en: "Speaker individuality / human-likeness — do the participants come across as distinct individuals, each with their own voice and personality, rather than all sounding like the same person? A discussion where every speaker is interchangeable should rank LOW even if its reasoning is good."

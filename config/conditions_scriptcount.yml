@@ -1,0 +1,51 @@
+# Script-count sweep: vary the NUMBER of injected scripts (K=0,1,3,5,10), script-only (reply=ack).
+# Goal: dose-response of exemplar count on the SAME metric scale as run_en_8cond_rep1 (integrable).
+# K-dirs are nested subsets of scripts_pool (k1 ⊂ k3 ⊂ k5 ⊂ k10). baseline = K=0 reference.
+# L1: eval tasks are disjoint from the 10 script-source tasks (script_ids in hb_task_split_en.yml).
+
+conditions:
+  baseline:
+    label: baseline
+    inject: []
+    scenario:
+      enabled: false
+
+  script_k1:
+    label: script_k1
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k1"
+
+  script_k3:
+    label: script_k3
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k3"
+
+  script_k5:
+    label: script_k5
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k5"
+
+  script_k10:
+    label: script_k10
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k10"

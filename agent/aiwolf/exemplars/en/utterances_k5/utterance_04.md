@@ -1,0 +1,56 @@
+# Example utterances from a good discussion
+
+The following are individual utterances sliced from a good discussion (the whole-discussion flow is not included).
+
+- Owen blocks every attempt to verify his claim. That's not a seer, that's someone shielding the wolf. @Owen
+- Then I'll go. I'm the seer. Last night I divined Maya — result: human. She's cleared in my book; build around her.
+- Owen needs me gone before tomorrow exposes him. Hard pass. @Owen
+- Agreed. A clean night means today's lynch is everything. Let's hear from any role before we start swinging blind.
+- Sleep well, villagers. Over.
+- I'll take that risk over letting you slide. @Derek
+- Cute story. Mine's simpler: Lena's been flat and evasive since Day 0, so I checked her. Werewolf. Vote her and we're done today.
+- If I'm wrong I'm wrong, but I think you're burning a villager here. @Maya
+- Yesterday's clear enough: Owen was the fake, and Derek, you backed his claim and threw both votes at the real seer. That's a wolf-team look.
+- Lena's right. Derek rode the "Priya cleared a buddy" line all day and aimed at the true seer. The possessed and the wolf were rowing the same boat.
+- Noted. I'll come forward when I have something worth your trust, and not a moment before.
+- Watch me all you like, Maya — I'll be the one driving the lynch when it counts. Over.
+- I still think the Maya-clear is too tidy, but I won't hand the wolf a free kill — sticking with my read. @Priya
+- You're all sleepwalking. Lena's the wolf and you'll regret skipping her tonight. @Priya
+- Owen flipped possessed — which means Priya was the real seer all along. And the wolf killed her overnight to bury whatever she'd have said today.
+- I like that Maya's already weighing tone. Keep it up. Nothing actionable from me yet.
+- Owen, you're loud about others revealing. Just flagging it — loud demands can be cover. I'll watch you too.
+- Hello. I'd rather listen early than talk over people. I'll be tracking how confident each claim sounds.
+- Then test it forward: keep me alive and I'll divine again tonight. A fake seer can't survive that — I can. Owen, will your story hold a second night?
+- Fair question, Derek. I divined Maya because she pushed the "reveal early" rule hardest — I wanted to know if that was genuine. It was.
+- You argued out loud to sink the seer. With Owen executed, the cover he gave you went with him. I genuinely don't see a third suspect here.
+- Come on — I bought the wrong seer, that's a villager's mistake, not a confession. If I were the wolf I'd have voted quietly, not argued out loud.
+- Being quiet isn't a tell, Owen — it's me waiting for data, which I said out loud. You're rushing the room, and that worries me more than my silence.
+- Convenient, Owen. I'm a plain villager and your "result" is a frame. Two seer claims, then — let's actually test them.
+- I see it as Derek. Every move that helped the wolf yesterday had your hand on it. @Derek
+- Brutal loss. So we're flying blind now. Three left, one wolf. We have to reason from yesterday instead of panicking.
+- Quiet night, nobody died — so the wolf held back. That puts the weight on claims. Seer, if you're real, now's the time.
+- I lean Owen, honestly. A seer who clears a teammate on night one smells like a buddy setup. Picking the safe target reads off.
+- Morning, everyone. Five of us, one wolf hiding. Let's keep notes on who says what — patterns beat vibes.
+- Or it's a confident seer doing his job. Priya, you cleared the one loud player on your own side. From outside, that looks coordinated.
+- Same energy as Derek. Whoever's holding the lamp, light it. Hiding "to stay safe" usually means cowardice or wolf.
+- Same call. You spent the whole day discrediting the only genuine seer — that's the wolf's job, and you did it well. @Derek
+- Ha, careful Maya, now you're the suspicious one. Kidding. Honestly everyone reads reasonable so far.
+- Until tomorrow. Over.
+- Hold on. I'm the seer, Priya. And my result is different — I divined Lena, and she came back werewolf. One of us is lying.
+- Notice the asymmetry: Priya offers to be tested tomorrow; Owen wants me dead today so nothing gets verified. The one dodging the check is the fake.
+- My story's finished — Lena's the wolf, no second night needed. Stalling for "another divine" is exactly what a fake seer begs for.
+- Over.
+- Hi all. I say we push hard from Day 1 — no sitting quiet. Role-holders, don't be shy when it counts.
+- Bring the data in the morning. Over.
+- That asymmetry decides me. A real seer welcomes another night; Owen refuses it and rushes a villager. I read his claim as false. @Owen
+- I'm telling you the maths just broke against me. But fine — I can't out-argue a coincidence. Vote how you see it and own the result.
+- Hey hey, good to meet you all. I'm an open book, ask me anything. Let's keep this clean and friendly.
+- Hi. Nothing to read yet. I'll save my judgements for when there's actual data on the table.
+- Fair, Lena. For now let's agree on one thing: any seer reveals the second they have a result that matters.
+- Over.
+- My problem with Owen: he spent Day 0 demanding everyone reveal, then conveniently "is" the seer with a kill shot. That's a lot of steering.
+- Okay, double CO. One real, one wolf-or-possessed. Priya cleared me; Owen accuses Lena. Let's compare their reasoning, not the volume.
+- Two villagers don't land the same read by accident, Derek. Lena got accused by the fake seer and still tracked true; you marched beside him all day.
+- Agreed, Maya. A seer sitting on info just feeds the wolf. Speak up early — that's my vote.
+- Over.
+- Good. Let's bank the goodwill and see what the night hands us. Over.

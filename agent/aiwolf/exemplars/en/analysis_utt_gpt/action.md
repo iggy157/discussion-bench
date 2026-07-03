@@ -1,0 +1,58 @@
+# Analysis — action (exemplar, from utterances_k5)
+
+Personal memo for 5-player AIWolf action selection
+
+General feel
+- In 5p, everything is compressed. There are very few utterances, very few flips, and almost no room to “wait and see.”
+- Day 1 after the first night is usually the whole game: if there are 2 seer claims, the village is really deciding which seer-world to live in.
+- Good play in these transcripts is not random bravado; it is compact, reason-linked commitment. Actions should cash out the story you’ve already been telling.
+- Thin move budget matters: one wrong vote often creates a 3-player endgame that the wolf can steer. White side cannot spend bodies loosely.
+
+Divine (seer): in this situation, do this
+- If Day 0 had one player strongly steering pace, proposing plans, or trying to frame how tomorrow should work, divine that player first. In 5p, a leader read is high-value because they will shape the only meaningful day.
+- If one player felt “helpful in a generic way” but never exposed themselves to judgment, divine them. Wolves often sound procedurally reasonable without planting a stake.
+- If one player is notably quiet / low-content / hard to place, divine them when the table is otherwise flat. Quiet wolves win short games because they survive the authenticity duel while others fight.
+- If someone pressed role timing unusually hard (“seer must claim early,” “don’t hide”) and it felt slightly agenda-driven, that is a worthwhile check target. Could be villager, but the information is central because that player will influence claim credibility.
+- If there is an obvious contested social center (the person everyone keeps referencing), divine there. Even a human result is actionable because it sharpens the likely wolf pool.
+- Avoid spending the first divine on a player who is already likely to be mechanically resolved by claim conflict unless they are also central to the day’s decision.
+- If your own tone or role claim style will need support, divine a player whose result can structure the room. “I checked the process leader / the hardest-to-read quiet slot” is easier for villagers to accept than a random pick.
+- If there are two strong suspicious players and one is more likely to be checked by a fake claimant as well, it can still be correct to check that same person; in 5p, overlap happens because the most discussion-driving target is genuinely the best information node.
+
+Vote: in this situation, do this
+1-CO situations
+- If there is only one seer claim and the claim is timely, specific, and consistent with prior Day 0 posture, generally trust the result and push the process through that frame.
+- If the solo seer gives a black result on a plausible target, default is to vote that target unless the claim is wildly incoherent.
+- If the solo seer gives a white result, treat the cleared player as anchor material and vote among the remaining uncleared players based on who resisted structure, floated, or opportunistically shaded the claim.
+- If a solo claimant appears late, vague, or only emerges after pressure, don’t auto-trust; vote should move toward the player whose overall arc best fits hidden-wolf incentives, including possibly the claimant.
+- In 5p, “wait for more” is often fake caution. In a 1-CO world, move decisively unless there is a concrete reason not to.
+
+2-CO situations
+- If two people claim seer, treat Day 1 primarily as a seer-authenticity battle. The key question is not “who is loudest,” but whose claim fits Day 0, target choice, timing, and response quality.
+- If one claimant mirrors the other’s target/result logic in a reactive-looking way, that is a major strike. Second-mover copying is often how fake claims muddy the board.
+- If one seer has a target choice that naturally follows from their Day 0 attention, and the other gives a thinner or backfilled reason, vote toward the thinner claimant or the black-result target they are shielding, depending on the exact board.
+- If one claimant’s whole case is “trust me tomorrow” while the other’s story already coheres with the social flow, prefer the coherent one. In 5p there may not be a safe tomorrow.
+- If one claimant cleared/accused the player they were already softly pocketing or setting up on Day 0, scrutinize hard; paired movement matters a lot.
+- If one claimant’s existence mainly benefits another player’s survival, suspect a wolf-possessed or wolf-fake alignment pattern and vote the claim that best collapses that pair.
+- When unsure in 2-CO, convergence often goes to the seer claim judged fake rather than the seer result target, unless one claimant has directly accused someone and the fake-looking counterclaim seems built to save that exact person.
+- If the black-result target is also the process-dominant player and the counterclaim looks reactive, voting the accused can be correct: “remove the source instead of gambling on the seer flip.”
+- If one claimant was pushing for seer openness all Day 0 and then claims with a natural result, that is mildly towny, not auto-town. Weigh whether the posture was conviction or pre-positioning.
+
+Attack (werewolf): in this situation, do this
+- If the real seer is apparent and alive after Day 1, usually kill them. In 5p, removing future hard information is huge, and the night kill itself often confirms who was real.
+- If a fake/possessed seer survived and is still a useful shield, consider preserving that ambiguity only if killing elsewhere creates a better final 3 with blame lines pointing away from you.
+- If the table already strongly believes one seer is real, attack that seer rather than an influential villager. Letting them live into another result is often losing.
+- If the possessed fake claim has successfully drawn votes and can remain the focal point, kill an influential villager who was reading the pairing correctly. Keep the misinformation asset alive.
+- If there was 1-CO and the solo seer is trusted, kill them unless a stronger kill removes the one villager certain to unify the others against you.
+- If there was 2-CO and your possessed partner is the fake claimant under heat, killing the apparent real seer can retroactively validate your side’s confusion and open a narratable final day.
+- If players remaining are going to 3p next, attack the villager most likely to organize the endgame or remember vote history accurately.
+- If one villager is emotionally committed but sloppy and another is calm, pattern-based, and influential, kill the calm one.
+- Do not overvalue fancy frame kills in 5p. Simple “remove the confirming seer” wins often because the village has too few moves left.
+
+5-player specifics: in this situation, do this
+- Treat every public commitment as expensive. A weak vote path can lock tomorrow.
+- Day 1 with 2-CO is not a normal suspect hunt; it is almost always “which claim belongs in the real world.”
+- White side has almost no spare villagers. Avoid vanity votes and low-confidence detours.
+- Wolves benefit from villagers trying to be overly nuanced. Villagers benefit from clean, reasoned convergence.
+- As seer, choose targets that will matter to exactly one coming day.
+- As wolf, kill for board shape, not drama.
+- As voter, ask: which action most reduces worlds, right now?

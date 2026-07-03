@@ -137,6 +137,15 @@ class AnthropicProvider(Provider):
             msg = "Claude refused the generation request (stop_reason=refusal)"
             raise RuntimeError(msg)
 
+        # Log real token usage (output_tokens INCLUDES thinking) so cost can be measured.
+        u = getattr(message, "usage", None)
+        if u is not None:
+            logging.getLogger("provider").info(
+                "USAGE model=%s in=%s cache_read=%s cache_write=%s out=%s",
+                self._model, getattr(u, "input_tokens", "?"),
+                getattr(u, "cache_read_input_tokens", 0), getattr(u, "cache_creation_input_tokens", 0),
+                getattr(u, "output_tokens", "?"))
+
         parts = [block.text for block in message.content if block.type == "text"]
         return "".join(parts).strip()
 

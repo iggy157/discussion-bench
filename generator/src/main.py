@@ -23,6 +23,7 @@ Run:
 
 from __future__ import annotations
 
+import os
 import argparse
 import logging
 from pathlib import Path
@@ -30,7 +31,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from config import GeneratorConfig, load_config
-from leakage import aiwolf_seeds, select_hiddenbench_tasks
+from leakage import aiwolf_seeds, load_hiddenbench_tasks_by_ids, select_hiddenbench_tasks
 from prompts import aiwolf_script_prompt, analysis_prompt, hiddenbench_script_prompt
 from provider import Provider, build_provider, script_max_tokens
 from slicing import build_utterance_block
@@ -68,14 +69,20 @@ def _generate_one(
     # ③ utterance few-shot is sliced from the SAME script (fairness backbone). No LLM call.
     utterances_md = build_utterance_block(script_md, lang=config.lang, seed=index)
 
-    logger.info("[%s #%d] generating analysis ...", domain, index)
-    ap = analysis_prompt(config.lang, domain, script_md)
-    analysis_md = provider.generate(
-        system=ap.system,
-        user=ap.user,
-        max_tokens=config.max_tokens,
-        effort="medium",
-    )
+    # Claude analysis is OPTIONAL here (we generate analysis separately with gemma/gpt). Skip via
+    # GEN_SKIP_ANALYSIS, and tolerate a refusal so one bad item never aborts the whole run.
+    if os.environ.get("GEN_SKIP_ANALYSIS"):
+        analysis_md = "(analysis generated separately; skipped)"
+    else:
+        logger.info("[%s #%d] generating analysis ...", domain, index)
+        ap = analysis_prompt(config.lang, domain, script_md)
+        try:
+            analysis_md = provider.generate(
+                system=ap.system, user=ap.user, max_tokens=config.max_tokens, effort="medium",
+            )
+        except RuntimeError as e:
+            logger.warning("[%s #%d] analysis failed (%s); writing placeholder", domain, index, e)
+            analysis_md = "(analysis generation failed)"
 
     write_triple(
         config.agent_dir,
@@ -131,15 +138,18 @@ def _run_domain(config: GeneratorConfig, provider: Provider, domain: str) -> Non
         seeds = aiwolf_seeds(count)
         prompts = [aiwolf_script_prompt(config.lang, seed) for seed in seeds]
     else:  # hiddenbench
-        tasks = select_hiddenbench_tasks(
-            config.hiddenbench.benchmark,
-            config.hiddenbench.eval_task_limit,
-            count,
-        )
-        logger.info(
-            "[hiddenbench] building from L1-disjoint task ids: %s",
-            [t.id for t in tasks],
-        )
+        if config.hiddenbench.script_ids:  # curated, validity-/difficulty-selected source (preferred)
+            tasks = load_hiddenbench_tasks_by_ids(
+                config.hiddenbench.benchmark, config.hiddenbench.script_ids[:count],
+            )
+            logger.info("[hiddenbench] building from curated script ids: %s", [t.id for t in tasks])
+        else:  # legacy: leading slice after the eval window
+            tasks = select_hiddenbench_tasks(
+                config.hiddenbench.benchmark,
+                config.hiddenbench.eval_task_limit,
+                count,
+            )
+            logger.info("[hiddenbench] building from L1-disjoint leading slice: %s", [t.id for t in tasks])
         prompts = [
             hiddenbench_script_prompt(
                 config.lang,
@@ -150,17 +160,14 @@ def _run_domain(config: GeneratorConfig, provider: Provider, domain: str) -> Non
             for task in tasks
         ]
 
-    records = [
-        _generate_one(
-            config,
-            provider,
-            domain,
-            index=i + 1,
-            script_system=p.system,
-            script_user=p.user,
-        )
-        for i, p in enumerate(prompts)
-    ]
+    records = []
+    for i, p in enumerate(prompts):
+        try:
+            records.append(_generate_one(
+                config, provider, domain, index=i + 1, script_system=p.system, script_user=p.user,
+            ))
+        except Exception as e:  # noqa: BLE001 -- one bad item must not abort the whole run
+            logger.warning("[%s #%d] generation failed (%s); skipping this item", domain, i + 1, e)
     manifest = write_token_manifest(config.agent_dir, domain, config.lang, records)
     logger.info("[%s] wrote %d examples; token manifest: %s", domain, len(records), manifest)
 

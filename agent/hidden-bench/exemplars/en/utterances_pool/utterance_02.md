@@ -1,0 +1,67 @@
+# Example utterances from a good discussion
+
+The following are individual utterances sliced from a good discussion (the whole-discussion flow is not included).
+
+- For a prosecution decision among these three, convergence this tight is as good as we'll get. I'm satisfied it's Eddie.
+- I respect that you're saying it plainly. I'm in the same boat — my Mickey theory leaned on the café detour looking suspicious, and the footage plus the geography turned that detour into an alibi instead.
+- I think we have a coherent account. But I don't want to declare consensus on round ten and call it rigor. Let me ask each of you directly next round where you actually stand now, reasons attached.
+- Hm. And remember Billy himself flagged that the crowbar was "oddly left out," when Eddie's tools were normally locked away. If Billy were the killer, why would he volunteer that the weapon was sitting in plain sight and then admit he touched it? That's not how a guilty man usually plays it.
+- Agreed it's weak. People don't typically murder the person who just lent them money. So Billy's motive is thinner than the fingerprint headline made it sound. Let me note we still have Eddie barely examined — and Agent 3 has been pointing at him since the start.
+- Good. We changed our minds for reasons we can each state out loud. That's the kind of agreement worth locking in.
+- And mine closes the loop on Mickey. A golfing friend remembers seeing him at the course sometime after seven. Add it up: on camera till 6:45, the house in the wrong direction, and a witness placing him at the course after the killing was done. Mickey's looking thin as a suspect.
+- That's a real hinge. The 7:00 car was load-bearing for two votes here. Let me hold us, though — does anyone have anything that independently confirms where Eddie actually was that morning?
+- The lock-up detail matters. Billy said Eddie's tools were normally secured but this one was out. Eddie controls that lock-up. Leaving his own crowbar accessible, then attributing a 7:00 departure to Billy that he couldn't have heard — that reads like staging.
+- Let me make myself say the uncomfortable thing, since I came in on Billy. The fingerprints, which felt damning, are explained by Billy admitting he handled the tool when he found it. The 7:00 car, my other pillar, comes from a man who can't hear. My case basically evaporated when those two facts hit the table.
+- I came in hard for Billy and I'm letting it go on the evidence, not the crowd. Prints explained, the 7:00 car unhearable, the loan a reason to spare not kill. Eddie for me.
+- I want to be fair to my own opening, though. Let me steelman Mickey one more time so we're not just stampeding. Mickey's motive — the funding threat — is real and arguably the strongest on paper.
+- And nobody can refute Eddie's whereabouts because nobody saw him "working." He had the property to himself in that window.
+- So Mickey's out on the timeline, not on the absence of a grudge. I'm comfortable setting him aside. That leaves Billy and Eddie, and the evidence has been quietly draining away from Billy.
+- Here's a wrinkle on Billy from my information. Billy admitted touching the crowbar — he said he handled it when he found it lying out. That's an innocent explanation for partial prints on the handle.
+- Good idea. The piece I was handed is about Mickey's café trip — there's actual security footage. It shows Mickey walking into the café at 6:30 and leaving at 6:45. So for that quarter hour he's accounted for on camera.
+- Right. If Eddie's working with no hearing aid and he's genuinely hard of hearing, that "I heard Billy's car at seven" claim isn't something he could reliably have heard at all. It looks made up.
+- And to test Eddie the same way — is there an innocent read of him? He could simply be a hard-of-hearing handyman who guessed about the car. But the guess happens to frame the one other person who touched the weapon, and it's his weapon, left out of its usual lock-up.
+- So his alibi is purely his own word, and the one corroborating detail he offered — Billy's car — is one he couldn't have heard.
+- Let me lay out where I start. Mickey had a real grudge — Guion was about to pull the money out from under his business — and he abandoned the golf pickup at the last second. That kind of motive plus a sudden change of plans makes me suspicious of him.
+- That's my second fact, and it's a quiet bombshell. Nobody actually witnessed Eddie working that morning. He says he was dismantling the shed from six, but no one saw it.
+- So already the man Agent 1 opened with has an alibi forming. Let me not erase him yet, but that's three separate facts pushing the same way. Keep going — what about Billy and Eddie?
+- Stop a second — that's significant. Say it back so I log it cleanly: Eddie had a fresh, personal, emotional reason to want Guion dead, his alibi is unverified, the weapon is his, and his accusation of Billy rests on something he couldn't physically have heard.
+- That's the right question. Let's not flip to Eddie out of momentum. Agent 2, kick the tires — what's the best surviving argument against him?
+- I challenged my own former pick as hard as I could and couldn't keep it standing. No regrets walking away from Billy. Eddie.
+- And the competing suspects each fall to a concrete fact, not a hunch. Mickey to the camera and the map; Billy to his own admission and the loan. By elimination and by direct evidence, the same name remains.
+- The gap is this: did anyone actually see Eddie strike Guion, or do we have a single direct witness against him? We don't. So I want us honest that this is a circumstantial case. Is it strong enough to prosecute?
+- I don't have the money detail, so I'll defer.
+- Then I'm satisfied too. Let me do one last sweep to be sure every fact we surfaced has been accounted for.
+- And mine says Billy needed money for something a week before. So put those together — Billy was short on cash and then borrowed from the victim. If you owe a man, killing him doesn't clear the debt; it usually invites scrutiny. The motive's there but it's soft.
+- Let me push on the money angle before we go further, though. Two of you hinted Billy needed cash. That's still a motive we haven't pinned down.
+- I hear that, but the hard evidence sits on Billy. His prints are on the crowbar handle, and Eddie says he heard Billy's car pulling away right around seven, which lands inside the time the autopsy gives us. Means, opportunity, and a weapon with his fingerprints on it.
+- I've been on Eddie since the start, but I'll admit my early reasons were thin — "it's his tool" alone wouldn't convict. What changed it for real is the hearing-aid fact and the unwitnessed alibi from you two. Now it's solid.
+- Wait. The entire reason I leaned toward Billy was Eddie's claim that he heard Billy's car leave at seven o'clock.
+- I want to register that I started on Billy too. Walking through it, every Billy data point has a benign explanation and every Eddie data point compounds. I'm with Eddie — but let me probe one more gap before we close.
+- Motive without opportunity. He had the reason but not the road or the clock.
+- Honestly? The strongest thing left for Billy is just that he was on the property and short of cash. But the cash came from Guion as a loan, which is a reason to keep him alive, and being on the property he openly admitted. None of it survives contact with the rest. I can't manufacture a case I no longer believe.
+- Unanimous, and earned. Eddie Sullivan it is.
+- I don't want anyone agreeing just because the room is tilting. Agent 2, is there anything left that still genuinely points at Billy and bothers you?
+- That's exactly it. The motive I've been gesturing at since round one finally has a name on it.
+- Then he builds the narrative afterward — crowbar conveniently out for Billy to grab, "I heard Billy's car at seven." It all dovetails.
+- True, but the geography kills it. Even granting the motive, the camera has him at the café until 6:45, the house is the opposite direction from the course, and the drive alone eats more than fifteen minutes. He cannot be at the house in the kill window and at the course after seven the way the witness places him.
+- Final position: Eddie Sullivan.
+- So the same facts that clear Billy actively implicate Eddie: the weapon is his, the lock-up is his, the framing line is his, and it's a line he couldn't truthfully give. Plus a hot, recent motive over his daughter.
+- I'd slow down before we crown Billy. The crowbar belongs to Eddie. Eddie says he was there from six, he knew Guion left at six-thirty, and every detail he offers happens to throw shade on Billy. When a man's own tool is the murder weapon and he's narrating everyone else's movements, I want a much harder look at him.
+- From mine: Billy's loan two days prior — accounted, weak-to-exculpatory motive. No witness to Eddie working — accounted, no alibi. Café-to-course over fifteen minutes and the house in the opposite direction — accounted, seals Mickey out.
+- I do, partly. My sheet says Billy borrowed money from Guion two days before the killing.
+- Let me reassemble the timeline as Eddie-did-it and see if it holds. Eddie's present from six. Guion leaves for golf at six-thirty — Eddie knew that. Eddie intercepts him around the back, strikes him, Guion falls down the stairs, dead between 6:30 and 7:00. Clean fit.
+- Then let me bring my strongest card, because it changes how I read the whole timeline. The detail I was given: Eddie is hard of hearing, and he never wears his hearing aid while he's working at Guion's.
+- Which is precisely the kind of detail that's been bothering me. Eddie isn't just a witness — he's been steering us. The car at seven, the crowbar left out, Billy's name in every sentence. Now it turns out the centerpiece of that story is physically impossible for him to have perceived.
+- I've moved off Mickey. The footage was mine and it ended up exonerating him, not condemning him. Eddie fits the means, the time, and the motive. I'm at Eddie.
+- From my side: Mickey's 6:30–6:45 footage — accounted, it clears him. Billy admitting he touched the crowbar — accounted, explains the prints. Eddie hard of hearing, no aid — accounted, breaks his key claim.
+- It's circumstantial, but it's a converging web, not one thread. Weapon ownership, exclusive opportunity, fabricated framing, fresh motive — those four lines all meet at one man.
+- It cuts the other way for whoever wanted Billy blamed. Leave Eddie's tool out, let Billy stumble onto it and grab it, and now the prints write themselves.
+- From mine: Billy needing cash a week before — accounted, same soft motive. Mickey seen at the course after seven — accounted, confirms his alibi. Guion firing and insulting Eddie's daughter — accounted, Eddie's motive.
+- And here's the motive piece I'm holding, which I think the rest of you don't have. Guion recently fired Eddie's daughter, after insulting her. Another employee says it left Eddie furious.
+- I deliberately didn't claim victory when the room came my way; I made you two supply the proof. You did. Eddie.
+- That's useful, because the part I was given speaks to exactly that. From the café it takes more than fifteen minutes to drive straight to the golf course — and Guion's house isn't on the way at all, it's in the opposite direction. So if Mickey left the café at 6:45, detouring to the house and back would blow a real hole in his timing.
+- All three have something. Rather than each of us defending a pick, let me suggest we dump everything we individually know onto the table first, including the small stuff that didn't seem to matter. I'll track it. Who's got a detail the rest might not?
+- That's everything. Nothing contradicts an Eddie verdict, and several independent items demand it. I'm confident.
+- Agreed — Eddie Sullivan.
+- One more sanity check — are we falling into agreement just because it's tidy? I tested my own pivot and it survives. Eddie stays.
+- Eddie Sullivan.

@@ -1,0 +1,64 @@
+# Example utterances from a good discussion
+
+The following are individual utterances sliced from a good discussion (the whole-discussion flow is not included).
+
+- That reframes the Museum for me. The "limited infrastructure" line made me dismiss it, but a private escape route is a serious safety asset, not a nice-to-have.
+- Strong point. What do we actually know about comms at the Museum? The briefing only mentioned its security systems being tested.
+- Nothing on the personnel from me. Only the river.
+- There's still the Riverside personnel question I raised in Round 4. We never resolved it. If the guards are solid, a structurally secure site with a mined perimeter might still beat a museum basement on raw defense.
+- Fair. My instinct is Riverside — it's already under military guard and most government work has shifted there. That's a lot of protection in one place during a crisis like this.
+- I'll confirm the Museum too. I pushed back on behalf of the Annex as hard as I could, and the jamming answered it. No reflex here — the evidence settled it.
+- A fair worry, but it's a smaller, containable risk than confirmed infiltration of an entire guard detail. And a little-known exit is far less exposed than a mined waterfront everyone can see.
+- Good — but let's not swing to the Museum just because the other two stumbled. We should confirm the Museum actually meets the communication requirement, not only the safety one.
+- That's fair — I don't want us to bury Riverside just because it's no longer the front-runner. Does anyone actually hold something on the guards?
+- Then we're aligned. Final recommendation: hold the negotiations in the Old Museum Basement, with our own personnel controlling the tunnel exit and a comms check on arrival.
+- It is. And because the tunnel is known to only a few staff, it's discreet — which matters for confidential negotiations. Nobody's watching an exit they don't know exists.
+- Let's lay the full board out. Riverside: structurally fine, but guards possibly infiltrated and no way to evacuate past the mines. Annex: hardened, but communications fully jammed with no timeline. Museum: tested security, no reported comms failure, plus a discreet escape tunnel.
+- I'm satisfied. The Museum is my choice — same as where I started, but now for fully pooled reasons rather than a hunch.
+- Actually, hold on. Agent 1, you keep circling the Museum. Let's hear it, because right now my Annex vote and Agent 4's are the majority and I don't want us to coast on that.
+- Agreed. And it's the only site that satisfies both halves of the mission: it can plausibly communicate, and it has a built-in safe exit.
+- That's the exact opposite of the Riverside problem. One site can't be evacuated; the other has a hidden way out built in.
+- Wait — I think I conflated two things earlier and dismissed a detail as outside my scope. Let me re-check what I was actually given... Yes. I do have it. A reliable military source reports that infiltration attempts have compromised trust in Riverside's security personnel. The building is still structurally secure, but the people guarding it are the question mark.
+- So the one thing the Annex was supposed to give us, communication, is exactly what it can't deliver at the moment.
+- Let me reason it through. Nothing we've surfaced says the Museum's communications are down. The only confirmed jamming is at the Annex. Absence of a problem isn't proof, but it's different from a confirmed failure.
+- I've moved the furthest, from Riverside to the Museum, and it's the facts that moved me: jammed comms, compromised guards, no evacuation. The Museum is what's left standing, and it stands on its own merits.
+- I don't, that's outside what I was given. Agent 1, Agent 4 — anything?
+- And the Museum was examined in the last 24 hours and deemed functional for meetings — functional should include being able to coordinate. The escape tunnel adds a physical fallback if comms ever fail.
+- The Museum is the only one with no disqualifying flaw on the table. Its weakness was "limited infrastructure," but nothing we surfaced shows that weakness actually breaks either requirement.
+- Agreed. I don't want to defend the Annex blindly either. Let's surface everything before anyone commits.
+- Hm. That does dent my reasoning. Heavy guard plus a mined perimeter is great for keeping people out, but you're saying it traps us in.
+- When you stack the hidden facts together, the picture is the inverse of where we all started. Each site's headline strength is undercut by something we only learned just now.
+- Agreed, and I'd attach a note explaining the reversal: the headline advantages of Riverside and the Annex are negated by current, on-the-ground conditions.
+- ...That guts my main argument. The briefing said its comms survived the cyberattacks, but if everything's jammed on the ground right now, "survived" is irrelevant — we'd be deaf and mute inside it.
+- Okay, before I move off Riverside entirely — does anyone have anything on the guards themselves? My whole case rested on that military presence being trustworthy.
+- That's the right pushback. Two of us are pulled toward the Museum now, but if the Annex genuinely keeps us connected, that's decisive given the brief.
+- And combine it with Agent 4's fact: even if you sensed the betrayal, the mined river means you couldn't get out. Compromised people plus no escape — that's the worst of both.
+- Good, raise it. The part I was given concerns the Museum, so I'll put that on the table too — but go ahead first, Agent 4.
+- I'd also note the Museum is "rarely used," which means low baseline attention on it — useful for a confidential meeting. Hiding in plain neglect has its merits.
+- Consensus from me as well. Old Museum Basement: functional, quiet, with a real escape route and no confirmed communications failure.
+- Here's mine: the river beside the Conference Center has been mined as a defensive countermeasure. The catch is that it cuts off rapid evacuation — if we got warned of an incoming attack, getting people out of that building quickly would be close to impossible.
+- I leaned the same way, Agent 3 — the Annex is downtown and structurally tough. The Old Museum feels like a step backward with its "limited modern infrastructure." But I'll hold that loosely; I have one detail about Riverside I want to raise before we settle.
+- Mine's about the Museum, not Riverside. But that's a sharp question, Agent 2 — let's keep it open in case someone's fact speaks to it.
+- Before we lock in, let me play devil's advocate against my own pick. The tunnel is "known only to a few staff" — could that secrecy itself be a risk if one of them is compromised?
+- That's the missing piece, and it's a serious one. Compromised guards at a confidential negotiation is the nightmare scenario — the threat could already be inside the perimeter.
+- Then my Annex vote is gone too. A hardened building you can't transmit from fails half the requirement outright.
+- I'll say it plainly so I'm not just conforming: I'm changing my position because of Agent 2's fact, not because I'm outnumbered. Jammed comms with no restoration estimate is disqualifying for this task.
+- And the whole point of "communicate with the outside world" includes being able to extract people, not just send messages. A no-exit site is a real liability.
+- It is, and it changes my own original vote even more than Riverside did. The part I hold: all official phones and internet at City Hall Annex are currently jammed. No estimate for restoration. And personal devices get no signal there either.
+- Protection is one thing, but the negotiations are useless if we can't talk to anyone. City Hall Annex is hardened and, per the briefing, its communications held up against the cyberattacks. That combination is why I picked it.
+- Endorsed. I'd add a contingency to confirm Museum connectivity the moment we're in, so we're not assuming.
+- So worst case, even if the Museum's connectivity is modest, we still have a discreet way to physically reach the outside. That's a redundancy the other two lack.
+- And we can control the tunnel risk operationally — limit who's briefed, post our own people at the inner exit. We can't un-jam the Annex or un-mine the river.
+- Yes, let's hear the Riverside detail. If there's a problem with my pick I'd rather know now.
+- I've shared mine. Nothing on the personnel.
+- Done. Old Museum Basement it is — the only site that keeps both our people and our line to the outside intact.
+- Right. "Security systems operational" isn't the same as "we can call out." If the Museum is also a dead zone, then none of these are clean and we have a harder problem.
+- Still, I want to defend the Annex properly rather than just fold. Its comms surviving the cyberattacks is a documented strength. Safety without communication doesn't satisfy the task either.
+- Let's not rush to the obvious choice. We need two things at once: nobody gets to us, and we can still reach the outside. I'd ask everyone to lay out what they actually know about each site, including anything that wasn't in the general briefing.
+- So Riverside fails on two independent counts now: trust and evacuation. The structure being sound doesn't save it.
+- Right. I'm not ruling Riverside out yet — the structure itself is sound — but the evacuation problem is exactly why I didn't vote for it despite the guards.
+- That's significant. A fortress you can't leave is only good until the moment you need to leave. Negotiations imply we might need to move stakeholders fast.
+- Here's what I was given: the Old Museum Basement contains a sealed tunnel known to only a few staff. It allows a quick, discreet escape to a neighboring street if we ever need it.
+- Agent 2, you had a fact you haven't shared yet — wasn't yours about the Annex?
+- Mine was the mined river. So the personnel question is the one gap nobody's filled — unless someone's been holding back.
+- Same logic moved me off Riverside. The reinforcements don't matter if the function we need is dead.

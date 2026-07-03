@@ -1,0 +1,90 @@
+# Condition registry — TYPED analysis variant of conditions_v2.yml.
+# Each +analysis condition references analysis DERIVED FROM ITS OWN exemplar type (not the shared
+# analysis_common). Built by serving/gen_typed_analysis.sh (gemma-4-31b):
+#   analysis_only            -> analysis_points (standalone checklist; NO exemplar shown)
+#   utterance_fewshot_analysis -> analysis_utt   (from utterances)
+#   situation_fewshot_analysis -> analysis_situ  (from situations)
+#   script_fewshot_analysis    -> analysis_scr   (from scripts)
+# NOTE: this makes "+analysis" co-vary with exemplar type (content & tokens differ) -> measures each
+# type's POTENTIAL rather than a clean analysis main-effect. Use conditions_v2.yml for the clean
+# factorial; use THIS for the exemplar-potential comparison. Run gen_typed_analysis.sh first.
+
+conditions:
+  baseline:
+    label: baseline
+    inject: []
+    scenario:
+      enabled: false
+
+  analysis_only:
+    label: analysis_only
+    inject: [analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: request
+      reply: analysis
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_points"
+
+  utterance_fewshot:
+    label: utterance_fewshot
+    inject: [utterances]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances_k5"
+
+  utterance_fewshot_analysis:
+    label: utterance_fewshot_analysis
+    inject: [utterances, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances_k5"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_utt"
+
+  situation_fewshot:
+    label: situation_fewshot
+    inject: [situations]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/situations"
+
+  situation_fewshot_analysis:
+    label: situation_fewshot_analysis
+    inject: [situations, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/situations"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_situ"
+
+  script_fewshot:
+    label: script_fewshot
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k5"
+
+  script_fewshot_analysis:
+    label: script_fewshot_analysis
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k5"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_k5"

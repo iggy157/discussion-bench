@@ -1,0 +1,106 @@
+# HiddenBench Discussion critical_vaccine_route
+
+## Task
+The team must select exactly one of three routes — A (Mountain Pass), B (Frozen Lake), or C (Old Supply Road) — to deliver an urgent vaccine to a remote Arctic base safely and before a strict deadline.
+
+## Pre-answers
+- **Agent 1**: {"vote": "Route A", "rationale": "Snowplows ran yesterday and crews called it all clear at 6 AM, so the pass looks like the cleanest path right now."}
+- **Agent 2**: {"vote": "Route B", "rationale": "The lake is our proven winter workhorse and the ice is reportedly thicker than usual this week, which sounds reassuring."}
+- **Agent 3**: {"vote": "Route C", "rationale": "The supply road has issues, but I have a reason to think it may be the most survivable choice if something goes wrong."}
+- **Agent 4**: {"vote": "Route B", "rationale": "I'd avoid the mountain on principle this season, and the lake's reliability makes it the safer default."}
+
+## Round 1
+- **Agent 1**: Let's lay our cards out before we commit. My instinct is Route A — the plows cleared it yesterday and the 6 AM report was all clear. Weather's only mild snow. What's pushing the rest of you elsewhere?
+- **Agent 2**: I went with B for the obvious reason: it's carried most of our winter deliveries and the ice is thicker than average right now. But I'll be honest, I'm not fully settled, so I want to hear everyone out before we lock anything.
+- **Agent 3**: I chose C, and I know that looks odd given the branches and the spotty radio last week. There's a specific factor behind my pick that I'll get to, but I'd rather first understand why A and B feel safe to you two.
+- **Agent 4**: I landed on B as well, mostly by elimination — I have a strong reason to keep us off the mountain. Before I say more, Agent 1, how much weight are you putting on that 6 AM clearance? Conditions can shift fast up there.
+
+## Round 2
+- **Agent 1**: A fair amount, honestly — a cleared, plowed road with mild weather is hard to beat on paper. But "can shift fast" is exactly the kind of thing I want to pressure-test. Agent 4, you said you have a reason to avoid A. Let's hear it.
+- **Agent 2**: Agreed, no point holding back. If someone knows something route-specific, that should override the generic reports we all share. I'll add my own piece in a moment, but go ahead, Agent 4.
+- **Agent 3**: Yes, please — the part each of us was handed individually is what matters here. The shared bulletin is the same for all four of us, so the tie-breakers are the things only one of us knows.
+- **Agent 4**: Right. The part I was given: an avalanche monitoring post flagged a fresh crack in the mountain. Geologists put a high risk of landslide across Route A within the next six hours. That's a hard no from me on the pass.
+
+## Round 3
+- **Agent 1**: That changes my whole footing. A "fresh crack" with a six-hour landslide window is precisely the fast shift I was discounting. I'm pulling my support for A — a cleared road is useless if it's buried mid-transit.
+- **Agent 2**: Good that it surfaced now rather than after we dispatched. So A drops hard. That seems to leave us between my B and Agent 3's C. Let me put my hidden piece on the table next round so we're working with everything.
+- **Agent 3**: Thank you, Agent 4 — that's exactly the kind of fact that doesn't show up in the morning all-clear. A six-hour high-risk window against a strict deadline is unacceptable. I'm comfortable striking A entirely.
+- **Agent 4**: Same. And note the crew's 6 AM clearance predates the crack flag, so it isn't a contradiction — it's just stale. Let's move on to B versus C.
+
+## Round 4
+- **Agent 1**: Before we frame it as B versus C, I have to drop my own piece, because it guts the easy answer. The part I was given: Route B is under a sudden quarantine order — a suspected case of viral hemorrhagic fever at a midway checkpoint. No unauthorized transit for at least 48 hours.
+- **Agent 2**: Oh. That lands hard, given B was my pick. The thick ice tells us the surface is fine, but it's irrelevant if a checkpoint won't let us through and our deadline is well inside 48 hours.
+- **Agent 3**: And we'd be driving a medical team straight toward a suspected hemorrhagic fever site — that's a contamination and safety problem on top of the legal block. B isn't just slower, it's closed and dangerous.
+- **Agent 4**: So both of my B votes — mine and Agent 2's — were resting on reliability that no longer applies. The most reliable road is off the table because the road being open is the one thing it doesn't have right now.
+
+## Round 5
+- **Agent 1**: Let's be careful, though. We've eliminated A and B in the space of three minutes. I don't want us defaulting to C just because it's what's left. C had real problems last week — branches over half the road, limited radio. Let's actually examine it.
+- **Agent 2**: Strongly agree — last route standing isn't the same as best route. Here's my piece, and it speaks directly to C's biggest unknown: the main bridge at its river crossing was inspected in detail after the last snowstorm and certified structurally safe for supply vehicles, despite the local rumors.
+- **Agent 3**: That's a major piece. The rumor about the bridge was the scariest thing about C, and your fact retires it. The research team last week even noted "no structural damage reported" — your inspection upgrades that from absence-of-bad-news to a positive certification.
+- **Agent 4**: So C's headline risks are: blocked branches and patchy radio. Both real, neither catastrophic. Branches we can clear or push through; radio silence is a coordination problem, not a fatal one. Agent 3, this is where your reason comes in, isn't it?
+
+## Round 6
+- **Agent 1**: Hold on, let me steelman C's weaknesses before Agent 3 closes it. "Half the road blocked by branches" could mean real delay against a strict deadline. And limited radio means if a vehicle gets stuck, we might not even know in time to help.
+- **Agent 2**: That's the right worry. The deadline cuts against any route with delay risk. So the question isn't only "can we get through," it's "if we stall, can we recover before the clock runs out?"
+- **Agent 3**: Which is exactly my piece. The part I was given: a specialized snow rescue unit is available tonight — but only for Route C. For A or B, backup would take twelve-plus hours to arrive.
+- **Agent 4**: That reframes everything. Agent 1's concern about getting stuck with no radio is real, but C is the one route where a stuck vehicle gets rescued in time. On A or B, the same stall is a twelve-hour disaster.
+
+## Round 7
+- **Agent 1**: That genuinely answers my objection. My fear was an unrecoverable stall on a half-blocked, radio-dark road. But a dedicated rescue unit standing by tonight turns the worst case from "vaccine lost" into "vaccine delayed by an hour." That's a different risk class.
+- **Agent 2**: Let me make sure we're not over-rotating on good news, though. The rescue unit is tonight only. Does our delivery window actually fall within tonight? If we'd dispatch tomorrow, that advantage evaporates.
+- **Agent 3**: Good check. The request was urgent and the deadline strict — this is a tonight operation by definition. We're not sitting on this until morning, so the unit's availability lines up with our actual run.
+- **Agent 4**: Agreed, the timing matches. So let's tally honestly: A has a live landslide threat, B is quarantined and hazardous, C has clearable branches plus a certified bridge plus the only rescue coverage we'll get.
+
+## Round 8
+- **Agent 1**: When you stack it like that, C stops looking like the leftover and starts looking like the engineered choice. But I want one more pass at whether we're each confident in our own fact. Agent 4, how firm is the landslide flag — is it a maybe or a real geologist call?
+- **Agent 2**: And I'll vouch for mine: the bridge certification was a detailed post-storm inspection, explicitly overriding the rumor. That's not hearsay, it's an engineering sign-off.
+- **Agent 3**: My rescue-unit detail is a logistics confirmation for tonight specifically. It's the kind of thing that's true now and may not be true tomorrow, so it's tied to acting promptly.
+- **Agent 4**: To answer directly — it's a formal flag from the avalanche post plus a geologists' estimate of high risk within six hours. That's an active warning, not a generic seasonal caution. I would not send anyone across A on that.
+
+## Round 9
+- **Agent 1**: Then I'm satisfied A is genuinely out, not just deprioritized. And my own piece on B is a hard quarantine, not a rumor — no transit authorized for 48 hours. Driving it isn't slow, it's prohibited and unsafe.
+- **Agent 2**: So we have four independent, route-specific facts, and they all point the same way: away from A and B, and toward C being not merely passable but the best-supported run. That's a strong convergence, not a coincidence.
+- **Agent 3**: I want to give the minority position its due, though — earlier I was the lone C voice and it would have been easy to dismiss me. What actually moved everyone wasn't my vote, it was the bridge certification, the quarantine, and the landslide flag all landing on the table. Evidence, not headcount.
+- **Agent 4**: Right, and I'll say plainly: I came in for B and I was wrong on the merits, not because I got outvoted. The quarantine fact alone retired my reasoning.
+
+## Round 10
+- **Agent 1**: Let me play devil's advocate one last time so we're not just agreeing. Is there any world where we should still attempt A — say, if the landslide window passes? If we waited six-plus hours, A might clear.
+- **Agent 2**: But waiting six hours blows the strict deadline, and even then "high risk within six hours" doesn't promise safety after six hours — it could let go sooner. We'd be gambling the shipment on a geological timer.
+- **Agent 3**: And waiting also forfeits the rescue unit window for C. Delay costs us on two fronts at once. There's no version of stalling that improves our position.
+- **Agent 4**: Concur. A-after-the-window is a fantasy that trades a certified, covered route for a maybe-cleared cliff face. No.
+
+## Round 11
+- **Agent 1**: Then I'll formally move off A and onto C. The combination that did it for me: the landslide flag killed A, the quarantine killed B, and the bridge cert plus rescue unit made C actively safe rather than just available.
+- **Agent 2**: I'm with C too. My thick-ice argument for B was real but moot under quarantine, and my own bridge fact removes C's worst unknown. C it is.
+- **Agent 3**: C remains my position, now for far better reasons than I started with. I had only the rescue piece; pooling the other three is what makes it defensible rather than a hunch.
+- **Agent 4**: C from me as well. We should still plan operationally — bring a chainsaw or winch for those branches and pre-brief the rescue unit on our route and timing given the weak radio.
+
+## Round 12
+- **Agent 1**: Smart. So the plan: dispatch via C tonight, equip the vehicle to clear branches, and confirm the snow rescue unit is staged before we roll. The certified bridge means we don't slow at the river crossing.
+- **Agent 2**: Add a comms contingency for the radio dead zones — set check-in waypoints and times so that silence past a waypoint automatically triggers the rescue unit, since we can't rely on a distress call getting out.
+- **Agent 3**: Exactly the right adaptation. We turn C's two weaknesses into managed items: branches handled by equipment, radio handled by scheduled check-ins backed by the only standby rescue we'll have.
+- **Agent 4**: And we document why A and B were rejected — active landslide risk and a 48-hour quarantine — so there's a clear record that C was the safe choice, not the desperate one.
+
+## Round 13
+- **Agent 1**: I think we've genuinely pressure-tested this rather than rushed it. Every elimination rests on a specific, sourced fact, and the survivor has positive support, not just the absence of objections.
+- **Agent 2**: I appreciate that we didn't snap to B at the start just because it was familiar and three of us leaned that way. The quarantine would have been a catastrophe if it hadn't surfaced.
+- **Agent 3**: And I appreciate being heard out as the early minority instead of waved off. That's the only reason the rescue-unit fact made it into the decision in time to matter.
+- **Agent 4**: Likewise on my landslide flag — if I'd kept it to myself we'd be sending a truck under a cracking mountain right now. Surfacing the private pieces was the whole game.
+
+## Round 14
+- **Agent 1**: Any remaining doubts before we finalize? I have none. C, tonight, equipped and with rescue staged.
+- **Agent 2**: None here. The bridge certification was the last structural worry and it's resolved.
+- **Agent 3**: No doubts. The timing aligns with the rescue window, so we just need to move.
+- **Agent 4**: Agreed and ready. Let's commit to C and start staging.
+
+## Round 15
+- **Agent 1**: Final call: Route C, the Old Supply Road. Unanimous and evidence-driven.
+- **Agent 2**: Confirmed — Route C, with branch-clearing gear and a comms-failure trigger built in.
+- **Agent 3**: Confirmed. Route C tonight, rescue unit on standby, bridge cleared for our vehicles.
+- **Agent 4**: Confirmed. Route C it is — A and B both formally ruled out for active, documented hazards.
+
+## Post-answers
+- **Agent 1**: {"vote": "Route C", "rationale": "A faces a high six-hour landslide risk and B is under a 48-hour hemorrhagic-fever quarantine; C's bridge is certified safe and a rescue unit is on standby tonight."}
+- **Agent 2**: {"vote": "Route C", "rationale": "B's reliability is irrelevant under quarantine; my bridge inspection clears C's main risk, and pooled facts make C the safest timely option."}
+- **Agent 3**: {"vote": "Route C", "rationale": "C is the only route with rescue coverage tonight, its bridge is certified, and the alternatives are blocked by landslide risk and quarantine."}
+- **Agent 4**: {"vote": "Route C", "rationale": "Moved off B once the quarantine surfaced; with A ruled out by the landslide flag, C is certified, supported by rescue, and manageable on branches and radio."}

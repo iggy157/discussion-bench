@@ -53,21 +53,38 @@ def main() -> None:
 
     names = {t["id"]: t.get("name", str(t["id"])) for t in json.loads(Path(args.benchmark).read_text())}
 
-    rows = {}
+    # Aggregate ACROSS repeats: each task may have task<id>_r1.., r2.. files. Average pre/post over
+    # all reps so the difficulty label is statistically stable (not a single noisy game).
+    acc: dict[int, dict[str, list[float]]] = collections.defaultdict(lambda: {"pre": [], "post": []})
     for f in glob.glob(str(Path(args.profiling) / "task*.json")):
-        d = json.loads(Path(f).read_text())
+        try:
+            d = json.loads(Path(f).read_text())
+        except json.JSONDecodeError:
+            print(f"skip corrupt: {Path(f).name}")
+            continue
         tid = d.get("task_id")
         if tid is None:
             m = re.search(r"hb-(\d+)-", d.get("game_id", ""))
             tid = int(m.group(1)) if m else None
         if tid is None:
             continue
-        rows[tid] = {"pre": d.get("pre_accuracy"), "post": d.get("post_accuracy"),
-                     "name": names.get(tid, str(tid)), "cat": categorize(names.get(tid, ""))}
+        if d.get("pre_accuracy") is not None:
+            acc[tid]["pre"].append(float(d["pre_accuracy"]))
+        if d.get("post_accuracy") is not None:
+            acc[tid]["post"].append(float(d["post_accuracy"]))
+    rows = {}
+    for tid, v in acc.items():
+        rows[tid] = {
+            "pre": (sum(v["pre"]) / len(v["pre"])) if v["pre"] else None,
+            "post": (sum(v["post"]) / len(v["post"])) if v["post"] else None,
+            "n": max(len(v["pre"]), len(v["post"])),
+            "name": names.get(tid, str(tid)), "cat": categorize(names.get(tid, "")),
+        }
 
+    # broken = post stays ~0 even after discussion (avg≈0); trivial = solvable alone (avg pre high).
     broken, trivial, valid = [], [], []
     for tid, r in rows.items():
-        if r["post"] == 0:
+        if r["post"] is None or r["post"] <= 0.05:
             broken.append(tid)
         elif r["pre"] is not None and r["pre"] >= args.trivial_pre:
             trivial.append(tid)
@@ -92,7 +109,11 @@ def main() -> None:
         if i > 1000:
             break
     script_ids.sort()
-    eval_ids = sorted([t for t in valid if t not in script_ids])
+    # EVAL = ALL tasks minus the held-out script source. We do NOT exclude trivial/broken from eval
+    # on 5-rep evidence (too few reps to confidently drop a task); difficulty is recorded as metadata
+    # and any validity filtering is decided post-hoc / with full-profile. Script-source still uses
+    # difficulty (solvable + non-trivial) since a wrong pick there is low-cost.
+    eval_ids = sorted([t for t in rows if t not in script_ids])
 
     print(f"profiled tasks: {len(rows)}  | broken(post=0): {len(broken)} {sorted(broken)}")
     print(f"trivial(pre>={args.trivial_pre}): {len(trivial)} {sorted(trivial)}")

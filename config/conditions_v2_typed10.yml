@@ -1,0 +1,116 @@
+# 10-condition registry for the typed-analysis comparison with BOTH K=5 and K=1 script variants.
+# 6 non-script conditions are IDENTICAL across both views; only the SCRIPT condition swaps K5<->K1.
+# Eval builds two 8-cond comparisons:
+#   K=5 view: baseline analysis_only utterance_fewshot utterance_fewshot_analysis
+#             situation_fewshot situation_fewshot_analysis script_fewshot_k5 script_fewshot_analysis_k5
+#   K=1 view: ...(same 6)... script_fewshot_k1 script_fewshot_analysis_k1
+# Analyses are ENGLISH (gen_analysis --analang en); JA review copies in results/analysis_review/.
+# Run SMALL with all 10 (4b may prefer K=1); BIG with the K=5 8-cond subset.
+
+conditions:
+  baseline:
+    label: baseline
+    inject: []
+    scenario:
+      # No exemplars and no analysis, but still feed a plain SystemMessage so every condition
+      # shares the same message shape (both HiddenBench and aiwolf). human=none/reply=none =>
+      # system message only; the scenario_enabled context flag stays false (keeps aiwolf
+      # instruction/identity in ablation mode, i.e. no "reference script" mentions).
+      enabled: true
+      delivery: full
+      human: none
+      reply: none
+
+  analysis_only:
+    label: analysis_only
+    inject: [analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: request
+      reply: analysis
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_points"
+
+  utterance_fewshot:
+    label: utterance_fewshot
+    inject: [utterances]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances_k5"
+
+  utterance_fewshot_analysis:
+    label: utterance_fewshot_analysis
+    inject: [utterances, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/utterances_k5"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_utt"
+
+  situation_fewshot:
+    label: situation_fewshot
+    inject: [situations]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/situations"
+
+  situation_fewshot_analysis:
+    label: situation_fewshot_analysis
+    inject: [situations, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/situations"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_situ"
+
+  script_fewshot_k5:
+    label: script_fewshot_k5
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k5"
+
+  script_fewshot_analysis_k5:
+    label: script_fewshot_analysis_k5
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k5"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_k5"
+
+  script_fewshot_k1:
+    label: script_fewshot_k1
+    inject: [scripts]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: ack
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k1"
+
+  script_fewshot_analysis_k1:
+    label: script_fewshot_analysis_k1
+    inject: [scripts, analysis]
+    scenario:
+      enabled: true
+      delivery: full
+      human: examples
+      reply: analysis
+      sample_dir: "{domain_pack}/exemplars/{lang}/scripts_k1"
+      analysis_dir: "{domain_pack}/exemplars/{lang}/analysis_k1"

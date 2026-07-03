@@ -20,8 +20,11 @@ rm -f "$ROOT/serving/PROFILE_DONE"
 
 run_task(){
   local gi="$1" w="$2"
-  local port=$((8090+w))
-  local wlog="$ROOT/log/prof_w$w"
+  # INSTANCE offsets port + log dir so a 2nd profiler instance (different endpoint) doesn't
+  # collide on the HB server port / LOG_ROOT. INSTANCE=0 default keeps legacy behavior.
+  local inst="${INSTANCE:-0}"
+  local port=$(( 8090 + inst*10 + w ))
+  local wlog="$ROOT/log/prof_i${inst}_w$w"
   local exp; exp="$(printf 'hb-%03d-r0-0000.json' "$gi")"
   local rep att
   for rep in $(seq 1 "$REPS"); do
@@ -53,8 +56,9 @@ run_task(){
 echo "profiling $NTASKS tasks, lang=$LANG_CODE, $NWORKERS workers -> $OUT"
 # Stagger worker starts so their agent launches don't burst simultaneously (12 agents spawning at
 # once → connection-refused → games never start). 20s/worker desyncs the initial launches.
+TASK_START="${TASK_START:-1}"; TASK_END="${TASK_END:-$NTASKS}"   # task-id range (for splitting across endpoints)
 for w in $(seq 0 $((NWORKERS-1))); do
-( sleep $((w*20)); for gi in $(seq $((w+1)) "$NWORKERS" "$NTASKS"); do run_task "$gi" "$w"; done ) &
+( sleep $((w*20)); for gi in $(seq $((TASK_START + w)) "$NWORKERS" "$TASK_END"); do run_task "$gi" "$w"; done ) &
 done
 wait
 touch "$ROOT/serving/PROFILE_DONE"

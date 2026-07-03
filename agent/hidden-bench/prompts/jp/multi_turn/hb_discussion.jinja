@@ -1,5 +1,10 @@
 {% set history_source = talk_history -%}
 {% set history_start = hb_history_start | default(0) -%}
+{%- set _r = hb_round if (hb_round is defined and hb_round) else None -%}
+{%- set _T = hb_total_rounds if (hb_total_rounds is defined and hb_total_rounds) else None -%}
+{%- if _r and _T %}
+議論の進行状況: 全{{ _T }}ラウンド中の第{{ _r }}ラウンド（このあと残り{{ _T - _r }}ラウンド）。全ラウンドを使ってペース配分してください——結論を急がず、既に出た結論を繰り返さないこと。序盤: 自分の私的情報を出し、他者の情報を取り込む。中盤: 各事実を突き合わせ・反証し、対立する選択肢を比較検討する。終盤: 有力な答えをストレステストする——それを覆す単一の事実は無いか？ 課題文の正確な文言を読み直す。全参加者の情報が反映されているか？ 最終回答は最後のラウンドでのみ簡潔に述べる。本当に新しいことが無ければ、新しい観点か検証を足すこと——過去の発言を言い換えて繰り返さない。
+{% endif -%}
 {% if talk_history|length == 0 -%}
 あなたが最初の発言者です。あなたの持つ情報のうち、判断に最も関係しそうな要点を1〜2文でグループに共有してください。
 {%- elif history_source[history_start:]|length == 0 -%}

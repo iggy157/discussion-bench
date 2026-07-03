@@ -1,0 +1,24 @@
+# English aiwolf exemplar generation (local gemma via vLLM 8002, parallel to the HB gen on 8000).
+# aiwolfの台本ソースは「シード」(gen_seed_base=10000起点) で評価シード(1..N)とL1分離。10台本生成。
+provider: vllm
+model: gemma-4-31b
+temperature: 0.7
+max_tokens: 6144          # werewolf full-game transcripts are longer than HB
+api_key_env: OPENAI_API_KEY
+base_url: http://localhost:8002/v1
+
+lang: en
+domains: [aiwolf]
+
+num_scripts:
+  hiddenbench: 0
+  aiwolf: 10
+
+hiddenbench:
+  benchmark: ../server/hidden-bench/data/benchmark.json
+  eval_task_limit: 20
+  total_rounds: 15
+  num_agents: 4
+
+token_match: approximate
+agent_dir: ../agent

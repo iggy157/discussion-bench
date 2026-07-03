@@ -35,14 +35,19 @@ SHORT = {"baseline": "①base", "analysis_only": "②anal", "utterance_fewshot":
          "script_fewshot_analysis": "⑧scr+a"}
 
 _ACC = [("post_accuracy", +1), ("integration_gain", +1)]
-_SHARED = [
+_OBJ_SHARED = [
     ("conformity_conformity_rate", -1), ("conformity_independence_rate", +1),
     ("distinct_1", +1), ("distinct_2", +1), ("self_repetition_diversity", +1),
-    ("convergence_round", +1), ("subj_naturalness", +1), ("subj_coherence", +1),
-    ("subj_topic_development", +1),
+    ("convergence_round", +1),
 ]
-HB_METRICS = _ACC + _SHARED
-AIWOLF_METRICS = _SHARED
+_SUBJ = [("subj_naturalness", +1), ("subj_coherence", +1), ("subj_topic_development", +1)]
+# Objective vs subjective aggregated separately (subjective judge can be unreliable).
+HB_OBJ = _ACC + _OBJ_SHARED
+AIWOLF_OBJ = _OBJ_SHARED
+HB_SUBJ = _SUBJ
+AIWOLF_SUBJ = _SUBJ
+HB_METRICS = HB_OBJ + _SUBJ  # back-compat
+AIWOLF_METRICS = AIWOLF_OBJ + _SUBJ
 
 
 def _per_game(path: Path) -> dict[str, list[dict[str, float]]]:
@@ -102,19 +107,20 @@ def _resample(pg: dict[str, list[dict[str, float]]], rnd: random.Random) -> dict
     return {c: [games[rnd.randrange(len(games))] for _ in games] for c, games in pg.items() if games}
 
 
-def bootstrap(pg_hb: dict, pg_aw: dict | None, b: int, seed: int) -> dict[str, Any]:
-    """Return per-condition rank distributions for HB / aiwolf / overall / 各ドメイン+総合の順位分布."""
+def bootstrap(pg_hb: dict, pg_aw: dict | None, b: int, seed: int,
+              hb_metrics: list, aw_metrics: list) -> dict[str, Any]:
+    """Per-condition rank distributions (HB / aiwolf / overall) for ONE metric set."""
     rnd = random.Random(seed)
     dists: dict[str, dict[str, list[float]]] = {d: collections.defaultdict(list) for d in ("hb", "aiwolf", "overall")}
     for _ in range(b):
         hb_s = _resample(pg_hb, rnd)
-        hb_rank = _mean_rank_once(hb_s, HB_METRICS)
+        hb_rank = _mean_rank_once(hb_s, hb_metrics)
         for c, v in hb_rank.items():
             dists["hb"][c].append(v)
         aw_rank = {}
         if pg_aw:
             aw_s = _resample(pg_aw, rnd)
-            aw_rank = _mean_rank_once(aw_s, AIWOLF_METRICS)
+            aw_rank = _mean_rank_once(aw_s, aw_metrics)
             for c, v in aw_rank.items():
                 dists["aiwolf"][c].append(v)
         for c in CONDS:
@@ -170,14 +176,19 @@ def main() -> None:
     n_hb = statistics.mean([len(v) for v in pg_hb.values()]) if pg_hb else 0
     n_aw = statistics.mean([len(v) for v in pg_aw.values()]) if pg_aw else 0
 
-    dists = bootstrap(pg_hb, pg_aw, args.b, args.seed)
     parts = [f"# ランキング信頼性（ブートストラップ B={args.b}, n_HB≈{n_hb:.0f}, n_aiwolf≈{n_aw:.0f}）",
              "順位を1位=最良で算出。SD・90%CIが大きい/重なるほど順位はノイズ（ゲーム数を増やすと縮むが、"
-             "天井・飽和指標の差は増えない）。P(1位)・P(top2)は復元抽出での順位安定性。"]
-    parts.append(_report("HiddenBench", dists["hb"], args.b))
-    if pg_aw:
-        parts.append(_report("aiwolf", dists["aiwolf"], args.b))
-        parts.append(_report("総合 / Overall", dists["overall"], args.b))
+             "天井・飽和指標の差は増えない）。P(1位)・P(top2)は復元抽出での順位安定性。",
+             "**客観**（正答率/統合/distinct/同調/収束 等の計算指標）と**主観**（judgeのLikert 3指標）"
+             "を分けて集計（主観judge=gemmaは天井効果で弁別が弱い→[主観の妥当性] 節を参照）。"]
+    for grp_name, hb_m, aw_m in (("客観 (Objective)", HB_OBJ, AIWOLF_OBJ),
+                                 ("主観 (Subjective)", HB_SUBJ, AIWOLF_SUBJ)):
+        dists = bootstrap(pg_hb, pg_aw, args.b, args.seed, hb_m, aw_m)
+        parts.append(f"\n## {grp_name}")
+        parts.append(_report("HiddenBench", dists["hb"], args.b))
+        if pg_aw:
+            parts.append(_report("aiwolf", dists["aiwolf"], args.b))
+            parts.append(_report("総合 / Overall", dists["overall"], args.b))
     text = "\n".join(parts) + "\n"
     print(text)
     if args.out:

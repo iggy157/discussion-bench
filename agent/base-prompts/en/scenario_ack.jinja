@@ -1,0 +1,14 @@
+{#-
+  scenario_ack.jinja (English)
+  AIMessage body for reply=ack conditions. A brief first-person acknowledgement of the
+  references, phrased by what each exemplar kind actually teaches. Domain-neutral.
+  Expects: exemplar_kind ('scripts' | 'utterances' | 'situations')
+-#}
+{%- set _kind = exemplar_kind | default('scripts') -%}
+{%- if _kind == 'utterances' -%}
+Understood. I'll draw on these examples — the phrasing, the pacing, and how to raise a point — as I take part.
+{%- elif _kind == 'situations' -%}
+Understood. I'll draw on these examples — how to phrase myself for each kind of situation — as I take part.
+{%- else -%}
+Understood. I'll draw on these reference scripts — the flow of the discussion and the pacing of the contributions — as I take part.
+{%- endif %}

@@ -2,13 +2,15 @@ package logic
 
 import (
 	"log/slog"
-	"math/rand"
 
 	"github.com/aiwolfdial/aiwolf-nlp-server/model"
+	"github.com/aiwolfdial/aiwolf-nlp-server/util"
 )
 
 func (s *CommunicationSession) runTurnBased() {
-	rand.Shuffle(len(s.agents), func(i, j int) {
+	// Seeded Rng (AIWOLF_SEED) so speaking order is reproducible across conditions (matched-seed),
+	// not the auto-seeded global math/rand which varied per run.
+	util.Rng.Shuffle(len(s.agents), func(i, j int) {
 		s.agents[i], s.agents[j] = s.agents[j], s.agents[i]
 	})
 

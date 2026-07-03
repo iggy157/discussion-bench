@@ -1,0 +1,64 @@
+# Example utterances from a good discussion
+
+The following are individual utterances sliced from a good discussion (the whole-discussion flow is not included).
+
+- Same arc for me. I started on Peak from the shared sheet alone, which is exactly why we needed each other's pieces.
+- Right. The decision rule here isn't "who's fastest in theory," it's "who can definitely close without hidden issues." Peak's hidden issue is the disqualifier.
+- I'm fully on board. My initial speed argument was right in principle and wrong in target — the fast, executable path is Skylake, not Peak.
+- Even if they agreed, you'd be asking a short-staffed firm with a history of late legal cold feet to break their own process under time pressure. That raises risk, not lowers it.
+- Agreed. I raised it only to keep us honest. I'm satisfied.
+- Fair challenge. The wording I was given is specific: execution is on hold and zero new investments have been processed this month. That's not a slowdown, it's a stop with no posted end date.
+- An open-ended stop is the worst case for us, because our risk isn't just "slow," it's "indefinite." We can't price an unknown against a 12-hour decision window.
+- Locked for me as well. No reservations.
+- That answers my worry about whether it's a token name versus a qualifying participant.
+- So by elimination and by Skylake's own positive movement, it's the one firm that can definitely act now.
+- Go ahead — I'd been treating Northstar as the safe fallback if Peak wobbled.
+- And mine flipped twice: off Peak when the freeze surfaced, and toward Skylake only after we stress-tested the co-investor quality. That's the right way round.
+- Let me make sure I follow. Skylake's single blocker was "needs a reputable co-investor." That blocker is now removed by their own action.
+- I want to steelman Peak one more time so we're not just relieved to have an answer. Is there any version where the investigation clears in days and they fund fastest after all?
+- Confirm in writing that the angel group's participation satisfies Skylake's co-investor clause, then ask Skylake to issue the lead term sheet against it.
+- Skylake Ventures. Changed from Peak once the freeze and the committee delay were on the table.
+- And nothing about strong IP protection or expediting changes the fact that we'd still be weeks from money. The clock kills Northstar regardless.
+- Wait — finalized, as in already in place? Not "in talks"?
+- Final position: Skylake Ventures, contingent on the written co-investor confirmation we already have reason to expect.
+- Right. And remember the shared note that they've pulled out late after legal hiccups. A three-week wait plus a history of last-minute exits is a brutal combination on our timeline.
+- Correct. So the offer that looked the most conditional is actually the most unblocked.
+- Closed yesterday. The condition that's printed on their offer is the condition they just satisfied themselves.
+- I'll go first, because the part I was given changes the Peak picture a lot. Peak Capital is under a regulatory investigation right now. Their deal execution is frozen at the bank — no new investments have cleared this entire month.
+- My instinct is Peak. Twelve hours to decide, three days to wire — that math is hard to beat. But I'm listening.
+- Peak: terms could be met, but the bank is frozen under investigation with no resume date. Cannot reliably close.
+- We should also get the funding timeline from Skylake in writing, so we're not trading Peak's hidden delay for a Skylake one we didn't check.
+- Don't. The detail I hold is that Northstar cut their investment committee to one meeting a month because of a staff shortage. Their next committee meeting is three weeks out.
+- Skylake Ventures. The pooled facts overturned the surface read, and this is the only choice that closes on time.
+- Agreed, and it is starting to look like a real yes. Let me line all three up against the only thing that matters: can they actually close in our window.
+- To Agent 1's point: nothing in any of our pieces suggested a hidden delay on Skylake's side. The only condition was the co-investor, and that's resolved.
+- That's a big deal. So the "3 days if terms are met" line is essentially theoretical at the moment?
+- This is exactly where my piece fits. The co-investor condition isn't open anymore. Skylake finalized a partnership with a well-known angel group yesterday, and it meets their usual requirement for a round of this size.
+- Then I'm satisfied on that point. I don't want us swapping to Skylake just because the other two collapsed; I want it to be a real yes on its own merits.
+- Three weeks just to get committee approval? Nothing can be led, signed, or funded before that gate.
+- Let's not rush the obvious choice. The headline says Peak closes fast, but I want everyone's specifics on the table before we sign anything.
+- I'm now comfortable moving off Northstar, which was my pre-answer. The information I didn't have — the funding freeze and the committee delay — reframes everything.
+- Let me also steelman Northstar briefly, in fairness, since I'm the one who downgraded it. Could we ask them to expedite a special committee session?
+- Exactly. Terms being met doesn't matter if the wire can't physically leave the bank.
+- And we don't need that gamble if a clean option exists. We only reach for Peak's upside if Skylake weren't viable — but it is.
+- Good test. The phrasing I was handed is that the partnership meets their usual requirements specifically for a deal of this size. So it's not a marginal co-investor — it's calibrated to our round.
+- One last sanity pass on the task's exact wording: "the one that can definitely close the deal, on time, without unmanageable risk or hidden issues." Peak has a hidden issue, Northstar has a timing issue, Skylake has neither now.
+- Skylake: their one structural condition was satisfied yesterday, and nothing else in their profile flags a hold or a delay.
+- I want to test it before I switch, though. Are we certain the angel group counts as "reputable" by Skylake's own bar, and that it's large enough? Otherwise we've just moved the blocker, not cleared it.
+- Hold on — frozen, or just slowed? If it's slowed, three days might stretch to a week and still beat everyone. I want to be sure before I drop my top pick.
+- Okay, that genuinely moves me. If the bank won't process, the speed advantage evaporates. Let me put my own card down too: Northstar isn't as clean as it looks either.
+- Same starting point as Agent 3 for me. Still, three offers, three different catches. Let's each say what we actually know beyond the brochure version.
+- Concur. Skylake Ventures is the reliable close.
+- So Northstar can't even start the clock for three weeks, and when they do they sometimes bail. That's two strikes against my original vote.
+- Northstar: can't even convene to approve for three weeks, plus a track record of late legal exits. Cannot close on time.
+- Agreed. I'll flag up front that I lean Skylake, and I think the usual objection to them may not apply here. I'll explain when we get into details.
+- Possible, but we'd be betting our momentum on a regulator's calendar that we don't control and can't see. That's the "unmanageable risk" the task warns about.
+- For the record, my early Skylake lean was only a hunch until the co-investor news was confirmed in the open. It shouldn't have counted for much until we pooled this.
+- Skylake Ventures. Their one gate is cleared, and the other two firms can't act in our window.
+- That maps cleanly. Skylake is the only "definitely."
+- Let's nail the execution path for Skylake so the choice is operational, not just logical. What do we need in the next 12 hours?
+- Then I think we have consensus, and importantly it's consensus built after the facts, not before. Peak out for the freeze, Northstar out for the three-week gate.
+- That's a real reversal from where I started. The thing that knocked Skylake down on the shared sheet has already been resolved off the sheet.
+- Good — verify, don't assume. But on the evidence we have, Skylake is the only firm with no active blocker between us and close.
+- Let me push back on myself out loud, since I came in for Peak. If Peak is frozen and Northstar is three weeks from a yes, both of my fallbacks are gone. That leaves Skylake — but Skylake needs a reputable co-investor, and I don't have one lined up. So what do we actually do?
+- So both alternatives fail the same test for different reasons: one can't move funds, one can't reach a decision.

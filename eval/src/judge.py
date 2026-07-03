@@ -45,7 +45,24 @@ def build_transcript_text(result: dict[str, Any]) -> str:
     desc = (result.get("metadata") or {}).get("description") or result.get("description")
     if desc:
         lines.append(f"[Scenario] {desc}")
-    for t in result.get("transcript") or []:
+    rows = result.get("transcript")
+    if not rows and result.get("entries"):
+        # aiwolf raw server log ({agents, entries, ...}): extract TALK utterances into transcript rows.
+        rows = []
+        for e in result.get("entries", []):
+            resp = (e.get("response") or "").strip()
+            if not resp or resp.lower() in ("over", "skip"):
+                continue
+            req = e.get("request")
+            try:
+                pkt = json.loads(req) if isinstance(req, str) else (req or {})
+                if str(pkt.get("request", "")).upper() != "TALK":
+                    continue
+                day = int((pkt.get("info") or {}).get("day", 0))
+            except (ValueError, TypeError):
+                continue
+            rows.append({"day": day, "agent": e.get("agent", "?"), "text": resp})
+    for t in rows or []:
         rnd = t.get("day")
         agent = t.get("agent", "?")
         text = (t.get("text") or "").strip()

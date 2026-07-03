@@ -250,7 +250,9 @@ def main() -> None:
         args.server_url,
     )
 
-    tmp = Path(tempfile.gettempdir()) / f"dbagent_{args.domain}_{args.lang}_{args.condition}.yml"
+    _tag = os.environ.get("DBAGENT_TMP_TAG", "")
+    _pfx = f"{_tag}_" if _tag else ""
+    tmp = Path(tempfile.gettempdir()) / f"dbagent_{_pfx}{args.domain}_{args.lang}_{args.condition}.yml"
     with tmp.open("w", encoding="utf-8") as f:
         yaml.safe_dump(merged, f, allow_unicode=True, sort_keys=False)
     logger.info("merged config written to %s", tmp)

@@ -678,11 +678,23 @@ class Agent:
             "freeform": self._is_freeform(),
             "remain_talk_map": self._compute_remain_talk_map() if self._is_freeform() else None,
             "talk_state": self._compute_talk_state() if request_key in {"talk", "whisper"} else None,
-            "scenario_enabled": bool((self.config.get("scenario") or {}).get("enabled", False)),
+            # True only when the scenario actually injects exemplars/analysis. A system-message-only
+            # baseline (human=none/reply=none) keeps this False so aiwolf instruction/identity stay
+            # in ablation mode (no "reference script" mentions).
+            "scenario_enabled": bool((self.config.get("scenario") or {}).get("enabled", False))
+            and (
+                str((self.config.get("scenario") or {}).get("human", "examples")) != "none"
+                or str((self.config.get("scenario") or {}).get("reply", "ack")) != "none"
+            ),
             # HiddenBench per-turn context (phase / clues / options / round), parsed from
             # info.profile by the HiddenBench adapter. None in werewolf mode.
             # HiddenBenchのターン文脈 (フェーズ/手がかり/選択肢/ラウンド). 人狼モードでは None.
             "hb": getattr(self, "hb_context", None),
+            # Explicit round / total-rounds for pacing prompts (robust; server sends round per-turn
+            # and total_rounds in the base payload). 1-indexed current round; None outside HB.
+            "hb_round": ((getattr(self, "hb_context", None) or {}).get("round") + 1)
+            if isinstance((getattr(self, "hb_context", None) or {}).get("round"), int) else None,
+            "hb_total_rounds": (getattr(self, "hb_context", None) or {}).get("total_rounds"),
             # HiddenBench multi-turn delta: index into talk_history from which NEW turns begin
             # (turns before this were already shown in prior prompts and live in the LLM history).
             # Embedding only the delta keeps the per-turn context linear instead of quadratic.
@@ -857,7 +869,7 @@ class Agent:
         # below for backward compatibility (reply defaults to llm_summary when ack_mode says so).
         ack_mode = str(scenario_cfg.get("ack_mode", "llm_summary"))
         reply_kind = str(scenario_cfg.get("reply") or ("llm_summary" if ack_mode == "llm_summary" else "ack"))
-        if reply_kind in ("analysis", "ack"):
+        if reply_kind in ("analysis", "ack", "none"):
             self._feed_exemplar_structured(day=day, is_initial=is_initial)
             return
 
@@ -903,12 +915,8 @@ class Agent:
         template = env.get_template(template_name)
         system_template = env.get_template("scenario_system.jinja") if is_initial else None
 
-        static_ack = str(
-            scenario_cfg.get(
-                "ack_static_text",
-                "承知しました。台本を参考に、議論展開・発話のテンポ・キャラクターの口調を踏まえて演じます。",
-            ),
-        )
+        _ack_cfg_mt = scenario_cfg.get("ack_static_text")
+        static_ack = str(_ack_cfg_mt) if _ack_cfg_mt else env.get_template("scenario_ack.jinja").render().strip()
 
         # separate_langchain の場合は talk と action の両方に積む. そうでない場合は default のみ.
         if self._is_separate_langchain():
@@ -1076,6 +1084,8 @@ class Agent:
 
         human_kind = str(scenario_cfg.get("human", "examples"))
         reply_kind = str(scenario_cfg.get("reply", "ack"))
+        # System-message-only baseline (human=none/reply=none): feed a plain framing SystemMessage
+        # so every condition shares the same message shape (both HiddenBench and aiwolf).
         log_phase = "EXEMPLAR" if day is None else f"EXEMPLAR_DAY{day}"
         glob_cfg = scenario_cfg.get("glob", "*.md")
         glob: str | list[str] = list(glob_cfg) if isinstance(glob_cfg, (list, tuple)) else str(glob_cfg)
@@ -1085,7 +1095,12 @@ class Agent:
         exemplar_kind = "scripts"
         if human_kind == "examples":
             sample_dir = resolve_sample_dir(scenario_cfg, agent_cfg, project_root)
-            exemplar_kind = "utterances" if "utterances" in str(sample_dir) else "scripts"
+            _sd = str(sample_dir)
+            exemplar_kind = (
+                "utterances" if "utterances" in _sd
+                else "situations" if "situations" in _sd
+                else "scripts"
+            )
             if day is None:
                 bodies = load_scenario_bodies(sample_dir, glob)
             else:
@@ -1107,11 +1122,26 @@ class Agent:
                 self.agent_logger.logger.warning("reply=analysis but no analysis bodies found -> falling back to ack")
                 reply_kind = "ack"
 
-        static_ack = str(scenario_cfg.get("ack_static_text", "承知しました。参考にして議論に臨みます。"))
+        _ack_cfg = scenario_cfg.get("ack_static_text")
+        static_ack = (
+            str(_ack_cfg) if _ack_cfg
+            else env.get_template("scenario_ack.jinja").render(exemplar_kind=exemplar_kind).strip()
+        )
         system_template = env.get_template("scenario_system.jinja") if is_initial else None
         agent_num_int = int(agent_cfg["num"]) if agent_cfg.get("num") is not None else None
         mechanics = derive_mechanics_flags(agent_num_int)
         narration_split = self._is_narration_split()
+        # System-message framing: only full SCRIPTS use the screenwriter viewpoint; utterance/
+        # situation examples and analysis-only use the player viewpoint. domain routes werewolf vs HB.
+        scenario_domain = str(self.config.get("domain", "aiwolf"))
+        if human_kind == "none":
+            scenario_viewpoint = "baseline"
+        elif human_kind == "request":
+            scenario_viewpoint = "analysis"
+        elif human_kind == "examples" and exemplar_kind == "scripts":
+            scenario_viewpoint = "screenwriter"
+        else:
+            scenario_viewpoint = "player"
 
         if self._is_separate_langchain():
             targets: list[tuple[LLMRunnable | None, list[BaseMessage], str, dict[str, str] | None]] = [
@@ -1126,22 +1156,33 @@ class Agent:
             if is_initial and system_template is not None:
                 system_text = system_template.render(
                     target_role=label, mechanics=mechanics, narration_split=narration_split,
+                    domain=scenario_domain, viewpoint=scenario_viewpoint, exemplar_kind=exemplar_kind,
+                    hb_total_rounds=(getattr(self, "hb_context", None) or {}).get("total_rounds"),
+                    hb_num_agents=(getattr(self, "hb_context", None) or {}).get("num_agents"),
                 ).strip()
                 history.append(SystemMessage(content=system_text))
                 self.agent_logger.logger.info([log_phase, "system", label, f"chars={len(system_text)}", system_text])
 
-            # 2. HumanMessage: examples, or an analysis request.
-            if human_kind == "request":
-                human = env.get_template("analysis_request.jinja").render(target_role=label).strip()
+            # 2. HumanMessage: examples, or an analysis request. (human=none => no HumanMessage;
+            #    system-message-only baseline.)
+            if human_kind == "none":
+                pass
             else:
-                human = env.get_template("exemplar_present.jinja").render(
-                    scenario_bodies=bodies, scenario_count=len(bodies), exemplar_kind=exemplar_kind,
-                ).strip()
-            history.append(HumanMessage(content=human))
-            self.agent_logger.logger.info([log_phase, "human", label, human_kind, f"chars={len(human)}", human])
+                if human_kind == "request":
+                    human = env.get_template("analysis_request.jinja").render(target_role=label).strip()
+                else:
+                    human = env.get_template("exemplar_present.jinja").render(
+                        scenario_bodies=bodies, scenario_count=len(bodies), exemplar_kind=exemplar_kind,
+                        request_analysis=(reply_kind == "analysis"),
+                    ).strip()
+                history.append(HumanMessage(content=human))
+                self.agent_logger.logger.info([log_phase, "human", label, human_kind, f"chars={len(human)}", human])
 
-            # 3. AIMessage: the analysis (agent's own reflection) or a brief ack.
-            if reply_kind == "analysis":
+            # 3. AIMessage: the analysis (agent's own reflection) or a brief ack. (reply=none =>
+            #    no AIMessage; system-message-only baseline.)
+            if reply_kind == "none":
+                pass
+            elif reply_kind == "analysis":
                 ai_text = env.get_template("analysis_reply.jinja").render(
                     analysis_bodies=analysis_bodies, analysis_count=len(analysis_bodies),
                 ).strip()

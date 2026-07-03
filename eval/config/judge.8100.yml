@@ -1,0 +1,22 @@
+# LOCAL TEST judge config: subjective scoring via the local vLLM-served gemma.
+# (Temporary; for the full local validation run. Not the principled L3 setup — GPT is.)
+provider: vllm
+model: gemma-4-31b
+temperature: 0.0
+base_url: http://localhost:8100/v1
+api_key_env: OPENAI_API_KEY          # unused for local vllm (placeholder key)
+
+lang: en
+scale: 5
+repeats: 1
+
+items:
+  - key: naturalness
+    en: "Naturalness of the utterances (do they read as natural, fluent dialogue?)"
+    ja: "発話の自然さ（自然で流暢な対話として読めるか）"
+  - key: coherence
+    en: "Coherence & non-contradiction (do turns connect and stay consistent, without contradictions?)"
+    ja: "噛み合い・非矛盾（応答が噛み合い、矛盾なく一貫しているか）"
+  - key: topic_development
+    en: "Topic development (does the discussion advance and develop topics rather than stagnate?)"
+    ja: "話題展開（議論が停滞せず深まり・展開していくか）"
